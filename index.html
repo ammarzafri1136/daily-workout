@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <title>Daily Workout</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f2f7">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Workout">
 <link rel="icon" type="image/png" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -1487,9 +1486,20 @@
   // Rest-day colour: yellow against a blue/cool workout colour; blue if the workout colour is itself warm/yellow
   function restFor(pen) { var h = hueOf(pen); return (h >= 150 && h <= 300) ? '#facc15' : '#2563eb'; }
 
+  // Match the page edges and the phone's system bars (status / navigation bar) to the app background
+  function syncChrome() {
+    var bg = getComputedStyle(document.body).getPropertyValue('--page').trim() || (isDark() ? '#1c1c1e' : '#f2f2f7');
+    document.documentElement.style.background = bg;
+    var ms = document.querySelectorAll('meta[name="theme-color"]');
+    if (!ms.length) { var m = document.createElement('meta'); m.name = 'theme-color'; document.head.appendChild(m); ms = [m]; }
+    [].forEach.call(ms, function (m) { m.removeAttribute('media'); m.setAttribute('content', bg); });
+  }
+
   function applySettings() {
     var dark = isDark(), b = document.body.style;
     document.body.classList.toggle('dark', dark);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    setTimeout(syncChrome, 0);
     document.body.classList.toggle('large', !!S.large);
     var pen = typeof S.pen === 'string' ? [0, S.pen, S.pen] : (PENS[S.pen] || PENS[0]);
     var head = typeof S.head === 'string' ? [0, S.head, S.head] : (HEADS[S.head] || HEADS[0]);
