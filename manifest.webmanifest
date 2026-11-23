@@ -1,13 +1,13 @@
 {
-  "name": "Daily Workout",
-  "short_name": "Workout",
+  "name": "Rep & Rest",
+  "short_name": "Rep & Rest",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1c1c1e",
-  "theme_color": "#1c1c1e",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "description": "Daily workout + sleep tracker",
   "icons": [
     {

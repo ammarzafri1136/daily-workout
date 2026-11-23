@@ -1,4 +1,4 @@
-# Daily Workout
+# Rep & Rest
 
 Personal workout + sleep tracker, installable as an app (PWA).
 
