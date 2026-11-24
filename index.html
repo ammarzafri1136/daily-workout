@@ -955,8 +955,8 @@
   /* records summary panel */
   .rsum { display:flex; gap:10px; align-items:flex-start; background:var(--tile); border-radius:16px; padding:11px 12px; margin:10px 0 6px; }
   .rsum:empty { display:none; }
-  .rsum .si { width:30px; height:30px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; }
-  .rsum .si svg { width:17px; height:17px; }
+  .rsum .si { width:30px; height:30px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-style:normal; line-height:0; }
+  .rsum .si svg { width:17px; height:17px; display:block; margin:0; vertical-align:0; }
   .rsum .rt { display:block; font-size:15px; font-weight:700; margin-bottom:2px; }
   .rsum span { display:block; font-size:13px; line-height:1.45; color:var(--muted); }
   .rsum span b { color:var(--ink); font-weight:700; }
@@ -1244,7 +1244,7 @@
     // trailing rest run up to the last day of the period
     var run = 0, k0 = (to === t && !wd[t] && !rd[t]) ? addDays(t, -1) : to;   // today not logged yet -> start from yesterday
     for (var k = k0; k >= from && !wd[k]; k = addDays(k, -1)) run++;
-    var lines = [], tone = 'good', title;
+    var lines = [], tone = 'good', icon = 'bulb', title;
     var period = span === 1 ? T('Hari ini', 'This day') : span + T(' hari', ' days');
     lines.push(T(period + ': <b>' + nW + ' workout</b>, ' + nR + ' rehat' + (reps ? ' · ' + reps + ' reps' : '') + '.',
                  period + ': <b>' + nW + ' workout' + (nW === 1 ? '' : 's') + '</b>, ' + nR + ' rest' + (reps ? ' · ' + reps + ' reps' : '') + '.'));
@@ -1255,16 +1255,16 @@
     if (avgS !== null) lines.push(T('Tidur purata <b>' + hm(avgS * 60) + '</b> · ' + okS + '/' + nights.length + ' malam dalam target ' + lo + '–' + hi + 'j.',
                                     'Average sleep <b>' + hm(avgS * 60) + '</b> · ' + okS + '/' + nights.length + ' nights in the ' + lo + '–' + hi + 'h target.'));
     var tip;
-    if (!nW && span >= 2) { tone = 'short'; title = T('Jom mula semula', "Let's get moving"); tip = T('Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas 15 minit hari ini.', 'No workouts in this period yet. Start with a short 15-minute session today.'); }
-    else if (run >= 3 && to === t) { tone = 'short'; title = T(run + ' hari berturut rehat', run + ' rest days in a row'); tip = T('Badan dah cukup rehat — masa untuk kembali bergerak.', "You're well rested — time to move again."); }
-    else if (span >= 5 && cons < 30) { tone = 'info'; title = T('Konsisten ' + cons + '%', cons + '% consistency'); tip = T('Sasarkan sekurang-kurangnya 3 workout seminggu untuk nampak progress.', 'Aim for at least 3 workouts a week to see progress.'); }
-    else if (avgS !== null && avgS < lo) { tone = 'short'; title = T('Kurang tidur', 'Short on sleep'); tip = T('Tidur bawah ' + lo + 'j boleh lambatkan recovery otot. Cuba tidur 30 minit lebih awal.', 'Under ' + lo + 'h sleep slows muscle recovery. Try bed 30 minutes earlier.'); }
-    else if (span >= 5 && cons >= 60) { tone = 'good'; title = T('Hebat, konsisten ' + cons + '%!', 'Great, ' + cons + '% consistent!'); tip = T('Teruskan momentum ni. Tambah sedikit reps atau berat untuk terus maju.', 'Keep the momentum. Add a few reps or a little weight to keep improving.'); }
-    else if (nW) { tone = 'good'; title = T('Progress berjalan', 'Making progress'); tip = T('Bagus! Kekalkan rutin dan jaga tidur supaya badan pulih.', 'Nice! Keep the routine and protect your sleep so you recover.'); }
-    else { tone = 'info'; title = T('Ringkasan', 'Summary'); tip = T('Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.'); }
+    if (!nW && span >= 2) { tone = 'short'; icon = 'flame'; title = T('Jom mula semula', "Let's get moving"); tip = T('Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas 15 minit hari ini.', 'No workouts in this period yet. Start with a short 15-minute session today.'); }
+    else if (run >= 3 && to === t) { tone = 'warn'; icon = 'coffee'; title = T(run + ' hari berturut rehat', run + ' rest days in a row'); tip = T('Badan dah cukup rehat — masa untuk kembali bergerak.', "You're well rested — time to move again."); }
+    else if (span >= 5 && cons < 30) { tone = 'low'; icon = 'chart'; title = T('Konsisten ' + cons + '%', cons + '% consistency'); tip = T('Sasarkan sekurang-kurangnya 3 workout seminggu untuk nampak progress.', 'Aim for at least 3 workouts a week to see progress.'); }
+    else if (avgS !== null && avgS < lo) { tone = 'short'; icon = 'battery'; title = T('Kurang tidur', 'Short on sleep'); tip = T('Tidur bawah ' + lo + 'j boleh lambatkan recovery otot. Cuba tidur 30 minit lebih awal.', 'Under ' + lo + 'h sleep slows muscle recovery. Try bed 30 minutes earlier.'); }
+    else if (span >= 5 && cons >= 60) { tone = 'good'; icon = 'flame'; title = T('Hebat, konsisten ' + cons + '%!', 'Great, ' + cons + '% consistent!'); tip = T('Teruskan momentum ni. Tambah sedikit reps atau berat untuk terus maju.', 'Keep the momentum. Add a few reps or a little weight to keep improving.'); }
+    else if (nW) { tone = 'prog'; icon = 'chart'; title = T('Progress berjalan', 'Making progress'); tip = T('Bagus! Kekalkan rutin dan jaga tidur supaya badan pulih.', 'Nice! Keep the routine and protect your sleep so you recover.'); }
+    else { tone = 'info'; icon = 'bulb'; title = T('Ringkasan', 'Summary'); tip = T('Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.'); }
     lines.push(tip);
-    var C = { short: '#ef4444', good: '#22c55e', info: '#64748b' }, I = { short: 'alert', good: 'check', info: 'bulb' };
-    el.innerHTML = '<i class="si" style="background:' + C[tone] + '">' + ic(I[tone]) + '</i><div><b class="rt">' + esc(title) + '</b>' +
+    var C = { short: '#ef4444', warn: '#facc15', low: '#f97316', good: '#22c55e', prog: '#8b5cf6', info: '#64748b' };
+    el.innerHTML = '<i class="si" style="background:' + C[tone] + ';color:' + (tone === 'warn' ? '#111' : '#fff') + '">' + ic(icon, 'go') + '</i><div><b class="rt">' + esc(title) + '</b>' +
       lines.map(function (l) { return '<span>' + l + '</span>'; }).join('') + '</div>';
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) LANG_OBS.takeRecords();
   }
