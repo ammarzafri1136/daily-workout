@@ -608,13 +608,13 @@
       <div class="crange" id="dCustom"><label>Dari<input type="date" id="dFrom"></label><span>→</span><label>Hingga<input type="date" id="dTo"></label></div>
       <div id="sleepDash" style="display:none">
         <div class="kpis" id="sKpi"></div>
-        <div class="ch"><h4>Sleep Tracker</h4><div id="cSleep"></div></div>
-        <div class="ch"><h4>Heatmap tidur</h4><div id="cHeat"></div></div>
+        <div class="ch"><h4>Statistik tidur</h4><div id="cSleep"></div></div>
+        <div class="ch"><h4>History tidur</h4><div id="cHeat"></div></div>
       </div>
       <div id="workDash">
       <div class="kpis" id="dKpi"></div>
       <div class="ch"><h4>Workout vs Rest Day</h4><div id="cRatio"></div></div>
-      <div class="ch"><h4>Heatmap workout</h4><div id="cWHeat"></div></div>
+      <div class="ch"><h4>History workout</h4><div id="cWHeat"></div></div>
       <div class="ch"><h4>Trend masa workout <small style="color:var(--muted);font-weight:700">minit</small></h4><div id="cDur"></div></div>
       <div class="ch"><h4>Reps ikut latihan</h4><div id="cEx" class="hb"></div></div>
       <div class="ch"><h4>Progress latihan <select id="dEx" aria-label="Latihan"></select></h4><div id="cProg"></div></div>
@@ -806,6 +806,74 @@
   #keyGate b { font-size:20px; } #keyGate p { font-size:14px; color:var(--muted,#666); line-height:1.4; }
   #keyGate input { width:100%; box-sizing:border-box; font-size:16px; padding:12px; border-radius:12px; border:1px solid var(--edge,#ccc); background:var(--tile,#f4f4f4); color:inherit; margin-bottom:12px; }
   #keyGate button { width:100%; padding:12px; border:0; border-radius:999px; background:var(--headbg,#111); color:var(--headfg,#fff); font-size:16px; font-weight:700; }
+
+  /* ================= Habit-tracker style (Dribbble "Habit tracker App") =================
+     Near-black page, soft graphite cards, inner tiles, blue accent, stat row with ring,
+     area charts, History grid. Light mode keeps the same structure on grey/white. */
+  :root { --page:#f2f2f7; --paper:#ffffff; --tile:#f2f2f6; --soft:#ececf1; --line:#e2e2e8; --rule:#e8e8ee; --accent:#2f6fed; }
+  body.dark { --page:#0b0b0d; --paper:#1c1c1f; --tile:#2a2a2e; --soft:#26262a; --line:#38383d; --rule:#2c2c31; --muted:#8d8d93; --accent:#3b82f6; }
+  body.dark .dv, body.dark .trio .dwrap { background:#35353a !important; }
+  .card, .recent { box-shadow:none !important; border-radius:24px !important; }
+  /* compact centred header: language | title | theme · settings */
+  .nav { align-items:center !important; }
+  .nav .lt { order:2; text-align:center; }
+  #langBtn { order:1; } #themeBtn { order:3; } #setBtn { order:4; }
+  .lt h1 { font-size:20px !important; font-weight:800 !important; letter-spacing:-.01em !important; }
+  .lt small { font-size:11px !important; letter-spacing:.04em !important; }
+  .ib { background:var(--paper) !important; color:var(--ink) !important; }
+  /* accent */
+  .save, .chip.on, .rsel .rcur { background:var(--accent) !important; color:#fff !important; border-color:var(--accent) !important; }
+  .rest, .clear, .rsel .rmore { background:var(--tile) !important; color:var(--ink) !important; }
+  .rsel .rmore { color:var(--muted) !important; font-weight:600 !important; }
+  .seg button.on { color:var(--ink) !important; }
+  body.dark .seg { background:#2a2a2e; } body.dark .seg button.on { background:#48484e !important; }
+  /* dashboard: every block is its own card on the page */
+  #dashView > .card { background:none !important; padding:0 !important; }
+  #dashView .dh, #dashView .seg, #dashView .rsel { margin-bottom:10px !important; }
+  .ch { background:var(--paper) !important; box-shadow:none !important; border-radius:22px !important; padding:14px 14px 12px !important; margin:0 0 12px !important; }
+  .ch h4 { font-size:16px !important; font-weight:700 !important; letter-spacing:-.01em; margin:0 0 10px !important; }
+  .ch h4 small.drag { font-size:12px; font-weight:500; color:var(--muted); margin-left:auto; }
+  .ch h4 select { background:var(--tile); color:var(--ink); border:0; border-radius:999px; padding:6px 12px; font-size:13px; font-weight:600; }
+  .lg, .hml { font-weight:500 !important; }
+  /* stat row */
+  #dKpi, #sKpi { display:block !important; }
+  .hk { display:flex; align-items:center; background:var(--paper); border-radius:22px; padding:12px 6px 12px 12px; margin:0 0 10px; gap:0; }
+  .hk2 { padding-left:6px; }
+  .hk-ring { position:relative; flex:0 0 52px; width:52px; height:52px; padding:0 !important; background:none !important; margin-right:6px; color:var(--ink); }
+  .hk-ring svg { width:52px; height:52px; display:block; }
+  .hk-ring .trk { fill:none; stroke:var(--tile); stroke-width:5; }
+  .hk-ring .prg { fill:none; stroke:var(--accent); stroke-width:5; stroke-linecap:round; transition:stroke-dasharray .6s cubic-bezier(.2,.8,.2,1); }
+  .hk-ring b { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; letter-spacing:-.02em; }
+  .hk-ring b small { font-size:9px; font-weight:700; margin-left:1px; color:var(--muted); }
+  .hk-it { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; gap:2px; padding:2px 4px !important; background:none !important;
+    border-radius:12px !important; color:var(--ink); font:inherit; text-align:center; position:relative; }
+  .hk-it + .hk-it:before, .hk-ring + .hk-it:before { content:''; position:absolute; left:0; top:15%; bottom:15%; width:1px; background:var(--line); }
+  .hk-ring + .hk-it:before { display:none; }
+  .hk-it b { font-size:17px; font-weight:800; letter-spacing:-.02em; white-space:nowrap; line-height:1.2; }
+  .hk-it span { font-size:11px; font-weight:500; color:var(--muted); line-height:1.2; }
+  .hk-it.warn b { color:var(--warn); }
+  /* History grid */
+  .hst { display:flex; gap:6px; }
+  .hst-d { display:grid; grid-template-rows:16px repeat(7, 24px); row-gap:3px; flex:none; }
+  .hst-d span { font-size:11px; color:var(--muted); line-height:24px; font-weight:500; }
+  .hst-s { overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .hst-s::-webkit-scrollbar { display:none; }
+  .hst-m { display:grid; column-gap:3px; height:16px; margin-bottom:3px; width:max-content; }
+  .hst-m span { font-size:11px; color:var(--muted); white-space:nowrap; font-weight:500; }
+  .hst-g { display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 24px); gap:3px; width:max-content; }
+  .hst-g i { width:24px; height:24px; border-radius:6px; background:var(--tile); color:var(--muted); font-style:normal; font-size:10.5px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; opacity:.75; }
+  .hst-g i.has { opacity:1; cursor:pointer; font-weight:700; }
+  .hst-g i.o { background:none; }
+  /* home cards: inner tiles a step lighter than the card */
+  .box, .panel, textarea { background:var(--tile) !important; }
+  .tbl { border-color:var(--line) !important; }
+  body.dark td { background:var(--paper); } body.dark td:first-child { background:#232327 !important; }
+  .recent .day { border-top-color:var(--line) !important; }
+  .title h1, .sleep h2 { font-size:19px !important; font-weight:700 !important; }
+  #dashView .seg { background:#e3e3e9 !important; } body.dark #dashView .seg { background:#1c1c1f !important; }
+  #dashView .rsel .rmore { background:var(--paper) !important; }
+  .hb .n { font-weight:600 !important; } .hb .v { font-weight:700 !important; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1226,22 +1294,22 @@
     var xi = function (i) { return nd === 1 ? (L + (W - L - R) / 2) : L + 6 + i * (W - L - R - 12) / (nd - 1); };
     var x = function (kk) { return xi(idx[kk]); };
     var y = function (h) { return T + (H - T - B) * (1 - (Math.min(Math.max(h, lo), hi) - lo) / (hi - lo)); };
-    var g = '<line x1="' + L + '" y1="' + T + '" x2="' + L + '" y2="' + (H - B) + '" stroke="currentColor" stroke-width="1.5"/>' +
-            '<line x1="' + L + '" y1="' + (H - B) + '" x2="' + (W - R) + '" y2="' + (H - B) + '" stroke="currentColor" stroke-width="1.5"/>';
-    for (var h = 5; h <= 9; h++) g += '<text x="' + (L - 6) + '" y="' + (y(h) + 4) + '" font-size="11" text-anchor="end" fill="currentColor">' + (h === 9 ? '9+' : h) + '</text>';
+    var g = '';
+    for (var h = 5; h <= 9; h++) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(h) + '" y2="' + y(h) + '" stroke="currentColor" opacity=".14" stroke-dasharray="3 4"/>' +
+      '<text x="' + (L - 6) + '" y="' + (y(h) + 4) + '" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">' + (h === 9 ? '9j+' : h + 'j') + '</text>';
     var stp = nd <= 16 ? 1 : (nd <= 31 ? 2 : Math.ceil(nd / 12)), oneMonth = keys[0].slice(0, 7) === keys[nd - 1].slice(0, 7);
     keys.forEach(function (kk, i) {
       if (i % stp) return;
       var lab = nd <= 31 ? String(+kk.slice(8)) : (oneMonth ? String(+kk.slice(8)) : ddmm(kk));
       if (nd <= 2) lab = isoToDmy(kk);
-      g += '<text x="' + xi(i) + '" y="' + (H - B + 13) + '" font-size="' + (nd > 28 ? 7.5 : 9) + '" text-anchor="middle" fill="currentColor">' + lab + '</text>';
+      g += '<text x="' + xi(i) + '" y="' + (H - B + 13) + '" font-size="' + (nd > 28 ? 7.5 : 9) + '" text-anchor="middle" fill="currentColor" opacity=".6">' + lab + '</text>';
     });
-    g += '<text x="' + ((W + L) / 2) + '" y="' + (H - 3) + '" font-size="10" text-anchor="middle" fill="currentColor" font-weight="700">DATE</text>';
-    g += '<text x="10" y="' + ((H - B + T) / 2) + '" font-size="10" text-anchor="middle" fill="currentColor" font-weight="700" transform="rotate(-90 10 ' + ((H - B + T) / 2) + ')">HOURS</text>';
     var tgt = S.sleepTarget || 8;
     g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(tgt) + '" y2="' + y(tgt) + '" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 4"/>';
     var pts = rows.map(function (r) { return x(r.d) + ',' + y(r.h); });
-    g += '<polyline fill="none" stroke="var(--pen)" stroke-width="2.5" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
+    if (rows.length > 1) g += '<defs><linearGradient id="sga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--pen)" stop-opacity=".4"/><stop offset="1" stop-color="var(--pen)" stop-opacity="0"/></linearGradient></defs>' +
+      '<path d="M' + x(rows[0].d) + ',' + (H - B) + ' L' + pts.join(' L') + ' L' + x(rows[rows.length - 1].d) + ',' + (H - B) + ' Z" fill="url(#sga)"/>';
+    g += '<polyline fill="none" stroke="var(--pen)" stroke-width="2" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
     // below target = red X, target to 9h = green tick, over 9h = amber triangle (too much sleep)
     var okMax = Math.max(9, tgt);
     rows.forEach(function (r) {
@@ -1342,19 +1410,39 @@
     var x = function (i) { return labels.length === 1 ? (L + (W - L - R) / 2) : L + i * (W - L - R) / (labels.length - 1); };
     var y = function (v) { return T + (H - T - B) * (1 - (v - min) / (max - min)); };
     var g = '';
-    [min, (min + max) / 2, max].forEach(function (v) {
-      g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="currentColor" opacity=".12"/>' +
+    [min, min + (max - min) / 3, min + 2 * (max - min) / 3, max].forEach(function (v) {
+      g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="currentColor" opacity=".14" stroke-dasharray="3 4"/>' +
            '<text x="' + (L - 4) + '" y="' + (y(v) + 4) + '" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">' + Math.round(v) + '</text>';
     });
     var step = Math.max(1, Math.ceil(labels.length / 6));
     labels.forEach(function (l, i) { if (i % step === 0 || i === labels.length - 1) g += '<text x="' + x(i) + '" y="' + (H - 6) + '" font-size="10" text-anchor="middle" fill="currentColor" opacity=".6">' + esc(l) + '</text>'; });
     series.forEach(function (s) {
       var pts = []; s.vals.forEach(function (v, i) { if (v !== null) pts.push(x(i) + ',' + y(v)); });
-      g += '<polyline fill="none" stroke="' + s.c + '" stroke-width="2.5" ' + (s.dash ? 'stroke-dasharray="5 4"' : '') + ' points="' + pts.join(' ') + '"/>';
-      if (!s.dash) s.vals.forEach(function (v, i) { if (v !== null) g += '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="3.5" fill="' + s.c + '"><title>' + labels[i] + ': ' + v + (unit || '') + '</title></circle>'; });
+      if (!s.dash && pts.length > 1) {
+        var gid = 'ga' + Math.random().toString(36).slice(2, 7), fx = pts[0].split(',')[0], lx = pts[pts.length - 1].split(',')[0];
+        g += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + s.c + '" stop-opacity=".45"/><stop offset="1" stop-color="' + s.c + '" stop-opacity="0"/></linearGradient></defs>' +
+          '<path d="M' + fx + ',' + (H - B) + ' L' + pts.join(' L') + ' L' + lx + ',' + (H - B) + ' Z" fill="url(#' + gid + ')"/>';
+      }
+      g += '<polyline fill="none" stroke="' + s.c + '" stroke-width="2" stroke-linejoin="round" ' + (s.dash ? 'stroke-dasharray="5 4" opacity=".7"' : '') + ' points="' + pts.join(' ') + '"/>';
+      if (!s.dash) s.vals.forEach(function (v, i) { if (v !== null) g += '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="3.2" fill="' + s.c + '" stroke="var(--paper)" stroke-width="1.5"><title>' + labels[i] + ': ' + v + (unit || '') + '</title></circle>'; });
     });
     el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg>' +
       '<div class="lg">' + series.map(function (s) { return '<span style="--c:' + s.c + '">' + s.name + '</span>'; }).join('') + '</div>';
+  }
+
+  // ---- stat row (Dribbble habit style): optional ring + numbers split by thin dividers ----
+  function statRow(ring, items) {
+    var h = '<div class="hk' + (ring ? '' : ' hk2') + '">';
+    if (ring) {
+      var C = 2 * Math.PI * 21, f = Math.max(0, Math.min(1, ring.frac || 0));
+      h += '<button type="button" class="hk-ring"' + (ring.k ? ' data-k="' + ring.k + '"' : '') + ' title="' + esc(ring.label || '') + '">' +
+        '<svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" class="trk"/><circle cx="26" cy="26" r="21" class="prg" stroke-dasharray="' + (C * f).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 26 26)"/></svg>' +
+        '<b>' + ring.v + (ring.unit ? '<small>' + ring.unit + '</small>' : '') + '</b></button>';
+    }
+    items.forEach(function (it) {
+      h += '<' + (it[2] ? 'button type="button" data-k="' + it[2] + '"' : 'div') + ' class="hk-it' + (it[3] ? ' warn' : '') + '"><b>' + it[0] + '</b><span>' + it[1] + '</span></' + (it[2] ? 'button' : 'div') + '>';
+    });
+    return h + '</div>';
   }
 
   function renderDash() {
@@ -1374,8 +1462,13 @@
       [DASH.streaks.longest, 'Streak terbaik'], [review, 'Perlu semak', review > 0]];
     renderSleepChart(); renderSleepDash();
     var kid = ['wd', 'rd', 'sess', 'reps', 'mins', 'cur', 'long', 'rev'];
-    $('dKpi').innerHTML = kpis.map(function (k, i) { return '<button type="button" class="kpi' + (k[2] ? ' warn' : '') + '" data-k="' + kid[i] + '"><b>' + k[0] + '</b><span>' + k[1] + '</span></button>'; }).join('');
-    [].forEach.call($('dKpi').children, function (b) { b.onclick = function () { openKpi(b.dataset.k); }; });
+    var rgK = dRange(), lastK = rgK.to < DASH.today ? rgK.to : DASH.today;
+    var spanK = Math.max(1, Math.round((Date.parse(lastK) - Date.parse(rgK.from)) / 864e5) + 1);
+    var cons = Math.min(100, Math.round(100 * wd.length / spanK));
+    $('dKpi').innerHTML = statRow({ v: cons, unit: '%', frac: cons / 100, label: 'Konsisten', k: 'wd' },
+        [[wd.length, 'Workout', 'wd'], [rd.length, 'Rehat', 'rd'], [reps, 'Reps', 'reps'], [Math.floor(mins / 60) + 'j ' + (mins % 60) + 'm', 'Masa', 'mins']]) +
+      statRow(null, [[sessions, 'Sesi', 'sess'], [DASH.streaks.current, 'Streak', 'cur'], [DASH.streaks.longest, 'Streak terbaik', 'long'], [review, 'Perlu semak', 'rev', review > 0]]);
+    [].forEach.call($('dKpi').querySelectorAll('[data-k]'), function (b) { b.onclick = function () { openKpi(b.dataset.k); }; });
 
     var tot = wd.length + rd.length;
     $('cRatio').innerHTML = tot ? '<div class="ratio"><div style="flex:' + wd.length + ';background:' + penC + ';color:' + (lum(penC) > 0.5 ? '#111' : '#fff') + '">' + (wd.length ? 'Workout ' + wd.length : '') + '</div>' +
@@ -1876,7 +1969,8 @@
     var tiles = [[n ? hm(avg * 60) : '–', 'Purata tidur'], [n, 'Malam'], [n ? Math.round(hit / n * 100) + '%' : '–', 'Capai target'],
                  [enough, 'Cukup 7–9j'], [cur, 'Streak'], [best, 'Streak terbaik'],
                  [avgClock(rows.map(function (x) { return x.start; })), 'Purata lelap'], [avgWake(rows.map(function (x) { return x.end; })), 'Purata bangun']];
-    $('sKpi').innerHTML = tiles.map(function (t) { return '<div class="kpi"><b>' + t[0] + '</b><span>' + t[1] + '</span></div>'; }).join('');
+    $('sKpi').innerHTML = statRow({ v: n ? (Math.round(avg * 10) / 10) : '–', unit: n ? (S.lang === 'en' ? 'h' : 'j') : '', frac: n ? avg / tgt : 0, label: 'Purata tidur' },
+        [tiles[1], tiles[2], tiles[3], tiles[4]]) + statRow(null, [tiles[5], tiles[0], tiles[6], tiles[7]]);
     renderHeat(all, rg);
   }
   function renderHeat(all, rg, o) {
@@ -1887,42 +1981,33 @@
     if (RANGE === 'all') { var f = all.length ? all[0].d : to; from = f < from ? f : from; }
     var span = (Date.parse(to) - Date.parse(from)) / 864e5 + 1, html = '';
     var tip = o.tip || function (x) { return isoToDmy(x.d) + ': ' + x.text + ' (' + x.start + ' → ' + x.end + ')'; };
-    if (span <= 62) {
-      // calendar view, one block per month
-      var months = []; for (var m = from.slice(0, 7); m <= to.slice(0, 7); m = addDays(m + '-28', 7).slice(0, 7)) months.push(m);
-      months.forEach(function (mo) {
-        var p = mo.split('-'), nd = new Date(Date.UTC(+p[0], +p[1], 0)).getUTCDate(), first = mo + '-01';
-        var lead = (new Date(Date.UTC(+p[0], +p[1] - 1, 1)).getUTCDay() + 6) % 7;
-        html += '<div class="hmcal"><h5>' + monLabel(mo) + '</h5><div class="hmg">' +
-          ['Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab', 'Aha'].map(function (w) { return '<span class="wd">' + w + '</span>'; }).join('');
-        for (var i = 0; i < lead; i++) html += '<div class="c blank"></div>';
-        for (var d = 1; d <= nd; d++) {
-          var key = mo + '-' + ('0' + d).slice(-2), x = byD[key], out = key < from || key > to;
-          html += x ? '<div class="c has' + (out ? ' out' : '') + '" data-d="' + key + '" style="background:' + colOf(x) + (lum(colOf(x)) > 0.6 ? ';--hmtx:#111' : '') + '" title="' + esc(tip(x)) + '"><i>' + d + '</i><b>' + labOf(x) + '</b></div>'
-                    : '<div class="c' + (out ? ' out' : '') + '"><i>' + d + '</i></div>';
-        }
-        html += '</div></div>';
-      });
-    } else {
-      // year view: one square per day, weeks as columns
-      if (to > DASH.today) to = DASH.today;
-      if ((Date.parse(to) - Date.parse(from)) / 864e5 > 370) from = addDays(to, -370);
-      var start = weekStart(from), keys = []; for (var kk = start; kk <= to; kk = addDays(kk, 1)) keys.push(kk);
-      var cols = Math.ceil(keys.length / 7), lab = '', lastM = '';
-      for (var c = 0; c < cols; c++) {
-        var mk = keys[c * 7].slice(0, 7);
-        var shown = mk !== lastM && keys[c * 7 + 6] >= from;
-        lab += '<span style="flex:0 0 14px">' + (shown ? MON[+mk.slice(5) - 1] : '') + '</span>'; if (shown || keys[c * 7 + 6] >= from) lastM = mk;
-      }
-      html = '<div class="hmyw"><div class="hmyl">' + lab + '</div><div class="hmy">' + keys.map(function (key) {
-        var x = byD[key], out = key < from || key > to;
-        return x && !out ? '<i class="has" data-d="' + key + '" style="background:' + colOf(x) + '" title="' + esc(tip(x)) + '"></i>' : '<i' + (out ? ' style="opacity:.3"' : '') + '></i>';
-      }).join('') + '</div></div>';
+    // History grid (habit-tracker style): rows Mon..Sun, one column per week, day number in every cell
+    if (to > DASH.today) to = DASH.today;
+    if (from > to) from = to;
+    if ((Date.parse(to) - Date.parse(from)) / 864e5 > 370) from = addDays(to, -370);
+    var start = weekStart(from), keys = []; for (var kk = start; kk <= addDays(weekStart(to), 6); kk = addDays(kk, 1)) keys.push(kk);
+    var cols = keys.length / 7, en = S.lang === 'en', mon = '', lastM = '';
+    var WDN = en ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab', 'Aha'];
+    for (var c = 0; c < cols; c++) {
+      var mk = keys[c * 7 + 6].slice(0, 7);
+      mon += '<span>' + (mk !== lastM ? (en ? MON_LONG_EN : MON_LONG_BM)[+mk.slice(5) - 1].slice(0, 3) : '') + '</span>'; lastM = mk;
     }
+    html = '<div class="hst"><div class="hst-d"><span></span>' + WDN.map(function (w) { return '<span>' + w + '</span>'; }).join('') + '</div>' +
+      '<div class="hst-s"><div class="hst-m" style="grid-template-columns:repeat(' + cols + ',24px)">' + mon + '</div>' +
+      '<div class="hst-g" style="grid-template-columns:repeat(' + cols + ',24px)">' + keys.map(function (key) {
+        var x = byD[key], out = key < from || key > to, d = +key.slice(8);
+        if (out) return '<i class="o"></i>';
+        if (!x) return '<i>' + d + '</i>';
+        var bg = colOf(x);
+        return '<i class="has" data-d="' + key + '" style="background:' + bg + ';color:' + (lum(bg) > 0.6 ? '#111' : '#fff') + '" title="' + esc(tip(x) + ' · ' + labOf(x)) + '">' + d + '</i>';
+      }).join('') + '</div></div></div>';
     html += o.legend || '<div class="hml"><span style="--c:#ef4444">Bawah 6j</span><span style="--c:#eab308">6–6.9j</span><span style="--c:#22c55e">7–9j</span><span style="--c:#3b82f6">Lebih 9j</span></div>';
     el.innerHTML = html;
     [].forEach.call(el.querySelectorAll('[data-d]'), function (c) { c.onclick = function () { openDetail(c.dataset.d); }; });
-    var w = el.querySelector('.hmyw'); if (w) w.scrollLeft = w.scrollWidth;
+    var w = el.querySelector('.hst-s'); if (w) w.scrollLeft = w.scrollWidth;
+    var h4 = el.parentNode && el.parentNode.querySelector('h4'), hint = h4 && h4.querySelector('.drag');
+    if (h4 && !hint) { hint = document.createElement('small'); hint.className = 'drag'; hint.textContent = S.lang === 'en' ? 'Drag to see more' : 'Seret untuk lihat lagi'; h4.appendChild(hint); }
+    if (hint && w) hint.style.visibility = w.scrollWidth > w.clientWidth + 4 ? 'visible' : 'hidden';
   }
 
   // ---------------- Sleep insight (short tip that follows your sleep data) ----------------
@@ -2051,7 +2136,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
