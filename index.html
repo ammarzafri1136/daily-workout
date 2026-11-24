@@ -1072,24 +1072,16 @@
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
   #cardView > .sleep { margin-top:0; }
 
-  /* view switch animation */
-  #cardView, #dashView { will-change:auto; }
-  .vout-l { animation:vOutL .14s ease-in forwards; } .vout-r { animation:vOutR .14s ease-in forwards; }
-  .vin-r { animation:vInR .34s cubic-bezier(.22,1,.36,1) both; } .vin-l { animation:vInL .34s cubic-bezier(.22,1,.36,1) both; }
-  @keyframes vOutL { to { opacity:0; transform:translateX(-18px) scale(.985); } }
-  @keyframes vOutR { to { opacity:0; transform:translateX(18px) scale(.985); } }
-  @keyframes vInR { from { opacity:0; transform:translateX(28px) scale(.985); } to { opacity:1; transform:none; } }
-  @keyframes vInL { from { opacity:0; transform:translateX(-28px) scale(.985); } to { opacity:1; transform:none; } }
-  @media (prefers-reduced-motion: reduce) { .vout-l, .vout-r, .vin-l, .vin-r { animation:none !important; } }
+  /* view switch animation (content only; header stays put) */
+  .vin-r { animation:vInR .26s cubic-bezier(.25,.8,.3,1) both; } .vin-l { animation:vInL .26s cubic-bezier(.25,.8,.3,1) both; }
+  @keyframes vInR { from { opacity:0; transform:translate3d(16px,0,0); } to { opacity:1; transform:none; } }
+  @keyframes vInL { from { opacity:0; transform:translate3d(-16px,0,0); } to { opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce) { .vin-l, .vin-r { animation:none !important; } }
 
   .rfor { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; margin:12px 0 2px; padding:10px 12px; border-radius:12px; background:var(--tile); font-size:14px; color:var(--muted); }
   .rfor b { color:var(--ink); font-weight:700; } .rfor small { flex-basis:100%; font-size:12px; }
   .rfor.bad { color:#ef4444; }
 
-  .seg button.itab { display:flex; align-items:center; justify-content:center; padding:6px 4px !important; line-height:0; }
-  .seg button.itab .ico { width:19px; height:19px; }
-  .seg button.itab.on[data-t="w"] .ico { color:#f97316; } .seg button.itab.on[data-t="s"] .ico { color:#8b5cf6; }
-  .seg button.itab:not(.on) .ico { color:var(--muted); }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1220,14 +1212,6 @@
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","bed":"moon","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
   function ic(n, cls) { n = ICON_ALIAS[n] || n; var I = ICONS[n] || ICONS.info, vb = I[0], sw = vb === '0 0 24 24' ? '2' : (vb === '0 0 32 32' ? '2.6' : '4');
     return '<svg class="ico ih ih-' + n + (cls ? ' ' + cls : '') + '" viewBox="' + vb + '" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="' + (vb === '0 0 24 24' ? 'round' : 'square') + '" stroke-linejoin="round" aria-hidden="true">' + I[1] + '</svg>'; }
-
-  // Workout / Sleep tabs (Home + Dashboard): small icons instead of words
-  ['hTabs', 'dTabs'].forEach(function (id) {
-    [].forEach.call($(id).children, function (b) {
-      var w = b.dataset.t === 'w', lbl = w ? 'Workout' : 'Tidur';
-      b.innerHTML = ic(w ? 'flame' : 'moon'); b.setAttribute('aria-label', lbl); b.title = lbl; b.classList.add('itab');
-    });
-  });
 
   // itshover-style: replay an icon's motion on hover / tap
   (function () {
@@ -1658,23 +1642,17 @@
   function sundayOf(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10); }
   function weekStart(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); }
   function esc(t) { var x = document.createElement('span'); x.textContent = t; return x.innerHTML; }
-  // Home <-> Dashboard: old view slides/fades out, new one slides in from the side of its tab
-  var VIEW_T = 0;
+  // Home <-> Dashboard: header + week strip stay still; only the content below swaps with a short fade/slide
   function setView(dash) {
-    var inV = $(dash ? 'dashView' : 'cardView'), outV = $(dash ? 'cardView' : 'dashView'), tok = ++VIEW_T;
+    var inV = $(dash ? 'dashView' : 'cardView'), outV = $(dash ? 'cardView' : 'dashView');
     $('dashBtn').classList.toggle('on', dash); $('homeBtn').classList.toggle('on', !dash);
+    if (inV.style.display !== 'none' && outV.style.display === 'none') return;
     var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    function swap() {
-      if (tok !== VIEW_T) return;
-      outV.classList.remove('vout-l', 'vout-r'); outV.style.display = 'none';
-      inV.classList.remove('vout-l', 'vout-r'); inV.style.display = 'block'; window.scrollTo(0, 0);
-      if (!calm) { inV.classList.remove('vin-l', 'vin-r'); void inV.offsetWidth; inV.classList.add(dash ? 'vin-r' : 'vin-l'); }
-      if (dash) loadDash();
-    }
-    if (calm || outV.style.display === 'none') { swap(); return; }
-    inV.classList.remove('vin-l', 'vin-r'); outV.classList.remove('vin-l', 'vin-r');
-    outV.classList.add(dash ? 'vout-l' : 'vout-r');
-    setTimeout(swap, 140);
+    var hdr = $('weekStrip').getBoundingClientRect().bottom + window.scrollY;
+    outV.style.display = 'none'; inV.style.display = 'block';
+    if (window.scrollY > hdr) window.scrollTo(0, 0);
+    if (dash) { if (DASH) { try { renderDash(); } catch (e) {} } loadDash(); }
+    if (!calm) { inV.classList.remove('vin-l', 'vin-r'); void inV.offsetWidth; inV.classList.add(dash ? 'vin-r' : 'vin-l'); }
   }
   ['cardView', 'dashView'].forEach(function (id) { $(id).addEventListener('animationend', function (e) { if (e.target === this) this.classList.remove('vin-l', 'vin-r'); }); });
   function toggleDash() { setView($('dashView').style.display === 'none'); }
@@ -1727,7 +1705,7 @@
   });
   ['dFrom', 'dTo'].forEach(function (id) { $(id).addEventListener('change', function () { renderDash(); }); });
   function loadDash() {
-    $('dKpi').innerHTML = '<div class="empty">Memuatkan…</div>';
+    if (!DASH) $('dKpi').innerHTML = '<div class="empty">Memuatkan…</div>';
     RUN().withSuccessHandler(function (d) {
       DASH = d; $('dSheet').href = d.sheetUrl; SLEEP_ALL = d.sleep || []; renderSleepTip(sleepMins());
       renderDash();
@@ -2757,11 +2735,11 @@
   var MON_LONG_BM = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
   var MON_LONG_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   function paintTitle() {
-    var en = S.lang === 'en', d = new Date(), dash = $('dashView').style.display !== 'none';
+    var en = S.lang === 'en', d = new Date();
     LANG_BUSY = true;
     $('ltDate').textContent = greet() + ' · ' + (en ? DAYS_LONG_EN : DAYS_BM)[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + (en ? MON_LONG_EN : MON_LONG_BM)[d.getMonth()].slice(0, 3);
-    $('weekStrip').style.display = dash ? 'none' : ''; paintHeaderExtras();
-    $('ltTitle').textContent = dash ? 'Dashboard' : (en ? 'Today' : 'Hari Ini');
+    paintHeaderExtras();   // header + week strip are the same on Home and Dashboard
+    $('ltTitle').textContent = en ? 'Today' : 'Hari Ini';
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
     LANG_BUSY = false;
   }
