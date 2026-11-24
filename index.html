@@ -618,7 +618,6 @@
       <div class="ch"><h4>Reps ikut latihan</h4><div id="cEx" class="hb"></div></div>
       <div class="ch"><h4>Progress latihan <select id="dEx" aria-label="Latihan"></select></h4><div id="cProg"></div></div>
       </div>
-      <a id="dSheet" class="dlink sbtn" href="#" target="_blank" rel="noopener">Buka Google Sheet <svg class="ico ih ih-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><g class="ea"><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></g></svg></a>
     </div>
   </div>
 
@@ -1402,7 +1401,7 @@
   function loadRecent() {
     RUN().withSuccessHandler(function (d) {
       $('cur').textContent = d.streaks.current; $('best').textContent = d.streaks.longest;
-      $('sheetLink').href = d.sheetUrl; $('dSheet').href = d.sheetUrl;
+      $('sheetLink').href = d.sheetUrl;
       REC = d.recent; REC_TODAY = d.today; STREAK = d.streaks.current; renderRecent(); paintHeaderExtras(); paintLastWk();
     }).withFailureHandler(function () { $('days').innerHTML = '<div class="day"><small>Tak dapat muat rekod.</small></div>'; }).appGetRecent();
   }
@@ -1843,7 +1842,7 @@
   function loadDash() {
     if (!DASH) $('dKpi').innerHTML = '<div class="empty">Memuatkan…</div>';
     RUN().withSuccessHandler(function (d) {
-      DASH = d; $('dSheet').href = d.sheetUrl; SLEEP_ALL = d.sleep || []; renderSleepTip(sleepMins());
+      DASH = d; if (d.sheetUrl) $('sheetLink').href = d.sheetUrl; SLEEP_ALL = d.sleep || []; renderSleepTip(sleepMins());
       renderDash();
     }).withFailureHandler(function (e) { $('dKpi').innerHTML = '<div class="empty">Tak dapat muat dashboard: ' + esc(String(e && e.message || e)) + '</div>'; }).appGetDashboard();
   }
