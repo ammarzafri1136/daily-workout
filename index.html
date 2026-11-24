@@ -1170,10 +1170,12 @@
   .palc small { margin-left:6px; font-size:11px; font-weight:500; color:var(--muted); }
   .palc .preset { justify-content:center; color:var(--muted) !important; font-size:13px !important; background:none !important; }
   .palc .preset span { flex:none; }
-  /* custom surfaces: the grey segmented tracks follow the custom colours too */
-  body.csurf .htabs, body.csurf .dtabs, body.csurf #dashView .seg, body.csurf .flt.seg2, body.csurf #dashView .flt.seg2 { background:var(--tile) !important; }
-  body.csurf .seg button.on, body.csurf .htabs::before, body.csurf .dtabs::before, body.csurf .flt.seg2 button.on { background:var(--paper) !important; }
+  /* themed surfaces: every grey (tracks, selected pill, boxes) is tinted from the theme's own colours */
+  body.csurf .seg, body.csurf .htabs, body.csurf .dtabs, body.csurf #dashView .seg, body.csurf .flt.seg2, body.csurf #dashView .flt.seg2, body.csurf .qseg { background:var(--segbg) !important; }
+  body.csurf .seg button.on, body.csurf .flt.seg2 button.on, body.csurf .htabs::before, body.csurf .dtabs::before { background:var(--segon) !important; }
   body.csurf .htabs button.on, body.csurf .dtabs button.on { background:none !important; }
+  body.csurf .dv, body.csurf .trio .dwrap, body.csurf .srow2 .dv { background:var(--fieldbg) !important; }
+  body.csurf td:first-child { background:var(--cellbg) !important; }
   body.csurf .rkp .kt, body.csurf .rkp .kr li { background:var(--paper) !important; }
 
   body.csurf .tabs { background:linear-gradient(180deg, color-mix(in srgb, var(--paper) 72%, transparent), color-mix(in srgb, var(--paper) 50%, transparent)) !important;
@@ -2150,7 +2152,7 @@
     if (typeof renderDash === 'function' && DASH) renderDash();
   }
   // custom surfaces (Tersuai only): panel, page background, text -> the rest is mixed from them
-  var SURF = ['--paper', '--page', '--ink', '--tile', '--soft', '--line', '--rule', '--muted'];
+  var SURF = ['--paper', '--page', '--ink', '--tile', '--soft', '--line', '--rule', '--muted', '--segbg', '--segon', '--fieldbg', '--cellbg'];
   function mixC(a, b, t) { var p = parseCss(a), q = parseCss(b); return 'rgb(' + Math.round(p.r + (q.r - p.r) * t) + ',' + Math.round(p.g + (q.g - p.g) * t) + ',' + Math.round(p.b + (q.b - p.b) * t) + ')'; }
   function applySurfaces() {
     var st = document.body.style;
@@ -2165,6 +2167,9 @@
     st.setProperty('--paper', panel); st.setProperty('--page', page); st.setProperty('--ink', ink);
     st.setProperty('--tile', mixC(panel, ink, .07)); st.setProperty('--soft', mixC(panel, ink, .05));
     st.setProperty('--line', mixC(panel, ink, .16)); st.setProperty('--rule', mixC(panel, ink, .1)); st.setProperty('--muted', mixC(ink, panel, .42));
+    var dk = lum(panel) < 0.5;   // tinted greys: segmented tracks, the selected pill, input boxes
+    st.setProperty('--segbg', mixC(page, ink, dk ? .07 : .06)); st.setProperty('--segon', dk ? mixC(panel, ink, .2) : mixC(panel, '#ffffff', .7));
+    st.setProperty('--fieldbg', mixC(panel, ink, dk ? .11 : .05)); st.setProperty('--cellbg', mixC(panel, ink, dk ? .05 : .035));
   }
   // settings: colour-combo cards + Custom (three colours you pick yourself)
   function paintPal(dark) {
