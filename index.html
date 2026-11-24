@@ -627,7 +627,7 @@
     <div class="editbar" id="editBar"><span id="editText">Mengedit</span><button type="button" class="theme" id="editCancel">Batal</button></div>
     <div class="title">
       <svg viewBox="0 0 80 40" aria-hidden="true"><rect x="0" y="18" width="20" height="4" rx="2"/><rect x="22" y="10" width="7" height="20" rx="2"/><rect x="31" y="4" width="8" height="32" rx="2"/><rect x="39" y="17" width="41" height="6" rx="2"/></svg>
-      <h1><svg class="ico ih ih-dumbbell ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="dbl"><path d="M7.5 12h9"/><rect x="4.5" y="7" width="3" height="10" rx="1"/><rect x="16.5" y="7" width="3" height="10" rx="1"/><path d="M2.5 10v4"/><path d="M21.5 10v4"/></g><path class="mv mv1" d="M8 4.5l1 1.5"/><path class="mv mv2" d="M12 3.5v2"/><path class="mv mv3" d="M16 4.5l-1 1.5"/></svg> Daily Workout</h1>
+      <h1><svg class="ico ih ih-dumbbell ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l5 12.5"/><path class="bcp" d="M5 9c3.6 .4 5.2 3.6 3.2 7.6"/><g class="fa"><path d="M8 17h6.4"/><circle cx="16" cy="17" r="1.6"/><path d="M16 12.6v2.8"/><path d="M16 18.6v2.8"/><path d="M14.2 12.4h3.6"/><path d="M14.2 21.6h3.6"/></g></svg> Daily Workout</h1>
       <svg viewBox="0 0 80 40" aria-hidden="true" style="transform:scaleX(-1)"><rect x="0" y="18" width="20" height="4" rx="2"/><rect x="22" y="10" width="7" height="20" rx="2"/><rect x="31" y="4" width="8" height="32" rx="2"/><rect x="39" y="17" width="41" height="6" rx="2"/></svg>
     </div>
 
@@ -1227,6 +1227,26 @@
   body.dark .tabs::before, body.csurf .tabs::before { background:color-mix(in srgb, var(--accent) 24%, transparent) !important; border-color:color-mix(in srgb, var(--accent) 40%, transparent) !important; }
   body.dark .tabs button.on { color:color-mix(in srgb, var(--accent) 40%, #fff) !important; }
   body.csurf:not(.dark) .tabs::before { background:color-mix(in srgb, var(--accent) 16%, rgba(255,255,255,.7)) !important; }
+
+  /* Summary & Tips: tappable lines + their detail sheet */
+  .rkp .kr li { cursor:pointer; } .rkp .kr li:active { transform:scale(.985); }
+  .rkp .kr li > span { flex:1; } .rkp .kr .kgo { width:14px; height:14px; flex:none; color:var(--muted); }
+  .kl.tip .ttx { font-size:14.5px; line-height:1.55; margin:2px 2px 12px; color:var(--ink); }
+  .tkv { display:grid; grid-template-columns:repeat(2, 1fr); gap:6px; margin-bottom:6px; }
+  .tkv div { background:var(--tile); border-radius:12px; padding:8px 10px; } .tkv span { display:block; font-size:11.5px; color:var(--muted); } .tkv b { font-size:16px; font-weight:800; }
+  .tcmp { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:6px 8px; background:var(--tile); border-radius:12px; padding:10px 12px; margin-bottom:6px; font-size:14px; }
+  .tcmp b { font-size:11.5px; color:var(--muted); text-align:right; } .tcmp i { font-style:normal; font-weight:800; text-align:right; } .tcmp span { color:var(--muted); }
+  .kl.tip .day .w { color:var(--wk); } .kl.tip .day .r { color:var(--rest-tx); }
+  .kl.tip .sdot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:1px; }
+
+  /* bicep curl: forearm + dumbbell swing up around the elbow, the bicep bulges at the top */
+  @keyframes curlFa { 0%, 100% { transform:rotate(14deg); } 45%, 58% { transform:rotate(-56deg); } }
+  @keyframes curlBcp { 0%, 100% { transform:scale(.8); } 45%, 58% { transform:scale(1.18); } }
+  .ih-dumbbell .fa { transform-box:view-box; transform-origin:8px 17px; }
+  .ih-dumbbell .bcp { transform-box:view-box; transform-origin:6.5px 12.5px; }
+  .title h1 .ih-dumbbell .fa, .rkp .kr .ih-dumbbell .fa { animation:curlFa 1.7s cubic-bezier(.45,0,.3,1) infinite; }
+  .title h1 .ih-dumbbell .bcp, .rkp .kr .ih-dumbbell .bcp { animation:curlBcp 1.7s cubic-bezier(.45,0,.3,1) infinite; }
+  .ratio .ih-dumbbell .fa { transform:rotate(-30deg); transform-box:view-box; transform-origin:8px 17px; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1355,7 +1375,7 @@
   // Icons: Material Design Icons (Pictogrammers, via Yesicon), embedded so they work offline
   var ICONS = {"home":["0 0 24 24","<path class=\"roof\" d=\"M5 12l-2 0l9 -9l9 9l-2 0\"/><path class=\"house\" d=\"M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7\"/><path class=\"door\" d=\"M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6\"/>"],"gear":["0 0 32 32","<g class=\"gr\"><circle class=\"gc\" cx=\"16\" cy=\"16\" r=\"5\"/><path d=\"m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z\"/><\/g>"],"moon":["0 0 24 24","<path class=\"mn\" d=\"M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z\"/>"],"chart":["0 0 24 24","<path class=\"bl\" d=\"M4 19l16 0\"/><path class=\"cl\" pathLength=\"1\" d=\"M4 15l4 -6l4 2l4 -5l4 4\"/>"],"flame":["0 0 24 24","<path class=\"fl\" d=\"M12 10.941c2.333 -3.308 .167 -7.823 -1 -8.941c0 3.395 -2.235 5.299 -3.667 6.706c-1.43 1.408 -2.333 3.621 -2.333 5.588c0 3.704 3.134 6.706 7 6.706s7 -3.002 7 -6.706c0 -1.712 -1.232 -4.403 -2.333 -5.588c-2.084 3.353 -3.257 3.353 -4.667 2.235\"/>"],"clock":["0 0 24 24","<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\"/><path class=\"ch\" d=\"M12 7v5l3 3\"/>"],"sun":["0 0 24 24","<path d=\"M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0\"/><g class=\"sr\"><path d=\"M12 5l0 .01\"/><path d=\"M17 7l0 .01\"/><path d=\"M19 12l0 .01\"/><path d=\"M17 17l0 .01\"/><path d=\"M12 19l0 .01\"/><path d=\"M7 17l0 .01\"/><path d=\"M5 12l0 .01\"/><path d=\"M7 7l0 .01\"/><\/g>"],"coffee":["0 0 24 24","<path class=\"st\" d=\"M6 2v3\"/><path class=\"st\" d=\"M10 2v3\"/><path class=\"st\" d=\"M14 2v3\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/>"],"refresh":["0 0 24 24","<g class=\"rf\"><path d=\"M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4\"/><path d=\"M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4\"/><\/g>"],"x":["0 0 24 24","<path class=\"x1\" pathLength=\"1\" d=\"M18 6l-12 12\"/><path class=\"x2\" pathLength=\"1\" d=\"M6 6l12 12\"/>"],"check":["0 0 24 24","<path class=\"ck\" pathLength=\"1\" d=\"M5 12l5 5l10 -10\"/>"],"checkc":["0 0 24 24","<path d=\"M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\"/><path class=\"ck\" pathLength=\"1\" d=\"M9 12l2 2l4 -4\"/>"],"xc":["0 0 24 24","<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0\"/><path class=\"x1\" pathLength=\"1\" d=\"M10 10l4 4\"/><path class=\"x2\" pathLength=\"1\" d=\"M14 10l-4 4\"/>"],"right":["0 0 24 24","<path class=\"cv\" d=\"M9 6l6 6l-6 6\"/>"],"down":["0 0 24 24","<path class=\"cv\" d=\"M6 9l6 6l6 -6\"/>"],"ext":["0 0 24 24","<path d=\"M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6\"/><g class=\"ea\"><path d=\"M11 13l9 -9\"/><path d=\"M15 4h5v5\"/><\/g>"],"pen":["0 0 32 32","<g class=\"pg\"><path d=\"M20 6 L26 12\"/><path d=\"m10.5,27.5l-8,2 2-8L22.257,3.743c1.657-1.657,4.343-1.657,6,0s1.657,4.343,0,6L10.5,27.5Z\"/><\/g>"],"trash":["0 0 24 24","<path class=\"tl\" d=\"M4 7l16 0\"/><path d=\"M10 11l0 6\"/><path d=\"M14 11l0 6\"/><path d=\"M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12\"/><path class=\"tl\" d=\"M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3\"/>"],"dialpad":["0 0 24 24","<path class=\"db\" d=\"M6 2h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/><path class=\"db\" d=\"M13 2h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/><path class=\"db\" d=\"M20 2h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/><path class=\"db\" d=\"M6 9h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/><path class=\"db\" d=\"M13 9h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/><path class=\"db\" d=\"M20 9h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/><path class=\"db\" d=\"M13 16h-2a2 2 0 0 0 -2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2 -2v-2a2 2 0 0 0 -2 -2z\"/>"],"paint":["0 0 24 24","<rect x=\"4\" y=\"9\" width=\"16\" height=\"3\" rx=\"1.5\" class=\"ps\"/><g class=\"pr\"><path d=\"M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z\"/><path d=\"M19 6h1a2 2 0 0 1 2 2a5 5 0 0 1 -5 5l-5 0v2\"/><path d=\"M10 15m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z\"/><\/g>"],"alert":["0 0 24 24","<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><g class=\"ex\"><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/><\/g>"],"battery":["0 0 48 48","<path d=\"M46 20V28\"/><path d=\"M37 10H8C5.23858 10 3 12.2386 3 15V33C3 35.7614 5.23858 38 8 38H37C39.7614 38 42 35.7614 42 33V15C42 12.2386 39.7614 10 37 10Z\"/><path class=\"bb\" d=\"M33.5 25.6667L22.5 19V29L11.5 22.3333\"/>"],"bulb":["0 0 24 24","<g class=\"fillx\"><path class=\"ry\" d=\"M4 11a1 1 0 0 1 .117 1.993l-.117 .007h-1a1 1 0 0 1 -.117 -1.993l.117 -.007h1z\"/><path class=\"ry\" d=\"M12 2a1 1 0 0 1 .993 .883l.007 .117v1a1 1 0 0 1 -1.993 .117l-.007 -.117v-1a1 1 0 0 1 1 -1z\"/><path class=\"ry\" d=\"M21 11a1 1 0 0 1 .117 1.993l-.117 .007h-1a1 1 0 0 1 -.117 -1.993l.117 -.007h1z\"/><path class=\"ry\" d=\"M4.893 4.893a1 1 0 0 1 1.32 -.083l.094 .083l.7 .7a1 1 0 0 1 -1.32 1.497l-.094 -.083l-.7 -.7a1 1 0 0 1 0 -1.414z\"/><path class=\"ry\" d=\"M17.693 4.893a1 1 0 0 1 1.497 1.32l-.083 .094l-.7 .7a1 1 0 0 1 -1.497 -1.32l.083 -.094l.7 -.7z\"/><path d=\"M14 18a1 1 0 0 1 1 1a3 3 0 0 1 -6 0a1 1 0 0 1 .883 -.993l.117 -.007h4z\"/><path d=\"M12 6a6 6 0 0 1 3.6 10.8a1 1 0 0 1 -.471 .192l-.129 .008h-6a1 1 0 0 1 -.6 -.2a6 6 0 0 1 3.6 -10.8z\"/><\/g>"],"info":["0 0 24 24","<path d=\"M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0\"/><path class=\"id\" d=\"M12 9h.01\"/><path d=\"M11 12h1v4h1\"/>"],"cal":["0 0 24 24","<path d=\"M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z\"/><path class=\"cr\" d=\"M16 3v4\"/><path class=\"cr\" d=\"M8 3v4\"/><path d=\"M4 11h16\"/>"]};
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","bed":"moon","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
-  ICONS.dumbbell = ["0 0 24 24", "<g class=\"dbl\"><path d=\"M7.5 12h9\"/><rect x=\"4.5\" y=\"7\" width=\"3\" height=\"10\" rx=\"1\"/><rect x=\"16.5\" y=\"7\" width=\"3\" height=\"10\" rx=\"1\"/><path d=\"M2.5 10v4\"/><path d=\"M21.5 10v4\"/></g><path class=\"mv mv1\" d=\"M8 4.5l1 1.5\"/><path class=\"mv mv2\" d=\"M12 3.5v2\"/><path class=\"mv mv3\" d=\"M16 4.5l-1 1.5\"/>"];
+  ICONS.dumbbell = ["0 0 24 24", "<path d=\"M3 4.5l5 12.5\"/><path class=\"bcp\" d=\"M5 9c3.6 .4 5.2 3.6 3.2 7.6\"/><g class=\"fa\"><path d=\"M8 17h6.4\"/><circle cx=\"16\" cy=\"17\" r=\"1.6\"/><path d=\"M16 12.6v2.8\"/><path d=\"M16 18.6v2.8\"/><path d=\"M14.2 12.4h3.6\"/><path d=\"M14.2 21.6h3.6\"/></g>"];
   ICONS.bed = ["0 0 24 24", "<path d=\"M7 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\"/><path d=\"M22 19v-3h-20\"/><path d=\"M2 10v9\"/><path d=\"M12 16h10v-2a3 3 0 0 0 -3 -3h-7v5z\"/><path class=\"zz z1\" d=\"M11 6.5h2l-2 2h2\"/><path class=\"zz z2\" d=\"M14.5 3.5h2.5l-2.5 2.5h2.5\"/><path class=\"zz z3\" d=\"M18.5 .5h3l-3 3h3\"/>"];
   ICONS.lift = ["0 0 24 24", "<g class=\"lb\"><path d=\"M2.5 4h19\"/><path d=\"M4.5 1.5v5\"/><path d=\"M19.5 1.5v5\"/></g><path class=\"la la1\" d=\"M9.3 12.6l-1.3 -8.6\"/><path class=\"la la2\" d=\"M14.7 12.6l1.3 -8.6\"/><circle class=\"lh\" cx=\"12\" cy=\"9.6\" r=\"1.5\"/><path d=\"M9.3 12.6h5.4\"/><path d=\"M12 12.6v4.6\"/><path d=\"M12 17.2l-3 4.3\"/><path d=\"M12 17.2l3 4.3\"/>"];
   function ic(n, cls) { n = ICON_ALIAS[n] || n; var I = ICONS[n] || ICONS.info, vb = I[0], sw = vb === '0 0 24 24' ? '2' : (vb === '0 0 32 32' ? '2.6' : '4');
@@ -1473,7 +1493,7 @@
   if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RREC) < 0 && !/^m:\d{4}-\d{2}$/.test(RREC)) RREC = '7d';
   function renderRecent() {
     var rg = rangeFor(RREC, 'rFrom', 'rTo', REC.map(function (x) { return x.date; }));
-    [].forEach.call($('rFilter').children, function (b) { b.classList.toggle('on', b.dataset.r === RREC); });
+  [].forEach.call($('rFilter').children, function (b) { b.classList.toggle('on', b.dataset.r === RREC); });
     paintCustomBtn('rFilter', RREC);
     $('rCustom').classList.toggle('on', RREC === 'custom'); $('rLabel').textContent = rg.label;
     var list = REC.filter(function (x) { return x.date >= rg.from && x.date <= rg.to; });
@@ -1565,23 +1585,108 @@
     var R = [], cons = Math.round(100 * c.w / span), run = 0;
     var k0 = (to === t && !c.wd[t] && !c.rd[t]) ? addDays(t, -1) : to;
     for (var k = k0; k >= from && !c.wd[k]; k = addDays(k, -1)) run++;
-    function add(col, icon, bm, e) { R.push('<li><i class="ki" style="--kc:' + col + '">' + ic(icon) + '</i><span>' + T(bm, e) + '</span></li>'); }
-    if (!c.w && span >= 2) add('#ef4444', 'flame', 'Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas <b>15 minit</b> hari ini.', 'No workouts in this period yet. Start with a short <b>15-minute</b> session today.');
+    var KIND = [];
+    function add(col, icon, bm, e, kind) {
+      KIND.push(kind || 'info');
+      R.push('<li data-i="' + (KIND.length - 1) + '" role="button" tabindex="0"><i class="ki" style="--kc:' + col + '">' + ic(icon) + '</i><span>' + T(bm, e) + '</span>' + ic('right', 'kgo') + '</li>');
+    }
+    if (!c.w && span >= 2) add('#ef4444', 'flame', 'Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas <b>15 minit</b> hari ini.', 'No workouts in this period yet. Start with a short <b>15-minute</b> session today.', 'none');
     else if (span >= 5) {
-      if (cons >= 60) add('#22c55e', 'chart', 'Konsisten <b>' + cons + '%</b> — teruskan, tambah sedikit reps atau berat.', '<b>' + cons + '%</b> consistent — keep going, add a few reps or a little weight.');
-      else if (cons < 30) add('#f97316', 'chart', 'Konsisten <b>' + cons + '%</b>. Sasarkan sekurang-kurangnya <b>3 workout</b> seminggu.', '<b>' + cons + '%</b> consistency. Aim for at least <b>3 workouts</b> a week.');
+      if (cons >= 60) add('#22c55e', 'chart', 'Konsisten <b>' + cons + '%</b> — teruskan, tambah sedikit reps atau berat.', '<b>' + cons + '%</b> consistent — keep going, add a few reps or a little weight.', 'cons');
+      else if (cons < 30) add('#f97316', 'chart', 'Konsisten <b>' + cons + '%</b>. Sasarkan sekurang-kurangnya <b>3 workout</b> seminggu.', '<b>' + cons + '%</b> consistency. Aim for at least <b>3 workouts</b> a week.', 'cons');
     }
-    if (hasP && c.w !== p.w && span > 1) add('var(--wk)', 'dumbbell', (c.w > p.w ? 'Lebih ' : 'Kurang ') + '<b>' + Math.abs(c.w - p.w) + ' workout</b> berbanding tempoh sebelum.', '<b>' + Math.abs(c.w - p.w) + (c.w > p.w ? ' more' : ' fewer') + ' workout' + (Math.abs(c.w - p.w) === 1 ? '' : 's') + '</b> than the previous period.');
-    if (hasP && c.reps && p.reps) { var ch = Math.round(100 * (c.reps - p.reps) / p.reps); if (Math.abs(ch) >= 10) add(ch > 0 ? '#22c55e' : '#f97316', 'chart', 'Reps ' + (ch > 0 ? 'naik' : 'turun') + ' <b>' + Math.abs(ch) + '%</b>' + (ch > 0 ? ' — progress bagus.' : ' — semak intensiti atau rehat.'), 'Reps ' + (ch > 0 ? 'up' : 'down') + ' <b>' + Math.abs(ch) + '%</b>' + (ch > 0 ? ' — good progress.' : ' — check intensity or recovery.')); }
-    if (run >= 3 && to === t) add('var(--rest-tx)', 'coffee', '<b>' + run + ' hari</b> berturut rehat — masa untuk kembali bergerak.', '<b>' + run + ' days</b> of rest in a row — time to move again.');
+    if (hasP && c.w !== p.w && span > 1) add('var(--wk)', 'dumbbell', (c.w > p.w ? 'Lebih ' : 'Kurang ') + '<b>' + Math.abs(c.w - p.w) + ' workout</b> berbanding tempoh sebelum.', '<b>' + Math.abs(c.w - p.w) + (c.w > p.w ? ' more' : ' fewer') + ' workout' + (Math.abs(c.w - p.w) === 1 ? '' : 's') + '</b> than the previous period.', 'cmp');
+    if (hasP && c.reps && p.reps) { var ch = Math.round(100 * (c.reps - p.reps) / p.reps); if (Math.abs(ch) >= 10) add(ch > 0 ? '#22c55e' : '#f97316', 'chart', 'Reps ' + (ch > 0 ? 'naik' : 'turun') + ' <b>' + Math.abs(ch) + '%</b>' + (ch > 0 ? ' — progress bagus.' : ' — semak intensiti atau rehat.'), 'Reps ' + (ch > 0 ? 'up' : 'down') + ' <b>' + Math.abs(ch) + '%</b>' + (ch > 0 ? ' — good progress.' : ' — check intensity or recovery.'), 'reps'); }
+    if (run >= 3 && to === t) add('var(--rest-tx)', 'coffee', '<b>' + run + ' hari</b> berturut rehat — masa untuk kembali bergerak.', '<b>' + run + ' days</b> of rest in a row — time to move again.', 'run');
     if (c.sl !== null) {
-      if (c.sl < lo) add(sleepColor(c.sl), 'bed', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, bawah ' + lo + '–' + hi + 'j. Cuba tidur 30 minit lebih awal untuk recovery.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, under ' + lo + '–' + hi + 'h. Try bed 30 minutes earlier for recovery.');
-      else if (c.sl > hi) add(sleepColor(c.sl), 'bed', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, lebih dari ' + hi + 'j. Bangun pada waktu tetap.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, over ' + hi + 'h. Keep a fixed wake time.');
-      else add(sleepColor(c.sl), 'bed', 'Tidur dalam target: <b>' + c.ok + '/' + c.n + '</b> malam.', 'Sleep on target: <b>' + c.ok + '/' + c.n + '</b> nights.');
+      if (c.sl < lo) add(sleepColor(c.sl), 'bed', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, bawah ' + lo + '–' + hi + 'j. Cuba tidur 30 minit lebih awal untuk recovery.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, under ' + lo + '–' + hi + 'h. Try bed 30 minutes earlier for recovery.', 'sleep');
+      else if (c.sl > hi) add(sleepColor(c.sl), 'bed', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, lebih dari ' + hi + 'j. Bangun pada waktu tetap.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, over ' + hi + 'h. Keep a fixed wake time.', 'sleep');
+      else add(sleepColor(c.sl), 'bed', 'Tidur dalam target: <b>' + c.ok + '/' + c.n + '</b> malam.', 'Sleep on target: <b>' + c.ok + '/' + c.n + '</b> nights.', 'sleep');
     }
-    if (!R.length) add('#3b82f6', 'bulb', 'Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.');
+    if (!R.length) add('#3b82f6', 'bulb', 'Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.', 'info');
     el.innerHTML = head + grid + '<div class="kl">' + T('RINGKASAN & CADANGAN', 'SUMMARY & TIPS') + '</div><ul class="kr">' + R.slice(0, 4).join('') + '</ul>';
+    var ctx = { c: c, p: p, from: from, to: to, pFrom: pFrom, pTo: pTo, span: span, cons: cons, run: run, k0: k0, lo: lo, hi: hi, hasP: hasP };
+    [].forEach.call(el.querySelectorAll('.kr li[data-i]'), function (li) {
+      li.onclick = function () { openTip(KIND[+li.dataset.i], ctx); };
+      li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.onclick(); } };
+    });
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
+  }
+    // full explanation + the data behind one Summary & Tips line (opens in the detail sheet)
+  function openTip(kind, x) {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, c = x.c, p = x.p;
+    var dd = function (k) { return isoToDmy(k); }, rngTxt = function (a, b) { return a === b ? dd(a) : dd(a) + ' – ' + dd(b); };
+    var kv = function (rows) { return '<div class="tkv">' + rows.map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>'; };
+    var grp = function (t2) { return '<div class="grp">' + t2 + '</div>'; };
+    var row = function (k, right, cls) { return '<div class="day" data-d="' + k + '"><span' + (cls ? ' class="' + cls + '"' : '') + '>' + dd(k) + '</span><span>' + right + ' <b class="go">' + ic('right') + '</b></span></div>'; };
+    var recs = function (a, b, act) { return (REC || []).filter(function (r) { return r.date >= a && r.date <= b && (!act || r.activity === act); }).sort(function (q, w) { return q.date < w.date ? 1 : -1; }); };
+    var wrow = function (r) { return row(r.date, r.exercises + T(' latihan · ', ' exercises · ') + r.reps + ' reps' + (r.actual ? ' · ' + esc(r.actual) : ''), 'w'); };
+    var title = '', text = '', html = '';
+    var lastW = null; (REC || []).forEach(function (r) { if (r.activity === 'Workout' && r.date <= x.to && (!lastW || r.date > lastW)) lastW = r.date; });
+    var logged = Object.keys(c.wd).length + Object.keys(c.rd).length, unlogged = Math.max(0, x.span - logged);
+    if (kind === 'none') {
+      title = T('Belum ada workout', 'No workouts yet');
+      text = T('Dalam tempoh ' + rngTxt(x.from, x.to) + ' (' + x.span + ' hari) tiada workout direkod. Badan perlukan rangsangan berkala untuk kekalkan kekuatan — mulakan dengan sesi ringkas 15 minit (contoh: 3 pusingan push up, squats dan plank) dan naikkan sedikit demi sedikit.',
+        'No workouts were logged in ' + rngTxt(x.from, x.to) + ' (' + x.span + ' days). Your body needs regular stimulus to keep its strength — start with a short 15-minute session (e.g. 3 rounds of push ups, squats and plank) and build up gradually.');
+      html = kv([[T('Workout terakhir', 'Last workout'), lastW ? dd(lastW) : '–'], [T('Hari rehat', 'Rest days'), c.r], [T('Hari tiada rekod', 'Days not logged'), unlogged]]) +
+        grp(T('Rekod dalam tempoh ini', 'Records in this period')) + (recs(x.from, x.to).map(function (r) { return row(r.date, r.activity === 'Rest Day' ? T('Rehat', 'Rest') : esc(r.activity), r.activity === 'Rest Day' ? 'r' : ''); }).join('') || '<div class="empty">' + T('Tiada rekod.', 'No records.') + '</div>');
+    } else if (kind === 'cons') {
+      var perWk = Math.round(c.w / x.span * 7 * 10) / 10, need = Math.max(0, Math.ceil(x.span / 7 * 3) - c.w);
+      title = T('Konsistensi ' + x.cons + '%', x.cons + '% consistency');
+      text = x.cons >= 60 ? T('Kau workout ' + c.w + ' dari ' + x.span + ' hari — purata ' + perWk + ' kali seminggu. Ini rutin yang kuat. Untuk terus maju, tambah sedikit reps, set atau berat setiap minggu (progressive overload) dan pastikan tidur cukup untuk recovery.',
+        'You trained ' + c.w + ' of ' + x.span + ' days — about ' + perWk + ' times a week. That is a strong routine. To keep improving, add a few reps, sets or a little weight each week (progressive overload) and protect your sleep for recovery.')
+        : T('Kau workout ' + c.w + ' dari ' + x.span + ' hari — purata ' + perWk + ' kali seminggu. Sasaran asas ialah 3 workout seminggu; untuk tempoh ini, kau perlukan ' + need + ' lagi untuk capai tahap tu. Pilih hari tetap (contoh Isnin, Rabu, Jumaat) supaya jadi kebiasaan.',
+        'You trained ' + c.w + ' of ' + x.span + ' days — about ' + perWk + ' times a week. A good baseline is 3 workouts a week; for this period you would need ' + need + ' more to get there. Pick fixed days (e.g. Mon, Wed, Fri) so it becomes a habit.');
+      html = kv([[T('Hari workout', 'Workout days'), c.w + ' / ' + x.span], [T('Purata seminggu', 'Per week'), perWk + '×'], [T('Hari rehat', 'Rest days'), c.r], [T('Tiada rekod', 'Not logged'), unlogged]]) +
+        grp(T('Hari workout', 'Workout days')) + (recs(x.from, x.to, 'Workout').map(wrow).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'cmp') {
+      title = T('Banding tempoh sebelum', 'Compared with the previous period');
+      text = T('Tempoh ini (' + rngTxt(x.from, x.to) + ') ada ' + c.w + ' workout, berbanding ' + p.w + ' dalam tempoh sebelum (' + rngTxt(x.pFrom, x.pTo) + '). ' + (c.w > p.w ? 'Kau makin aktif — kekalkan rentak ni.' : 'Kekerapan menurun — cuba jadualkan sesi pendek supaya tak terputus.'),
+        'This period (' + rngTxt(x.from, x.to) + ') has ' + c.w + ' workouts versus ' + p.w + ' in the previous one (' + rngTxt(x.pFrom, x.pTo) + '). ' + (c.w > p.w ? "You're getting more active — keep the pace." : 'Frequency dropped — try scheduling short sessions so the streak does not break.'));
+      html = '<div class="tcmp"><div></div><b>' + T('Sekarang', 'Now') + '</b><b>' + T('Sebelum', 'Before') + '</b>' +
+        [['Workout', c.w, p.w], [T('Rehat', 'Rest'), c.r, p.r], ['Reps', c.reps, p.reps], [T('Masa', 'Time'), c.min + 'm', p.min + 'm']].map(function (r) { return '<span>' + r[0] + '</span><i>' + r[1] + '</i><i>' + r[2] + '</i>'; }).join('') + '</div>' +
+        grp(T('Sekarang', 'Now') + ' · ' + rngTxt(x.from, x.to)) + (recs(x.from, x.to, 'Workout').map(wrow).join('') || '<div class="empty">–</div>') +
+        grp(T('Sebelum', 'Before') + ' · ' + rngTxt(x.pFrom, x.pTo)) + (recs(x.pFrom, x.pTo, 'Workout').map(wrow).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'reps') {
+      var ch = Math.round(100 * (c.reps - p.reps) / p.reps), avgC = c.w ? Math.round(c.reps / c.w) : 0, avgP = p.w ? Math.round(p.reps / p.w) : 0;
+      title = 'Reps ' + (ch > 0 ? T('naik ', 'up ') : T('turun ', 'down ')) + Math.abs(ch) + '%';
+      text = ch > 0 ? T('Jumlah reps naik dari ' + p.reps + ' ke ' + c.reps + ' (purata ' + avgP + ' → ' + avgC + ' reps setiap workout). Tanda kekuatan dan stamina meningkat. Bila dah selesa, cuba tambah berat atau variasi yang lebih susah.',
+        'Total reps rose from ' + p.reps + ' to ' + c.reps + ' (' + avgP + ' → ' + avgC + ' reps per workout). A sign your strength and stamina are improving. Once it feels easy, add weight or a harder variation.')
+        : T('Jumlah reps turun dari ' + p.reps + ' ke ' + c.reps + ' (purata ' + avgP + ' → ' + avgC + ' reps setiap workout). Mungkin sebab kurang sesi, penat atau kurang tidur. Semak rehat dan tidur kau, dan fokus pada form yang betul dulu.',
+        'Total reps fell from ' + p.reps + ' to ' + c.reps + ' (' + avgP + ' → ' + avgC + ' reps per workout). It may be fewer sessions, fatigue or short sleep. Check your rest and sleep, and focus on good form first.');
+      html = kv([[T('Reps sekarang', 'Reps now'), c.reps], [T('Reps sebelum', 'Reps before'), p.reps], [T('Purata / workout', 'Avg / workout'), avgP + ' → ' + avgC]]) +
+        grp(T('Sekarang', 'Now') + ' · ' + rngTxt(x.from, x.to)) + (recs(x.from, x.to, 'Workout').map(wrow).join('') || '<div class="empty">–</div>') +
+        grp(T('Sebelum', 'Before') + ' · ' + rngTxt(x.pFrom, x.pTo)) + (recs(x.pFrom, x.pTo, 'Workout').map(wrow).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'run') {
+      var days = []; for (var k = x.k0, n = 0; n < x.run; k = addDays(k, -1), n++) days.push(k);
+      title = T(x.run + ' hari berturut rehat', x.run + ' rest days in a row');
+      text = T('Sejak ' + (lastW ? 'workout terakhir pada ' + dd(lastW) : 'awal tempoh ini') + ', dah ' + x.run + ' hari tanpa workout. Rehat 1–2 hari bagus untuk recovery, tapi lebih 3 hari boleh buat badan mula hilang rentak. Buat sesi ringan hari ini untuk mulakan semula.',
+        'Since ' + (lastW ? 'your last workout on ' + dd(lastW) : 'the start of this period') + ', ' + x.run + ' days have passed without a workout. 1–2 rest days help recovery, but more than 3 can make you lose momentum. Do a light session today to restart.');
+      html = kv([[T('Workout terakhir', 'Last workout'), lastW ? dd(lastW) : '–'], [T('Hari tanpa workout', 'Days without a workout'), x.run]]) +
+        grp(T('Hari-hari tersebut', 'Those days')) + days.map(function (k) { return row(k, c.rd[k] ? T('Hari rehat', 'Rest day') : T('Tiada rekod', 'Not logged'), c.rd[k] ? 'r' : ''); }).join('');
+    } else if (kind === 'sleep') {
+      var ns = (SLEEP_ALL || []).filter(function (q) { return q.d >= x.from && q.d <= x.to; }).sort(function (q, w) { return q.d < w.d ? 1 : -1; });
+      var shortN = ns.filter(function (q) { return q.h < x.lo; }).length, longN = ns.filter(function (q) { return q.h > x.hi; }).length;
+      var mn = ns.reduce(function (a, q) { return !a || q.h < a.h ? q : a; }, null), mx = ns.reduce(function (a, q) { return !a || q.h > a.h ? q : a; }, null);
+      title = T('Tidur', 'Sleep') + ' · ' + hm(c.sl * 60);
+      text = c.sl < x.lo ? T('Purata tidur ' + hm(c.sl * 60) + ', bawah target ' + x.lo + '–' + x.hi + 'j. ' + shortN + ' dari ' + ns.length + ' malam kurang tidur. Tidur yang cukup penting untuk recovery otot dan tenaga — cuba masuk tidur 30 minit lebih awal dan elakkan skrin sejam sebelum tidur.',
+        'Average sleep ' + hm(c.sl * 60) + ', under your ' + x.lo + '–' + x.hi + 'h target. ' + shortN + ' of ' + ns.length + ' nights were short. Enough sleep matters for muscle recovery and energy — try going to bed 30 minutes earlier and avoid screens an hour before.')
+        : c.sl > x.hi ? T('Purata tidur ' + hm(c.sl * 60) + ', lebih dari ' + x.hi + 'j. Tidur terlalu lama boleh buat badan rasa lesu. Tetapkan waktu bangun yang sama setiap hari.',
+        'Average sleep ' + hm(c.sl * 60) + ', over ' + x.hi + 'h. Oversleeping can leave you groggy. Keep the same wake time every day.')
+        : T('Purata tidur ' + hm(c.sl * 60) + ' — dalam target ' + x.lo + '–' + x.hi + 'j. ' + c.ok + ' dari ' + c.n + ' malam capai target. Kekalkan waktu tidur dan bangun yang konsisten.',
+        'Average sleep ' + hm(c.sl * 60) + ' — inside your ' + x.lo + '–' + x.hi + 'h target. ' + c.ok + ' of ' + c.n + ' nights on target. Keep a consistent bed and wake time.');
+      html = kv([[T('Purata', 'Average'), hm(c.sl * 60)], [T('Dalam target', 'On target'), c.ok + ' / ' + c.n], [T('Kurang', 'Short'), shortN], [T('Terlebih', 'Long'), longN],
+        [T('Paling singkat', 'Shortest'), mn ? hm(mn.h * 60) + ' (' + dd(mn.d).slice(0, 5) + ')' : '–'], [T('Paling lama', 'Longest'), mx ? hm(mx.h * 60) + ' (' + dd(mx.d).slice(0, 5) + ')' : '–']]) +
+        grp(T('Setiap malam', 'Each night')) + ns.map(function (q) { return row(q.d, '<i class="sdot" style="background:' + sleepColor(q.h) + '"></i>' + hm(q.h * 60) + (q.start ? ' · ' + esc(q.start) + '–' + esc(q.end) : '')); }).join('');
+    } else {
+      title = T('Ringkasan', 'Summary');
+      text = T('Belum ada data yang cukup untuk tempoh ini. Simpan workout, hari rehat atau rekod tidur dan analisis akan muncul di sini.', 'Not enough data for this period yet. Save workouts, rest days or sleep and insights will show up here.');
+    }
+    $('detailBack').style.display = 'none';
+    $('dTitle').textContent = title;
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + text + '</p>' + html + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
   [].forEach.call($('rFilter').children, function (b) {
     b.onclick = function () {
