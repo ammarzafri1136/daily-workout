@@ -722,6 +722,10 @@
   <h4>Tema</h4>
   <div class="seg" id="optTheme"><button type="button" data-v="light">Bright</button><button type="button" data-v="dark">Dark</button><button type="button" data-v="auto">Ikut telefon</button></div>
 
+  <h4>Gabungan warna</h4>
+  <div class="pal" id="optPal"></div>
+  <div class="palc" id="optPalC"></div>
+
   <h4>Warna tulisan</h4>
   <div class="sw" id="optPen"></div>
 
@@ -1040,18 +1044,18 @@
   .stt small { display:block; color:rgba(255,255,255,.7); font-size:11px; }
 
   /* live workout timer */
-  .sw { display:flex; align-items:center; gap:6px; margin:0 0 8px; }
-  .sw button { width:auto !important; min-width:0 !important; height:36px !important; border:0 !important; box-shadow:none !important; flex:none; }
-  .sw .swgo { display:inline-flex; align-items:center; gap:6px; padding:8px 14px !important; border-radius:999px !important; background:var(--tile) !important; color:var(--ink) !important; font-size:14px; font-weight:700 !important; }
-  .sw .swgo .ico { width:16px; height:16px; color:var(--accent); }
-  .sw .swt, .sw .swx, .sw .swfill { display:none; }
-  .sw.has .swt { display:block; font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; margin:0 auto 0 6px; }
-  .sw.run .swt { color:var(--accent); }
-  .sw.has .swx { display:flex; width:36px !important; height:36px; padding:0 !important; align-items:center; justify-content:center; border-radius:50% !important; background:var(--tile) !important; color:var(--muted) !important; }
-  .sw .swx.arm { background:#ef4444 !important; color:#fff !important; }
-  .sw .swx .ico { width:16px; height:16px; }
-  .sw.has .swfill { display:block; padding:8px 12px !important; border-radius:999px !important; background:var(--accent) !important; color:#fff !important; font-size:13px; font-weight:700 !important; white-space:nowrap; }
-  .sw.run .swgo { background:rgba(59,130,246,.15) !important; }
+  #sw.sw { display:flex; align-items:center; gap:6px; margin:0 0 8px; }
+  #sw.sw button { width:auto !important; min-width:0 !important; height:36px !important; border:0 !important; box-shadow:none !important; flex:none; }
+  #sw.sw .swgo { display:inline-flex; align-items:center; gap:6px; padding:8px 14px !important; border-radius:999px !important; background:var(--tile) !important; color:var(--ink) !important; font-size:14px; font-weight:700 !important; }
+  #sw.sw .swgo .ico { width:16px; height:16px; color:var(--accent); }
+  #sw.sw .swt, #sw.sw .swx, #sw.sw .swfill { display:none; }
+  #sw.sw.has .swt { display:block; font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; margin:0 auto 0 6px; }
+  #sw.sw.run .swt { color:var(--accent); }
+  #sw.sw.has .swx { display:flex; width:36px !important; height:36px; padding:0 !important; align-items:center; justify-content:center; border-radius:50% !important; background:var(--tile) !important; color:var(--muted) !important; }
+  #sw.sw .swx.arm { background:#ef4444 !important; color:#fff !important; }
+  #sw.sw .swx .ico { width:16px; height:16px; }
+  #sw.sw.has .swfill { display:block; padding:8px 12px !important; border-radius:999px !important; background:var(--accent) !important; color:#fff !important; font-size:13px; font-weight:700 !important; white-space:nowrap; }
+  #sw.sw.run .swgo { background:rgba(59,130,246,.15) !important; }
   .swp { width:10px; height:10px; border-left:3px solid currentColor; border-right:3px solid currentColor; box-sizing:border-box; display:inline-block; }
 
   .tp .tped { color:var(--accent) !important; }
@@ -1147,6 +1151,22 @@
   .lastwk .lk { flex:none; font-weight:700; color:var(--ink); }
   .lastwk .lv { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .lastwk .ico { width:14px; height:14px; flex:none; }
+
+  /* colour combos (settings) */
+  .pal { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+  .pal button { display:flex !important; flex-direction:column; align-items:center; gap:6px; padding:10px 4px 8px !important; border-radius:14px !important;
+    background:var(--tile) !important; border:2px solid transparent !important; color:var(--ink) !important; width:auto !important; height:auto !important; box-shadow:none !important; }
+  .pal button.on { border-color:var(--accent) !important; }
+  .pal b { font-size:12px; font-weight:600; }
+  .pal .pd { display:flex; } .pal .pd i { width:16px; height:16px; border-radius:50%; border:2px solid var(--tile); margin-left:-5px; }
+  .pal .pd i:first-child { margin-left:0; }
+  .pal .pplus { width:30px; height:16px; justify-content:center; align-items:center; border-radius:999px; font-weight:800; font-size:14px; line-height:1;
+    background:conic-gradient(#ef4444,#facc15,#22c55e,#3b82f6,#a855f7,#ef4444); color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+  .palc { display:flex; flex-direction:column; gap:6px; margin-top:8px; } .palc:empty { display:none; }
+  .palc button { display:flex !important; align-items:center; gap:10px; padding:10px 12px !important; border-radius:12px !important; background:var(--tile) !important;
+    color:var(--ink) !important; width:auto !important; height:auto !important; box-shadow:none !important; border:0 !important; font-size:14px !important; font-weight:600 !important; text-align:left; }
+  .palc i { width:22px; height:22px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(0,0,0,.1); }
+  .palc span { flex:1; } .palc .ico { width:16px; height:16px; color:var(--muted); }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -2023,13 +2043,31 @@
   }
 
   // ---------------- Settings (saved on this phone) ----------------
+  // colour combos for the data: [name, workout light, workout dark, rest light, rest dark, rest text (light), accent light, accent dark]
+  var PALS = [
+    ['Klasik', '#7c3aed', '#a78bfa', '#facc15', '#facc15', '#a16207', '#2f6fed', '#3b82f6'],
+    ['Lautan', '#0284c7', '#38bdf8', '#f97316', '#fb923c', '#c2410c', '#0d9488', '#14b8a6'],
+    ['Senja', '#ea580c', '#fb923c', '#6366f1', '#818cf8', '#4f46e5', '#e11d48', '#f43f5e'],
+    ['Neon', '#db2777', '#f472b6', '#06b6d4', '#22d3ee', '#0e7490', '#7c3aed', '#8b5cf6'],
+    ['Hutan', '#15803d', '#4ade80', '#eab308', '#facc15', '#a16207', '#0f766e', '#14b8a6'],
+    ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b']
+  ];
+  function palNow(dark) {        // -> {wk, rest, restTx, acc}
+    if (S.palette === 'custom') {
+      var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), rest = S.cRest || P0[3], acc = S.cAcc || (dark ? P0[7] : P0[6]);
+      return { wk: wk, rest: rest, restTx: (!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest, acc: acc };
+    }
+    var P = PALS[+S.palette] || PALS[0];
+    return { wk: dark ? P[2] : P[1], rest: dark ? P[4] : P[3], restTx: dark ? P[4] : P[5], acc: dark ? P[7] : P[6] };
+  }
+  function shade(c, f) { var q = parseCss(c); return 'rgb(' + Math.round(q.r * f) + ',' + Math.round(q.g * f) + ',' + Math.round(q.b * f) + ')'; }
   var PENS = [ // [name, bright-mode colour, dark-mode colour]
     ['Biru', '#1d4ed8', '#93c5fd'], ['Hijau', '#15803d', '#86efac'], ['Merah', '#b91c1c', '#fca5a5'],
     ['Ungu', '#7e22ce', '#d8b4fe'], ['Oren', '#c2410c', '#fdba74'], ['Hitam', '#111111', '#f5f5f4']];
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4 };
+  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, palette: 0, cWk: '', cRest: '', cAcc: '' };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -2065,8 +2103,9 @@
     var head = typeof S.head === 'string' ? [0, S.head, S.head] : (HEADS[S.head] || HEADS[0]);
     b.setProperty('--pen', dark ? pen[2] : pen[1]);
     // data colours (fixed, all different): workout = purple, rest = amber; sleep uses red / green / blue
-    b.setProperty('--wk', dark ? '#a78bfa' : '#7c3aed');
-    b.setProperty('--rest', '#facc15'); b.setProperty('--rest-tx', dark ? '#facc15' : '#a16207');
+    var pl = palNow(dark);
+    b.setProperty('--wk', pl.wk); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
+    paintPal(dark);
     b.setProperty('--headbg', dark ? head[2] : head[1]);
     b.setProperty('--headfg', typeof S.head === 'string' ? (lum(S.head) > 0.6 ? '#111' : '#fff') : (dark ? '#111' : '#fff'));
     $('themeBtn').classList.toggle('isdark', dark); $('themeBtn').title = dark ? 'Bright mode' : 'Dark mode';
@@ -2077,6 +2116,31 @@
     if (typeof applyLang === 'function' && window.__langReady) applyLang();
     $('optLarge').checked = !!S.large; $('optNames').checked = !!S.autoNames;
     if (typeof renderDash === 'function' && DASH) renderDash();
+  }
+  // settings: colour-combo cards + Custom (three colours you pick yourself)
+  function paintPal(dark) {
+    var box = $('optPal'); if (!box) return;
+    var en = S.lang === 'en', cur = S.palette === 'custom' ? 'custom' : String(+S.palette || 0);
+    var dots = function (a, b2, c) { return '<span class="pd"><i style="background:' + a + '"></i><i style="background:' + b2 + '"></i><i style="background:' + c + '"></i></span>'; };
+    var cp = palNow(dark), csel = S.palette === 'custom';
+    box.innerHTML = PALS.map(function (P, i) {
+      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6]) + '<b>' + P[0] + '</b></button>';
+    }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
+    [].forEach.call(box.children, function (x) {
+      x.onclick = function () {
+        if (x.dataset.p === 'custom') {
+          if (S.palette !== 'custom') { var d = palNow(isDark()); S.cWk = S.cWk || d.wk; S.cRest = S.cRest || d.rest; S.cAcc = S.cAcc || d.acc; }
+          S.palette = 'custom';
+        } else S.palette = +x.dataset.p;
+        saveSettings(); applySettings();
+      };
+    });
+    var c = $('optPalC');
+    if (!csel) { c.innerHTML = ''; return; }
+    c.innerHTML = [['cWk', 'Workout', cp.wk], ['cRest', en ? 'Rest day' : 'Hari rehat', cp.rest], ['cAcc', en ? 'Buttons' : 'Butang', cp.acc]].map(function (r) {
+      return '<button type="button" data-k="' + r[0] + '"><i style="background:' + r[2] + '"></i><span>' + r[1] + '</span>' + ic('pen') + '</button>';
+    }).join('');
+    [].forEach.call(c.children, function (x) { x.onclick = function () { openCP(x.dataset.k); }; });
   }
   function swatches(boxId, list, key) {
     list.forEach(function (c, i) {
@@ -2207,9 +2271,11 @@
   })();
   function openCP(key) {
     CP.key = key;
-    var cur = typeof S[key] === 'string' ? S[key] : getComputedStyle(document.body).getPropertyValue(key === 'pen' ? '--pen' : '--headbg').trim();
+    var VAR = { pen: '--pen', head: '--headbg', cWk: '--wk', cRest: '--rest', cAcc: '--accent' };
+    var cur = typeof S[key] === 'string' && S[key] ? S[key] : getComputedStyle(document.body).getPropertyValue(VAR[key] || '--pen').trim();
     var c = parseCss(cur); CP.r = c.r; CP.g = c.g; CP.b = c.b; CP.a = c.a;
-    $('cpTitle').textContent = key === 'pen' ? 'Warna tulisan' : 'Warna kad';
+    var en = S.lang === 'en';
+    $('cpTitle').textContent = { pen: 'Warna tulisan', head: 'Warna kad', cWk: en ? 'Workout colour' : 'Warna workout', cRest: en ? 'Rest day colour' : 'Warna hari rehat', cAcc: en ? 'Button colour' : 'Warna butang' }[key] || '';
     paintCP(); $('cp').classList.add('on'); $('cpBg').classList.add('on');
   }
   function closeCP() { $('cp').classList.remove('on'); $('cpBg').classList.remove('on'); }
@@ -2917,7 +2983,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Set semula timer': 'Reset timer', 'Sasaran mingguan': 'Weekly goal', 'Bilangan workout seminggu (Ahad–Sabtu)': 'Workouts per week (Sun–Sat)', 'Sasaran workout seminggu': 'Workouts per week goal', 'Pilih untuk isi nama workout': 'Pick to fill the workout names', 'Template workout': 'Workout templates', 'Tidur & prestasi': 'Sleep & performance', 'Padam template': 'Delete template', 'Ubah template': 'Edit template', 'Julat sendiri…': 'Custom range…', '14 hari': '14 days', '30 hari': '30 days', '90 hari': '90 days', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Set semula timer': 'Reset timer', 'Sasaran mingguan': 'Weekly goal', 'Bilangan workout seminggu (Ahad–Sabtu)': 'Workouts per week (Sun–Sat)', 'Sasaran workout seminggu': 'Workouts per week goal', 'Pilih untuk isi nama workout': 'Pick to fill the workout names', 'Template workout': 'Workout templates', 'Tidur & prestasi': 'Sleep & performance', 'Padam template': 'Delete template', 'Gabungan warna': 'Colour combo', 'Ubah template': 'Edit template', 'Julat sendiri…': 'Custom range…', '14 hari': '14 days', '30 hari': '30 days', '90 hari': '90 days', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
