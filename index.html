@@ -696,11 +696,11 @@
     <h2><span>Rekod<span id="rLabel"></span></span> <a id="sheetLink" href="#" target="_blank">Buka Sheet <svg class="ico ih ih-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><g class="ea"><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></g></svg></a></h2>
     <div class="flt seg2" id="rFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="yesterday" title="Yesterday">Yest.</button><button type="button" data-r="7d" class="on">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
     <div class="crange" id="rCustom"><label>Dari<input type="date" id="rFrom"></label><span>→</span><label>Hingga<input type="date" id="rTo"></label></div>
-    <div class="streak">
+    <div class="streak" hidden>
       <div><b id="cur">–</b><span>streak semasa</span></div>
       <div><b id="best">–</b><span>streak terpanjang</span></div>
     </div>
-    <div class="rsum" id="rSum"></div>
+    <div class="rkp" id="rSum"></div>
     <div id="days"><div class="day"><small>Memuatkan…</small></div></div>
   </div>
   </div>
@@ -1114,6 +1114,29 @@
   .srow2.hasdur .sdur { align-self:center; }
   .srow2.hasdur .stip { grid-column:1 / -1; }
   .srow2 .stip:empty { display:none; }
+
+  /* Records: KPI summary (period · tiles with change · tips) */
+  .rkp { background:var(--tile); border-radius:16px; padding:12px; margin:10px 0 6px; }
+  .rkp:empty { display:none; }
+  .rkp .kh { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 2px 10px; }
+  .rkp .kh b { font-size:14px; font-weight:700; } .rkp .kh small { font-size:11px; color:var(--muted); white-space:nowrap; }
+  .rkp .kg { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
+  .rkp .kt { background:var(--paper); border-radius:12px; padding:8px 9px; min-width:0; }
+  body.dark .rkp .kt { background:rgba(255,255,255,.07); }
+  .rkp .kt span { display:block; font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rkp .kt b { display:block; font-size:17px; font-weight:800; margin:1px 0; white-space:nowrap; }
+  .rkp .kt b i { font-style:normal; font-size:11px; font-weight:600; color:var(--muted); }
+  .rkp .kt em { font-style:normal; font-size:10.5px; font-weight:700; }
+  .rkp em.up { color:#16a34a; } body.dark .rkp em.up { color:#22c55e; } .rkp em.dn { color:#ef4444; } .rkp em.z { color:var(--muted); font-weight:600; }
+  .rkp .kl { font-size:11px; font-weight:700; letter-spacing:.5px; color:var(--muted); margin:12px 2px 6px; }
+  .rkp .kr { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
+  .rkp .kr li { display:flex; gap:9px; align-items:flex-start; background:var(--paper); border-radius:10px; padding:8px 10px; font-size:13px; line-height:1.4; }
+  body.dark .rkp .kr li { background:rgba(255,255,255,.07); }
+  .recent .streak[hidden] { display:none !important; }
+  .rkp .kh { justify-content:flex-end; margin-bottom:8px; }
+  .rkp .kr li b { font-weight:700; color:var(--ink); }
+  .rkp .kr i { width:7px; height:7px; border-radius:50%; flex:none; margin-top:6px; }
+  .rkp .kr i.g { background:#22c55e; } .rkp .kr i.r { background:#ef4444; } .rkp .kr i.o { background:#f97316; } .rkp .kr i.y { background:#facc15; } .rkp .kr i.b { background:#3b82f6; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1382,48 +1405,76 @@
   }
 
   // ---------------- Records summary: short progress / advice for the chosen period ----------------
+  // Records summary: period header, small KPI tiles with change vs the previous period, then short recommendations
+  function actMins(v) {
+    v = String(v || ''); if (!v) return 0;
+    var m = v.match(/^(\d+):(\d{1,2})$/); if (m) return +m[1] + m[2] / 60;
+    var h = /(\d+)\s*h/.exec(v), mm = /(\d+)\s*m(?!s)/.exec(v), ss = /(\d+)\s*s/.exec(v);
+    return (h ? +h[1] * 60 : 0) + (mm ? +mm[1] : 0) + (ss ? ss[1] / 60 : 0);
+  }
   function renderRecSummary(list, rg) {
     var el = $('rSum'); if (!el) return;
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
     var t = REC_TODAY || todayKey(), to = rg.to < t ? rg.to : t, from = rg.from;
     var span = Math.max(1, Math.round((Date.parse(to) - Date.parse(from)) / 864e5) + 1);
-    var inR = function (k) { return k >= from && k <= to; };
-    var wd = {}, rd = {}, reps = 0;
-    list.forEach(function (x) { if (!inR(x.date)) return; if (x.activity === 'Workout') { wd[x.date] = 1; reps += +x.reps || 0; } else if (x.activity === 'Rest Day') rd[x.date] = 1; });
-    var nW = Object.keys(wd).length, nR = Object.keys(rd).length, cons = Math.round(100 * nW / span);
-    // previous period of the same length, for a trend
-    var pTo = addDays(from, -1), pFrom = addDays(from, -span), pReps = 0, pW = {};
-    (REC || []).forEach(function (x) { if (x.date >= pFrom && x.date <= pTo && x.activity === 'Workout') { pW[x.date] = 1; pReps += +x.reps || 0; } });
-    var nPW = Object.keys(pW).length;
-    // sleep in the period
-    var nights = (SLEEP_ALL || []).filter(function (x) { return inR(x.d); }), lo = slLo(), hi = slHi();
-    var avgS = nights.length ? nights.reduce(function (a, x) { return a + x.h; }, 0) / nights.length : null;
-    var okS = nights.filter(function (x) { return x.h >= lo && x.h <= hi; }).length;
-    // trailing rest run up to the last day of the period
-    var run = 0, k0 = (to === t && !wd[t] && !rd[t]) ? addDays(t, -1) : to;   // today not logged yet -> start from yesterday
-    for (var k = k0; k >= from && !wd[k]; k = addDays(k, -1)) run++;
-    var lines = [], tone = 'good', icon = 'bulb', title;
-    var period = span === 1 ? T('Hari ini', 'This day') : span + T(' hari', ' days');
-    lines.push(T(period + ': <b>' + nW + ' workout</b>, ' + nR + ' rehat' + (reps ? ' · ' + reps + ' reps' : '') + '.',
-                 period + ': <b>' + nW + ' workout' + (nW === 1 ? '' : 's') + '</b>, ' + nR + ' rest' + (reps ? ' · ' + reps + ' reps' : '') + '.'));
-    if (span > 1 && (nPW || pReps)) {
-      if (reps && pReps) { var ch = Math.round(100 * (reps - pReps) / pReps); if (Math.abs(ch) >= 5) lines.push(T('Reps ' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% berbanding tempoh sebelum.', 'Reps ' + (ch > 0 ? 'up ' : 'down ') + Math.abs(ch) + '% on the previous period.')); }
-      else if (nW !== nPW) lines.push(T((nW > nPW ? 'Lebih' : 'Kurang') + ' ' + Math.abs(nW - nPW) + ' workout berbanding tempoh sebelum.', Math.abs(nW - nPW) + (nW > nPW ? ' more' : ' fewer') + ' workouts than the previous period.'));
+    var pTo = addDays(from, -1), pFrom = addDays(from, -span), lo = slLo(), hi = slHi();
+    function stats(a, b) {
+      var wd = {}, rd = {}, reps = 0, min = 0;
+      (REC || list).forEach(function (x) {
+        if (x.date < a || x.date > b) return;
+        if (x.activity === 'Workout') { wd[x.date] = 1; reps += +x.reps || 0; min += actMins(x.actual); }
+        else if (x.activity === 'Rest Day') rd[x.date] = 1;
+      });
+      var ns = (SLEEP_ALL || []).filter(function (x) { return x.d >= a && x.d <= b; });
+      return { w: Object.keys(wd).length, r: Object.keys(rd).length, reps: reps, min: Math.round(min), wd: wd, rd: rd,
+        n: ns.length, sl: ns.length ? ns.reduce(function (q, x) { return q + x.h; }, 0) / ns.length : null,
+        ok: ns.filter(function (x) { return x.h >= lo && x.h <= hi; }).length };
     }
-    if (avgS !== null) lines.push(T('Tidur purata <b>' + hm(avgS * 60) + '</b> · ' + okS + '/' + nights.length + ' malam dalam target ' + lo + '–' + hi + 'j.',
-                                    'Average sleep <b>' + hm(avgS * 60) + '</b> · ' + okS + '/' + nights.length + ' nights in the ' + lo + '–' + hi + 'h target.'));
-    var tip;
-    if (!nW && span >= 2) { tone = 'short'; icon = 'flame'; title = T('Jom mula semula', "Let's get moving"); tip = T('Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas 15 minit hari ini.', 'No workouts in this period yet. Start with a short 15-minute session today.'); }
-    else if (run >= 3 && to === t) { tone = 'warn'; icon = 'coffee'; title = T(run + ' hari berturut rehat', run + ' rest days in a row'); tip = T('Badan dah cukup rehat — masa untuk kembali bergerak.', "You're well rested — time to move again."); }
-    else if (span >= 5 && cons < 30) { tone = 'low'; icon = 'chart'; title = T('Konsisten ' + cons + '%', cons + '% consistency'); tip = T('Sasarkan sekurang-kurangnya 3 workout seminggu untuk nampak progress.', 'Aim for at least 3 workouts a week to see progress.'); }
-    else if (avgS !== null && avgS < lo) { tone = 'short'; icon = 'battery'; title = T('Kurang tidur', 'Short on sleep'); tip = T('Tidur bawah ' + lo + 'j boleh lambatkan recovery otot. Cuba tidur 30 minit lebih awal.', 'Under ' + lo + 'h sleep slows muscle recovery. Try bed 30 minutes earlier.'); }
-    else if (span >= 5 && cons >= 60) { tone = 'good'; icon = 'flame'; title = T('Hebat, konsisten ' + cons + '%!', 'Great, ' + cons + '% consistent!'); tip = T('Teruskan momentum ni. Tambah sedikit reps atau berat untuk terus maju.', 'Keep the momentum. Add a few reps or a little weight to keep improving.'); }
-    else if (nW) { tone = 'prog'; icon = 'chart'; title = T('Progress berjalan', 'Making progress'); tip = T('Bagus! Kekalkan rutin dan jaga tidur supaya badan pulih.', 'Nice! Keep the routine and protect your sleep so you recover.'); }
-    else { tone = 'info'; icon = 'bulb'; title = T('Ringkasan', 'Summary'); tip = T('Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.'); }
-    lines.push(tip);
-    var C = { short: '#ef4444', warn: '#facc15', low: '#f97316', good: '#22c55e', prog: '#8b5cf6', info: '#64748b' };
-    el.innerHTML = '<i class="si" style="background:' + C[tone] + ';color:' + (tone === 'warn' ? '#111' : '#fff') + '">' + ic(icon, 'go') + '</i><div><b class="rt">' + esc(title) + '</b>' +
-      lines.map(function (l) { return '<span>' + l + '</span>'; }).join('') + '</div>';
+    var c = stats(from, to), p = stats(pFrom, pTo), hasP = (p.w + p.r + p.n) > 0;
+    function dl(a, b, kind) {                   // change badge vs previous period
+      if (!hasP) return '<em class="z">–</em>';
+      if (kind === 'sl') {
+        if (a === null || b === null) return '<em class="z">–</em>';
+        var dm = Math.round((a - b) * 60); if (!dm) return '<em class="z">= 0m</em>';
+        var dist = function (h) { return h < lo ? lo - h : (h > hi ? h - hi : 0); }, better = dist(a) <= dist(b);
+        return '<em class="' + (better ? 'up' : 'dn') + '">' + (dm > 0 ? '▲ ' : '▼ ') + hm(Math.abs(dm)) + '</em>';
+      }
+      if (a === b) return '<em class="z">= ' + T('sama', 'same') + '</em>';
+      var txt = kind === 'n' ? Math.abs(a - b) : (b ? Math.round(100 * Math.abs(a - b) / b) + '%' : T('baru', 'new'));
+      var cls = kind === 'neutral' ? 'z' : (a > b ? 'up' : 'dn');
+      return '<em class="' + cls + '">' + (a > b ? '▲ ' : '▼ ') + txt + '</em>';
+    }
+    function tile(lbl, val, d) { return '<div class="kt"><span>' + lbl + '</span><b>' + val + '</b>' + d + '</div>'; }
+    var cur = +($('cur').textContent) || 0, best = +($('best').textContent) || 0;
+    var dmy = function (k) { var q = k.split('-'); return q[2] + '/' + q[1]; };
+    var head = '<div class="kh"><small>' + T('vs tempoh sebelum', 'vs previous period') + ' (' + (span === 1 ? dmy(pFrom) : dmy(pFrom) + ' – ' + dmy(pTo)) + ')</small></div>';
+    var grid = '<div class="kg">' +
+      tile('Workout', c.w + '<i>/' + span + '</i>', dl(c.w, p.w, 'n')) +
+      tile(T('Rehat', 'Rest'), c.r, dl(c.r, p.r, 'neutral')) +
+      tile('Reps', c.reps.toLocaleString(), dl(c.reps, p.reps)) +
+      tile(T('Masa workout', 'Workout time'), c.min >= 60 ? Math.floor(c.min / 60) + T('j ', 'h ') + (c.min % 60) + 'm' : c.min + 'm', dl(c.min, p.min)) +
+      tile(T('Purata tidur', 'Avg sleep'), c.sl === null ? '–' : hm(c.sl * 60), dl(c.sl, p.sl, 'sl')) +
+      tile('Streak', cur + '<i> ' + T('hari', cur === 1 ? 'day' : 'days') + '</i>', '<em class="z">' + T('terbaik ', 'best ') + best + '</em>') + '</div>';
+    // recommendations: one short line each, coloured dot = tone
+    var R = [], cons = Math.round(100 * c.w / span), run = 0;
+    var k0 = (to === t && !c.wd[t] && !c.rd[t]) ? addDays(t, -1) : to;
+    for (var k = k0; k >= from && !c.wd[k]; k = addDays(k, -1)) run++;
+    function add(tone, bm, e) { R.push('<li><i class="' + tone + '"></i><span>' + T(bm, e) + '</span></li>'); }
+    if (!c.w && span >= 2) add('r', 'Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas <b>15 minit</b> hari ini.', 'No workouts in this period yet. Start with a short <b>15-minute</b> session today.');
+    else if (span >= 5) {
+      if (cons >= 60) add('g', 'Konsisten <b>' + cons + '%</b> — teruskan, tambah sedikit reps atau berat.', '<b>' + cons + '%</b> consistent — keep going, add a few reps or a little weight.');
+      else if (cons < 30) add('o', 'Konsisten <b>' + cons + '%</b>. Sasarkan sekurang-kurangnya <b>3 workout</b> seminggu.', '<b>' + cons + '%</b> consistency. Aim for at least <b>3 workouts</b> a week.');
+    }
+    if (hasP && c.w !== p.w && span > 1) add(c.w > p.w ? 'g' : 'o', (c.w > p.w ? 'Lebih ' : 'Kurang ') + '<b>' + Math.abs(c.w - p.w) + ' workout</b> berbanding tempoh sebelum.', '<b>' + Math.abs(c.w - p.w) + (c.w > p.w ? ' more' : ' fewer') + ' workout' + (Math.abs(c.w - p.w) === 1 ? '' : 's') + '</b> than the previous period.');
+    if (hasP && c.reps && p.reps) { var ch = Math.round(100 * (c.reps - p.reps) / p.reps); if (Math.abs(ch) >= 10) add(ch > 0 ? 'g' : 'o', 'Reps ' + (ch > 0 ? 'naik' : 'turun') + ' <b>' + Math.abs(ch) + '%</b>' + (ch > 0 ? ' — progress bagus.' : ' — semak intensiti atau rehat.'), 'Reps ' + (ch > 0 ? 'up' : 'down') + ' <b>' + Math.abs(ch) + '%</b>' + (ch > 0 ? ' — good progress.' : ' — check intensity or recovery.')); }
+    if (run >= 3 && to === t) add('y', '<b>' + run + ' hari</b> berturut rehat — masa untuk kembali bergerak.', '<b>' + run + ' days</b> of rest in a row — time to move again.');
+    if (c.sl !== null) {
+      if (c.sl < lo) add('r', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, bawah ' + lo + '–' + hi + 'j. Cuba tidur 30 minit lebih awal untuk recovery.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, under ' + lo + '–' + hi + 'h. Try bed 30 minutes earlier for recovery.');
+      else if (c.sl > hi) add('b', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, lebih dari ' + hi + 'j. Bangun pada waktu tetap.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, over ' + hi + 'h. Keep a fixed wake time.');
+      else add('g', 'Tidur dalam target: <b>' + c.ok + '/' + c.n + '</b> malam.', 'Sleep on target: <b>' + c.ok + '/' + c.n + '</b> nights.');
+    }
+    if (!R.length) add('b', 'Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.');
+    el.innerHTML = head + grid + '<div class="kl">' + T('RINGKASAN & CADANGAN', 'SUMMARY & TIPS') + '</div><ul class="kr">' + R.slice(0, 4).join('') + '</ul>';
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
   }
   [].forEach.call($('rFilter').children, function (b) {
