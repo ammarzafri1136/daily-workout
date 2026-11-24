@@ -965,6 +965,27 @@
   /* dashboard period label centred */
   #dashView .dh { justify-content:center !important; text-align:center; gap:0 !important; }
   #dashView .dh #dLabel { font-size:13px; color:var(--muted); }
+
+  .mm2 { width:220px; }
+  .mm2 .mmh { font-size:12px; font-weight:600; color:var(--muted); padding:6px 10px 4px; }
+  .mm2 .mml { max-height:260px; overflow-y:auto; }
+  .mm2 .mml button { width:100%; display:flex; align-items:center; justify-content:space-between; padding:10px 10px !important; background:none !important;
+    color:var(--ink) !important; border-radius:10px !important; font-size:15px; font-weight:600 !important; }
+  .mm2 .mml button.on { color:var(--accent) !important; }
+  .mm2 .mml button:active { background:var(--tile) !important; }
+  .mm2 .qck { width:18px; height:18px; }
+  .flt.seg2 .cdn { width:12px; height:12px; vertical-align:-1px; opacity:.8; }
+
+  /* month picker (Custom): year switch, Jan–Dec grid, then custom range */
+  .mm2 .mmh { display:flex; align-items:center; justify-content:space-between; padding:6px 6px 8px; color:var(--ink); }
+  .mm2 .mmh b { font-size:15px; font-weight:700; }
+  .mm2 .yn { width:30px; height:30px; padding:0 !important; display:flex; align-items:center; justify-content:center; background:var(--tile) !important; color:var(--ink) !important; }
+  .mm2 .yn:disabled { opacity:.3; } .mm2 .yn .ico { width:16px; height:16px; } .mm2 .flip { transform:scaleX(-1); }
+  .mm2 .mml { display:grid !important; grid-template-columns:repeat(3, 1fr); gap:6px; padding:0 4px 6px; max-height:none !important; }
+  .mm2 .mml button { padding:9px 0 !important; border-radius:10px !important; background:var(--tile) !important; color:var(--ink) !important; font-size:14px; font-weight:600 !important; justify-content:center; }
+  .mm2 .mml button.now { box-shadow:inset 0 0 0 1.5px var(--accent); }
+  .mm2 .mml button.on { background:var(--accent) !important; color:#fff !important; }
+  .mm2 .mml button:disabled { opacity:.3; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1203,10 +1224,11 @@
   }
   var REC = [], REC_TODAY = '', RREC = '7d';
   try { RREC = localStorage.getItem('dw-rrange') || '7d'; } catch (e) {}
-  if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RREC) < 0) RREC = '7d';
+  if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RREC) < 0 && !/^m:\d{4}-\d{2}$/.test(RREC)) RREC = '7d';
   function renderRecent() {
     var rg = rangeFor(RREC, 'rFrom', 'rTo', REC.map(function (x) { return x.date; }));
     [].forEach.call($('rFilter').children, function (b) { b.classList.toggle('on', b.dataset.r === RREC); });
+    paintCustomBtn('rFilter', RREC);
     $('rCustom').classList.toggle('on', RREC === 'custom'); $('rLabel').textContent = rg.label;
     var list = REC.filter(function (x) { return x.date >= rg.from && x.date <= rg.to; });
       renderRecSummary(list, rg);
@@ -1507,12 +1529,16 @@
   // ---- dashboard date filter ----
   var RANGE = '30d';
   try { RANGE = localStorage.getItem('dw-range') || '30d'; } catch (e) {}
-  if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RANGE) < 0) RANGE = '30d';
+  if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RANGE) < 0 && !/^m:\d{4}-\d{2}$/.test(RANGE)) RANGE = '30d';
   function addDays(k, n) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + n)); return d.toISOString().slice(0, 10); }
   function dRange() { return rangeFor(RANGE, 'dFrom', 'dTo', DASH ? DASH.days.concat(DASH.sleep || []).map(function (x) { return x.d; }) : []); }
   function rangeFor(RANGE, fromId, toId, keys) {
     var t = (DASH && DASH.today) || REC_TODAY || todayKey(), first = t;
     keys.forEach(function (k) { if (k < first) first = k; });
+    if (/^m:\d{4}-\d{2}$/.test(RANGE)) {                       // a whole calendar month picked from the Custom menu
+      var mm = RANGE.slice(2), pp = mm.split('-'), nd0 = new Date(Date.UTC(+pp[0], +pp[1], 0)).getUTCDate();
+      return { from: mm + '-01', to: mm + '-' + (nd0 < 10 ? '0' : '') + nd0, label: monLabel(mm) };
+    }
     switch (RANGE) {
       case 'today': return { from: t, to: t, label: 'Today · ' + isoToDmy(t) };
       case 'yesterday': var y = addDays(t, -1); return { from: y, to: y, label: 'Yesterday · ' + isoToDmy(y) };
@@ -1533,6 +1559,7 @@
   function inRange(k) { var r = dRange(); return k >= r.from && k <= r.to; }
   function paintFilter() {
     [].forEach.call($('dFilter').children, function (b) { b.classList.toggle('on', b.dataset.r === RANGE); });
+    paintCustomBtn('dFilter', RANGE);
     $('dCustom').classList.toggle('on', RANGE === 'custom');
     $('dLabel').textContent = dRange().label;
   }
@@ -2182,6 +2209,57 @@
     paint();
   }
   // (period picker is now an inline segmented row — see .seg2)
+  // ---- "Custom" opens a menu: months (newest first) then "Custom range…" ----
+  function paintCustomBtn(fltId, val) {
+    var b = $(fltId).querySelector('[data-r="custom"]'); if (!b) return;
+    var isM = /^m:/.test(val), act = isM || val === 'custom';
+    b.classList.toggle('on', act);
+    b.innerHTML = esc(isM ? monLabel(val.slice(2)).replace(/ (\d{2})(\d{2})$/, ' $2') : (val === 'custom' ? 'Range' : 'Custom')) + ' ' + ic('down', 'cdn');
+  }
+  var MM = document.createElement('div'); MM.className = 'qm mm2'; document.body.appendChild(MM);
+  function closeMM() { MM.classList.remove('on'); }
+  var MM_YEAR = null;
+  function openMonthMenu(fltId, year) {
+    var isD = fltId === 'dFilter', cur = isD ? RANGE : RREC, t = (isD ? (DASH && DASH.today) : REC_TODAY) || todayKey();
+    var ty = +t.slice(0, 4), tm = t.slice(0, 7);
+    var y = year || (/^m:/.test(cur) ? +cur.slice(2, 6) : ty); MM_YEAR = y;
+    var en = S.lang === 'en', MS = en ? MON_LONG_EN : MON_LONG_BM, months = [];
+    for (var i = 1; i <= 12; i++) months.push(y + '-' + ('0' + i).slice(-2));          // Jan .. Dec
+    MM.innerHTML = '<div class="mmh"><button type="button" class="yn" data-y="' + (y - 1) + '" aria-label="Tahun sebelum">' + ic('right', 'flip') + '</button><b>' + y + '</b>' +
+      '<button type="button" class="yn" data-y="' + (y + 1) + '"' + (y >= ty ? ' disabled' : '') + ' aria-label="Tahun seterusnya">' + ic('right') + '</button></div>' +
+      '<div class="mml">' + months.map(function (x) {
+        var fut = x > tm, on = cur === 'm:' + x;
+        return '<button type="button" data-m="' + x + '" class="' + (on ? 'on' : '') + (x === tm ? ' now' : '') + '"' + (fut ? ' disabled' : '') + '>' + MS[+x.slice(5) - 1].slice(0, 3) + '</button>';
+      }).join('') + '</div><button type="button" class="qall" data-m="custom">' + ic('cal') + (en ? 'Custom range…' : 'Julat sendiri…') + (cur === 'custom' ? ic('check', 'qgo') : ic('right', 'qgo')) + '</button>';
+    [].forEach.call(MM.querySelectorAll('.yn'), function (b) { b.onclick = function (e) { e.stopPropagation(); if (!b.disabled) openMonthMenu(fltId, +b.dataset.y); }; });
+    [].forEach.call(MM.querySelectorAll('[data-m]'), function (b) {
+      b.onclick = function (e) {
+        e.stopPropagation(); closeMM();
+        var v = b.dataset.m === 'custom' ? 'custom' : 'm:' + b.dataset.m;
+        if (isD) {
+          RANGE = v; try { localStorage.setItem('dw-range', RANGE); } catch (x) {}
+          if (v === 'custom' && !$('dFrom').value) { $('dFrom').value = addDays(t, -29); $('dTo').value = t; }
+          renderDash();
+        } else {
+          RREC = v; try { localStorage.setItem('dw-rrange', RREC); } catch (x) {}
+          if (v === 'custom' && !$('rFrom').value) { $('rFrom').value = addDays(t, -29); $('rTo').value = t; }
+          renderRecent();
+        }
+      };
+    });
+    var r = $(fltId).querySelector('[data-r="custom"]').getBoundingClientRect();
+    MM.style.width = '236px';
+    MM.style.top = (r.bottom + window.scrollY + 8) + 'px'; MM.style.left = Math.max(8, Math.min(r.right - 236, window.innerWidth - 244) + window.scrollX) + 'px';
+    MM.classList.add('on');
+  }
+  ['dFilter', 'rFilter'].forEach(function (id) {
+    var b = $(id).querySelector('[data-r="custom"]');
+    b.onclick = function (e) { e.stopPropagation(); MM.classList.contains('on') ? closeMM() : openMonthMenu(id); };
+  });
+  document.addEventListener('click', function (e) { if (MM.classList.contains('on') && !MM.contains(e.target)) closeMM(); });
+  window.addEventListener('scroll', closeMM, { passive: true });
+  paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC);
+
 
   // ---------------- Dashboard tabs: Workout / Sleep ----------------
   var DTAB = 'w';
@@ -2399,7 +2477,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', '14 hari': '14 days', '30 hari': '30 days', '90 hari': '90 days', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Julat sendiri…': 'Custom range…', '14 hari': '14 days', '30 hari': '30 days', '90 hari': '90 days', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
