@@ -1284,6 +1284,10 @@
   .title h1 .ih-dumbbell .pub, .rkp .kr .ih-dumbbell .pub { animation:puB 1.4s cubic-bezier(.45,0,.3,1) infinite; }
   .title h1 .ih-dumbbell .pua, .rkp .kr .ih-dumbbell .pua { animation:puA 1.4s cubic-bezier(.45,0,.3,1) infinite; }
   .ratio .ih-dumbbell .pug { display:none; }
+
+  .schart svg { touch-action:pan-y; }
+  .schart .sguide { stroke:var(--muted); stroke-width:1; stroke-dasharray:3 3; opacity:0; transition:opacity .15s; pointer-events:none; }
+  .schart .sguide.on { opacity:.7; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -2014,7 +2018,23 @@
       tip.style.left = left + 'px'; tip.style.top = top + 'px';
     };
     [].forEach.call(wrap.querySelectorAll('.sdp'), function (q) { q.addEventListener('click', function (e) { e.stopPropagation(); showTip(q); }); q.addEventListener('mouseenter', function () { showTip(q); }); });
-    wrap.addEventListener('click', function () { tip.classList.remove('on'); [].forEach.call(wrap.querySelectorAll('.sdp.on'), function (q) { q.classList.remove('on'); }); });
+    wrap.addEventListener('click', function () { tip.classList.remove('on'); guide.classList.remove('on'); [].forEach.call(wrap.querySelectorAll('.sdp.on'), function (q) { q.classList.remove('on'); }); });
+    // slide a finger (or mouse) across the chart: the nearest night's details follow it, no need to hit the dot
+    var svg = wrap.querySelector('svg'), vb = svg.viewBox.baseVal, NS = 'http://www.w3.org/2000/svg';
+    var pts = [].map.call(wrap.querySelectorAll('.sdp'), function (q) { return { g: q, x: +q.firstChild.getAttribute('cx') }; });
+    var guide = document.createElementNS(NS, 'line'); guide.setAttribute('class', 'sguide'); guide.setAttribute('y1', 6); guide.setAttribute('y2', vb.height - 22);
+    svg.insertBefore(guide, svg.firstChild);
+    var curG = null, scrub = false;
+    var nearest = function (clientX) {
+      if (!pts.length) return;
+      var sr = svg.getBoundingClientRect(), x = (clientX - sr.left) / sr.width * vb.width, best = pts[0];
+      pts.forEach(function (pp) { if (Math.abs(pp.x - x) < Math.abs(best.x - x)) best = pp; });
+      if (best.g !== curG) { curG = best.g; showTip(best.g); guide.setAttribute('x1', best.x); guide.setAttribute('x2', best.x); guide.classList.add('on'); }
+    };
+    svg.addEventListener('pointerdown', function (e) { scrub = true; curG = null; nearest(e.clientX); });
+    svg.addEventListener('pointermove', function (e) { if (scrub || e.pointerType === 'mouse') nearest(e.clientX); });
+    ['pointerup', 'pointercancel'].forEach(function (ev) { svg.addEventListener(ev, function () { scrub = false; }); });
+    svg.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { scrub = false; } });
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
   }
 
