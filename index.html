@@ -1328,6 +1328,8 @@
   .navsp { order:3; width:50px; flex:none; }
   .nav .lt { container-type:inline-size; } .nav .lt small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
   @container (max-width:200px) { .lt small .gr { display:none; } }
+
+  .lchart .stt, .lchart .stt.on { transform:none; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -2196,8 +2198,34 @@
       g += '<polyline fill="none" stroke="' + s.c + '" stroke-width="2" stroke-linejoin="round" ' + (s.dash ? 'stroke-dasharray="5 4" opacity=".7"' : '') + ' points="' + pts.join(' ') + '"/>';
       if (!s.dash) s.vals.forEach(function (v, i) { if (v !== null) g += '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="3.2" fill="' + s.c + '" stroke="var(--paper)" stroke-width="1.5"><title>' + labels[i] + ': ' + v + (unit || '') + '</title></circle>'; });
     });
-    el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg>' +
+    el.innerHTML = '<div class="schart lchart"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg><div class="stt"></div></div>' +
       '<div class="lg">' + series.map(function (s) { return '<span style="--c:' + s.c + '">' + s.name + '</span>'; }).join('') + '</div>';
+    // slide a finger across: the nearest point's values follow it
+    var wrap = el.querySelector('.lchart'), svg = wrap.querySelector('svg'), tip = wrap.querySelector('.stt'), NS = 'http://www.w3.org/2000/svg';
+    var guide = document.createElementNS(NS, 'line'); guide.setAttribute('class', 'sguide'); guide.setAttribute('y1', T); guide.setAttribute('y2', H - B);
+    svg.insertBefore(guide, svg.firstChild);
+    var mk = document.createElementNS(NS, 'g'); svg.appendChild(mk);
+    var fmtVal = function (v, s) {
+      if (v === null || v === undefined) return '–';
+      if (/kg/i.test(s.name)) return (Math.round(v * 10) / 10) + ' kg';
+      if (unit === ' min') { var tot = Math.round(v * 60), m = Math.floor(tot / 60), sec = tot % 60; return m + 'm' + (sec ? ' ' + sec + 's' : ''); }
+      return (Math.round(v * 10) / 10) + (unit || '');
+    };
+    var cur = -1, on = false;
+    var show = function (i) {
+      if (i === cur) return; cur = i;
+      var gx = x(i); guide.setAttribute('x1', gx); guide.setAttribute('x2', gx); guide.classList.add('on');
+      mk.innerHTML = series.map(function (s) { var v = s.vals[i]; return v === null || v === undefined ? '' : '<circle cx="' + gx + '" cy="' + y(v) + '" r="5.5" fill="' + s.c + '" stroke="var(--paper)" stroke-width="2"/>'; }).join('');
+      tip.innerHTML = '<b>' + esc(labels[i]) + '</b>' + series.map(function (s) { return '<span><i style="background:' + s.c + '"></i>' + esc(s.name) + ': ' + fmtVal(s.vals[i], s) + '</span>'; }).join('');
+      tip.classList.add('on');
+      var sr = svg.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), px = sr.left - wr.left + gx / W * sr.width, tw = tip.offsetWidth;
+      var lx = px + 12 + tw <= wr.width ? px + 12 : px - 12 - tw; tip.style.left = Math.max(4, lx) + 'px'; tip.style.top = '4px';
+    };
+    var near = function (cx) { var sr = svg.getBoundingClientRect(), vx = (cx - sr.left) / sr.width * W, bi = 0; for (var i = 1; i < labels.length; i++) if (Math.abs(x(i) - vx) < Math.abs(x(bi) - vx)) bi = i; show(bi); };
+    svg.addEventListener('pointerdown', function (e) { on = true; cur = -1; near(e.clientX); });
+    svg.addEventListener('pointermove', function (e) { if (on || e.pointerType === 'mouse') near(e.clientX); });
+    ['pointerup', 'pointercancel'].forEach(function (ev) { svg.addEventListener(ev, function () { on = false; }); });
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) { tip.classList.remove('on'); guide.classList.remove('on'); mk.innerHTML = ''; cur = -1; } });
   }
 
   // ---- stat row (Dribbble habit style): optional ring + numbers split by thin dividers ----
