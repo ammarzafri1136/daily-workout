@@ -121,7 +121,7 @@
   .hb .r { display:flex; align-items:center; gap:8px; margin:5px 0; font-size:14px; }
   .hb .n { width:34%; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .hb .t { flex:1; background:var(--tile); border-radius:6px; height:22px; overflow:hidden; }
-  .hb .t i { display:block; height:100%; background:var(--pen); border-radius:6px; }
+  .hb .t i { display:block; height:100%; background:var(--wk, var(--pen)); border-radius:6px; }
   .hb .v { width:3.6em; text-align:right; font-weight:800; }
   .lg { display:flex; gap:12px; font-size:12px; color:var(--muted); margin-top:4px; }
   .lg span:before { content:''; display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; background:var(--c); vertical-align:-1px; }
@@ -751,7 +751,7 @@
   <div class="wnote">Muncul sebagai pilihan bila tekan kotak WORKOUT dalam kad.</div>
 
   <h4>Tidur</h4>
-  <div class="row"><div>Target tidur (julat)<small>Dalam julat = hijau · bawah = merah · lebih = oren</small></div>
+  <div class="row"><div>Target tidur (julat)<small>Dalam julat = hijau · bawah = merah · lebih = biru</small></div>
     <div class="mm"><input id="optSleepLo" inputmode="decimal" maxlength="4" placeholder="7" aria-label="Target tidur minimum (jam)">–<input id="optSleepT" inputmode="decimal" maxlength="4" placeholder="8" aria-label="Target tidur maksimum (jam)">j</div></div>
 
   <h4>Lain-lain</h4>
@@ -897,7 +897,7 @@
   .wk button { display:flex; flex-direction:column; align-items:center; gap:4px; background:none !important; padding:0 !important; color:var(--ink); position:relative; }
   .wk small { font-size:11px; color:var(--muted); font-weight:500; }
   .wk b { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; background:var(--tile); }
-  .wk .w b { background:var(--pen); color:#fff; } body.dark .wk .w b { color:#111; }
+  .wk .w b { background:var(--wk); color:#fff; } body.dark .wk .w b { color:#111; }
   .wk .r b { background:var(--rest); color:#111; }
   .wk .t b { box-shadow:none; }
   .wk .s b { box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--sc); }
@@ -1401,15 +1401,15 @@
       '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(tgt) + '" y2="' + y(tgt) + '" stroke="#22c55e" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>' +
       '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(okMax) + '" y2="' + y(okMax) + '" stroke="#22c55e" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>';
     var pts = rows.map(function (r) { return x(r.d) + ',' + y(r.h); });
-    if (rows.length > 1) g += '<defs><linearGradient id="sga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--pen)" stop-opacity=".4"/><stop offset="1" stop-color="var(--pen)" stop-opacity="0"/></linearGradient></defs>' +
+    if (rows.length > 1) g += '<defs><linearGradient id="sga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--muted)" stop-opacity=".35"/><stop offset="1" stop-color="var(--muted)" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="M' + x(rows[0].d) + ',' + (H - B) + ' L' + pts.join(' L') + ' L' + x(rows[rows.length - 1].d) + ',' + (H - B) + ' Z" fill="url(#sga)"/>';
-    g += '<polyline fill="none" stroke="var(--pen)" stroke-width="2" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
+    g += '<polyline fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
     // below target = red X, target to 9h = green tick, over 9h = amber triangle (too much sleep)
     rows.forEach(function (r) {
       var cx = x(r.d), cy = y(r.h), mk;
       if (r.h < tgt) mk = '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#ef4444" stroke="var(--paper)" stroke-width="1.5"/>';
       else if (r.h <= okMax) mk = '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#22c55e" stroke="var(--paper)" stroke-width="1.5"/>';
-      else mk = '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#f59e0b" stroke="var(--paper)" stroke-width="1.5"/>';
+      else mk = '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#3b82f6" stroke="var(--paper)" stroke-width="1.5"/>';
       g += '<g>' + mk + '<title>' + ddmm(r.d) + ': ' + r.text + ' (' + r.start + ' → ' + r.end + ')</title></g>';
     });
     var hs = rows.map(function (r) { return r.h; }), avg = hs.reduce(function (a, b) { return a + b; }, 0) / hs.length;
@@ -1418,7 +1418,7 @@
       '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg>' +
       '<div class="slg"><span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#ef4444"/></svg>Bawah target</span>' +
       '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#22c55e"/></svg>Target ' + tgt + '–' + okMax + 'j</span>' +
-      '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#f59e0b"/></svg>Lebih ' + okMax + ' jam</span></div>' +
+      '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#3b82f6"/></svg>Lebih ' + okMax + ' jam</span></div>' +
       '<div class="skpi"><div><b>' + fmt(avg) + '</b>Purata</div><div><b>' + rows.length + '</b>Malam</div><div><b>' + fmt(Math.min.apply(null, hs)) +
       '</b>Terpendek</div><div><b>' + fmt(Math.max.apply(null, hs)) + '</b>Terpanjang</div></div>';
   }
@@ -1549,7 +1549,7 @@
     var mins = Math.round(wd.reduce(function (a, x) { return a + x.min; }, 0));
     var sessions = wd.reduce(function (a, x) { return a + (x.sessions || 1); }, 0);
     var review = ex.filter(function (x) { return x.review; }).length;
-    var penC = getComputedStyle(document.body).getPropertyValue('--pen').trim();
+    var penC = getComputedStyle(document.body).getPropertyValue('--wk').trim();
     var restC = getComputedStyle(document.body).getPropertyValue('--rest').trim();
     var kpis = [[wd.length, 'Hari workout'], [rd.length, 'Hari rehat'], [sessions, 'Sesi'], [reps, 'Reps'],
       [Math.floor(mins / 60) + 'j ' + (mins % 60) + 'm', 'Masa'], [DASH.streaks.current, 'Streak'],
@@ -1631,7 +1631,7 @@
       // sleep stats -> list of the matching nights
       var tg = slLo(), okM = slHi(), allS = DASH.sleep || [], nts = allS.filter(function (x) { return inRange(x.d); });
       var onT = function (x) { return x.h >= tg && x.h <= okM; };
-      var mark = function (x) { return '<i class="sdot" style="background:' + (x.h < tg ? '#ef4444' : (x.h <= okM ? '#22c55e' : '#f59e0b')) + '"></i>'; };
+      var mark = function (x) { return '<i class="sdot" style="background:' + (x.h < tg ? '#ef4444' : (x.h <= okM ? '#22c55e' : '#3b82f6')) + '"></i>'; };
       var srow = function (x, extra) { return row(x.d, mark(x) + ' ' + x.text + ' · ' + x.start + ' → ' + x.end + (x.awake ? ' · awake ' + hmTxt(x.awake) : '') + (extra || '')); };
       var sd = function (a) { return a.slice().sort(function (p, q) { return p.d < q.d ? 1 : -1; }); };
       var avgH = nts.length ? nts.reduce(function (a, x) { return a + x.h; }, 0) / nts.length : 0;
@@ -1672,7 +1672,7 @@
     var rows = DASH.ex.filter(function (x) { return x.n === n && inRange(x.d); });
     var by = {}; rows.forEach(function (x) { by[x.d] = by[x.d] || { t: 0, kg: 0, u: x.u }; by[x.d].t += x.t; by[x.d].kg = Math.max(by[x.d].kg, x.kg); });
     var ks = Object.keys(by).sort(), unit = rows.length && rows[0].u === 'seconds' ? ' s' : ' reps';
-    var penC = getComputedStyle(document.body).getPropertyValue('--pen').trim();
+    var penC = getComputedStyle(document.body).getPropertyValue('--wk').trim();
     var series = [{ name: unit === ' s' ? 'Jumlah saat' : 'Jumlah reps', c: penC, vals: ks.map(function (k) { return by[k].t; }) }];
     if (ks.some(function (k) { return by[k].kg; })) series.push({ name: 'Berat max (kg)', c: getComputedStyle(document.body).getPropertyValue('--warn').trim(), vals: ks.map(function (k) { return by[k].kg || null; }) });
     lineSvg($('cProg'), ks.map(ddmm), series, unit);
@@ -1720,7 +1720,9 @@
     var pen = typeof S.pen === 'string' ? [0, S.pen, S.pen] : (PENS[S.pen] || PENS[0]);
     var head = typeof S.head === 'string' ? [0, S.head, S.head] : (HEADS[S.head] || HEADS[0]);
     b.setProperty('--pen', dark ? pen[2] : pen[1]);
-    var rc = restFor(dark ? pen[2] : pen[1]); b.setProperty('--rest', rc); b.setProperty('--rest-tx', rc === '#facc15' && !dark ? '#a16207' : rc);
+    // data colours (fixed, all different): workout = purple, rest = amber; sleep uses red / green / blue
+    b.setProperty('--wk', dark ? '#a78bfa' : '#7c3aed');
+    b.setProperty('--rest', '#f59e0b'); b.setProperty('--rest-tx', dark ? '#fbbf24' : '#b45309');
     b.setProperty('--headbg', dark ? head[2] : head[1]);
     b.setProperty('--headfg', typeof S.head === 'string' ? (lum(S.head) > 0.6 ? '#111' : '#fff') : (dark ? '#111' : '#fff'));
     $('themeBtn').classList.toggle('isdark', dark); $('themeBtn').title = dark ? 'Bright mode' : 'Dark mode';
@@ -2131,7 +2133,7 @@
   function slLo() { var lo = +S.sleepMin || 7, hi = +S.sleepTarget || 8; return Math.min(lo, hi); }
   function slHi() { var lo = +S.sleepMin || 7, hi = +S.sleepTarget || 8; return Math.max(lo, hi); }
   function slTxt() { return slLo() + '–' + slHi() + 'j'; }
-  function sleepColor(h) { return h < slLo() ? '#ef4444' : (h <= slHi() ? '#22c55e' : '#f59e0b'); }
+  function sleepColor(h) { return h < slLo() ? '#ef4444' : (h <= slHi() ? '#22c55e' : '#3b82f6'); }
   function hClock(h) { var t = Math.round(h * 60); return Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2); }
   function avgClock(list) {
     var v = list.map(clockMin).filter(function (c) { return c !== null; });
@@ -2194,7 +2196,7 @@
         var bg = colOf(x);
         return '<i class="has" data-d="' + key + '" style="background:' + bg + ';color:' + (lum(bg) > 0.6 ? '#111' : '#fff') + '" title="' + esc(tip(x) + ' · ' + labOf(x)) + '">' + d + '</i>';
       }).join('') + '</div></div></div>';
-    html += o.legend || '<div class="hml"><span style="--c:#ef4444">Bawah ' + slLo() + 'j</span><span style="--c:#22c55e">' + slTxt() + '</span><span style="--c:#f59e0b">Lebih ' + slHi() + 'j</span></div>';
+    html += o.legend || '<div class="hml"><span style="--c:#ef4444">Bawah ' + slLo() + 'j</span><span style="--c:#22c55e">' + slTxt() + '</span><span style="--c:#3b82f6">Lebih ' + slHi() + 'j</span></div>';
     el.innerHTML = html;
     [].forEach.call(el.querySelectorAll('[data-d]'), function (c) { c.onclick = function () { openDetail(c.dataset.d); }; });
     var w = el.querySelector('.hst-s'); if (w) w.scrollLeft = w.scrollWidth;
@@ -2242,7 +2244,7 @@
         else { k = 'good'; title = T('Corak tidur bagus', 'Good sleep pattern'); text = T('Purata ' + hm(avg * 60) + ', ' + hit + '/' + wk.length + ' malam capai target. Teruskan!', 'Average ' + hm(avg * 60) + ', ' + hit + ' of ' + wk.length + ' nights on target. Keep it up!'); }
       }
     }
-    var C = { late: '#8b5cf6', short: '#dc2626', long: '#f59e0b', good: '#16a34a', info: '#3b82f6' };
+    var C = { late: '#ec4899', short: '#dc2626', long: '#3b82f6', good: '#16a34a', info: '#64748b' };
     var I = { late: 'moon-stars', short: 'battery-low', long: 'bed', good: 'check', info: 'lightbulb' };
     LANG_BUSY = true;
     box.innerHTML = '<i class="si" style="background:' + C[k] + '">' + ic(I[k]) + '</i><div><b></b><span></span></div>';
@@ -2330,7 +2332,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = oren': 'In range = green · under = red · over = amber', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
