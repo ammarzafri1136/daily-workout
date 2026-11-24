@@ -590,10 +590,12 @@
 <div class="wrap">
   <nav class="nav">
     <div class="tabs" role="tablist"><button type="button" id="homeBtn" class="on" role="tab">Home</button><button type="button" id="dashBtn" role="tab">Dashboard</button></div>
+    <button type="button" class="stk" id="streakChip" title="Streak workout" aria-label="Streak workout"></button>
     <button type="button" class="ib txt" id="langBtn" title="Bahasa / Language" aria-label="Bahasa / Language">BM</button>
     <button type="button" class="ib" id="themeBtn" title="Dark / Bright mode" aria-label="Dark mode"><svg class="ico ih ih-moon hi tm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mn" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg><svg class="ico ih ih-sun hi ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><g class="sr"><path d="M12 5l0 .01"/><path d="M17 7l0 .01"/><path d="M19 12l0 .01"/><path d="M17 17l0 .01"/><path d="M12 19l0 .01"/><path d="M7 17l0 .01"/><path d="M5 12l0 .01"/><path d="M7 7l0 .01"/></g></svg></button>
     <button type="button" class="ib" id="setBtn" title="Settings" aria-label="Settings"><svg class="ico ih ih-gear hi" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="gr"><circle class="gc" cx="16" cy="16" r="5"/><path d="m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z"/></g></svg></button>
   </nav>
+  <div class="wk" id="weekStrip" aria-label="Minggu ini"></div>
 
   <div id="dashView" style="display:none">
     <div class="card">
@@ -874,6 +876,26 @@
   #dashView .seg { background:#e3e3e9 !important; } body.dark #dashView .seg { background:#1c1c1f !important; }
   #dashView .rsel .rmore { background:var(--paper) !important; }
   .hb .n { font-weight:600 !important; } .hb .v { font-weight:700 !important; }
+
+  /* header: streak | title | settings  (language + theme live in Settings) */
+  #langBtn, #themeBtn { display:none !important; }
+  .stk { order:1; height:36px; min-width:56px; padding:0 12px !important; display:inline-flex; align-items:center; justify-content:center; gap:4px;
+    background:rgba(250,204,21,.16) !important; color:#b45309 !important; font-size:15px; }
+  body.dark .stk { color:#facc15 !important; }
+  .stk .ico { width:18px; height:18px; } .stk b { font-weight:800; }
+  .stk.zero, body.dark .stk.zero { background:var(--paper) !important; color:var(--muted) !important; }
+  #setBtn { min-width:56px; }
+  .lt small { text-transform:none !important; letter-spacing:0 !important; font-size:12px !important; font-weight:500 !important; }
+  /* this-week strip */
+  .wk { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:4px; background:var(--paper); border-radius:22px; padding:10px 8px; margin:0 0 12px; }
+  .wk button { display:flex; flex-direction:column; align-items:center; gap:4px; background:none !important; padding:0 !important; color:var(--ink); position:relative; }
+  .wk small { font-size:11px; color:var(--muted); font-weight:500; }
+  .wk b { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; background:var(--tile); }
+  .wk .w b { background:var(--pen); color:#fff; } body.dark .wk .w b { color:#111; }
+  .wk .r b { background:var(--rest); color:#111; }
+  .wk .t b { box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--accent); }
+  .wk .f { opacity:.35; pointer-events:none; }
+  .wk i { position:absolute; bottom:-5px; width:5px; height:5px; border-radius:50%; background:#a78bfa; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1107,7 +1129,7 @@
     RUN().withSuccessHandler(function (d) {
       $('cur').textContent = d.streaks.current; $('best').textContent = d.streaks.longest;
       $('sheetLink').href = d.sheetUrl;
-      REC = d.recent; REC_TODAY = d.today; renderRecent();
+      REC = d.recent; REC_TODAY = d.today; STREAK = d.streaks.current; renderRecent(); paintHeaderExtras();
     }).withFailureHandler(function () { $('days').innerHTML = '<div class="day"><small>Tak dapat muat rekod.</small></div>'; }).appGetRecent();
   }
   var REC = [], REC_TODAY = '', RREC = '7d';
@@ -1533,6 +1555,35 @@
       var info = {}; DASH.days.forEach(function (x) { info[x.d] = x; });
       html = pick.slice().reverse().map(function (k) { var x = info[k] || {}; return row(k, (x.ex || 0) + ' latihan · ' + (x.reps || 0) + ' reps'); }).join('');
     }
+    else if (id.indexOf('s-') === 0) {
+      // sleep stats -> list of the matching nights
+      var tg = S.sleepTarget || 8, okM = Math.max(9, tg), allS = DASH.sleep || [], nts = allS.filter(function (x) { return inRange(x.d); });
+      var onT = function (x) { return x.h >= tg && x.h <= okM; };
+      var mark = function (x) { return x.h < tg ? '<span style="color:#dc2626;font-weight:800">✕</span>' : (x.h <= okM ? '<span style="color:#16a34a;font-weight:800">✓</span>' : '<span style="color:#f59e0b;font-weight:800">▲</span>'); };
+      var srow = function (x, extra) { return row(x.d, mark(x) + ' ' + x.text + ' · ' + x.start + ' → ' + x.end + (extra || '')); };
+      var sd = function (a) { return a.slice().sort(function (p, q) { return p.d < q.d ? 1 : -1; }); };
+      var avgH = nts.length ? nts.reduce(function (a, x) { return a + x.h; }, 0) / nts.length : 0;
+      if (id === 's-avg' || id === 's-n') { title = id === 's-n' ? 'Malam direkod' : 'Purata tidur'; sum = nts.length + ' malam' + (nts.length ? ' · purata ' + hm(avgH * 60) : ''); html = sd(nts).map(function (x) { return srow(x); }).join(''); }
+      else if (id === 's-hit') { var hitN = nts.filter(onT); title = 'Capai target (' + tg + 'j)'; sum = hitN.length + ' / ' + nts.length + ' malam';
+        html = '<div class="grp">Capai target</div>' + (sd(hitN).map(function (x) { return srow(x); }).join('') || '<div class="empty">Tiada.</div>') +
+          '<div class="grp">Tak capai</div>' + (sd(nts.filter(function (x) { return !onT(x); })).map(function (x) { return srow(x); }).join('') || '<div class="empty">Tiada.</div>'); }
+      else if (id === 's-ok') { var okN = nts.filter(function (x) { return x.h >= 7 && x.h <= 9; }); title = 'Tidur cukup 7–9 jam'; sum = okN.length + ' malam'; html = sd(okN).map(function (x) { return srow(x); }).join(''); }
+      else if (id === 's-cur' || id === 's-long') {
+        var byS = {}; allS.forEach(function (x) { byS[x.d] = x; });
+        var runsS = [], curR = null; allS.slice().sort(function (p, q) { return p.d < q.d ? -1 : 1; }).forEach(function (x) {
+          if (!onT(x)) { curR = null; return; }
+          if (curR && addDays(curR[curR.length - 1].d, 1) === x.d) curR.push(x); else { curR = [x]; runsS.push(curR); } });
+        var pk = [];
+        if (id === 's-cur') { title = 'Streak tidur semasa'; runsS.forEach(function (r) { var l = r[r.length - 1].d; if (l === DASH.today || l === addDays(DASH.today, -1)) pk = r; }); }
+        else { title = 'Streak tidur terbaik'; runsS.forEach(function (r) { if (r.length > pk.length) pk = r; }); }
+        sum = pk.length + ' malam berturut-turut capai target (semua rekod)'; html = pk.slice().reverse().map(function (x) { return srow(x); }).join('');
+      }
+      else if (id === 's-bed') { title = 'Waktu lelap'; sum = nts.length + ' malam · lewat dulu';
+        var bedM = function (x) { var c = clockMin(x.start); return c === null ? 0 : (c < 12 * 60 ? c + 1440 : c); };
+        html = nts.slice().sort(function (p, q) { return bedM(q) - bedM(p); }).map(function (x) { return srow(x); }).join(''); }
+      else if (id === 's-wake') { title = 'Waktu bangun'; sum = nts.length + ' malam · lewat dulu';
+        html = nts.slice().sort(function (p, q) { return (clockMin(q.end) || 0) - (clockMin(p.end) || 0); }).map(function (x) { return srow(x); }).join(''); }
+    }
     else if (id === 'rev') { title = 'Perlu semak'; var rv = ex.filter(function (x) { return x.review; }); sum = rv.length + ' latihan — tekan untuk edit';
       html = desc(rv).map(function (x) { return row(x.d, '<span class="flag">' + esc(x.n) + '</span>'); }).join(''); }
     $('detailBack').style.display = 'none';
@@ -1880,6 +1931,36 @@
   }
   function closeDp() { $('dp').classList.remove('on'); $('dpBg').classList.remove('on'); }
 
+
+  // ---------------- Header extras: streak chip, greeting, this-week strip ----------------
+  var STREAK = null;
+  function greet() { var h = new Date().getHours(), en = S.lang === 'en';
+    return h < 12 ? (en ? 'Good morning' : 'Selamat pagi') : h < 15 ? (en ? 'Good afternoon' : 'Selamat tengah hari') : h < 19 ? (en ? 'Good evening' : 'Selamat petang') : (en ? 'Good night' : 'Selamat malam'); }
+  function paintHeaderExtras() {
+    var c = $('streakChip'); if (!c) return;
+    c.innerHTML = ic('flame') + '<b>' + (STREAK === null ? '–' : STREAK) + '</b>';
+    c.title = (S.lang === 'en' ? 'Workout streak: ' : 'Streak workout: ') + (STREAK || 0) + (S.lang === 'en' ? ' day(s)' : ' hari');
+    c.classList.toggle('zero', !STREAK);
+    var w = $('weekStrip'), t = REC_TODAY || todayKey(), mon = weekStart(t), by = {};
+    var slp = {}; (REC || []).forEach(function (x) { (by[x.date] = by[x.date] || []).push(x.activity); if (x.sleep || x.activity === 'Sleep') slp[x.date] = 1; });
+    var en = S.lang === 'en', L = en ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['I', 'S', 'R', 'K', 'J', 'S', 'A'], h = '';
+    for (var i = 0; i < 7; i++) {
+      var k = addDays(mon, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
+      if (k > t) cls += ' f'; if (k === t) cls += ' t';
+      h += '<button type="button" data-d="' + k + '" class="' + cls + '"><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b>' + (slp[k] ? '<i></i>' : '') + '</button>';
+    }
+    w.innerHTML = h;
+    [].forEach.call(w.children, function (b) {
+      b.onclick = function () {
+        var k = b.dataset.d; if (k > t) return;
+        if ((by[k] || []).length) { openDetail(k); return; }
+        var pk = $('datePick'); pk.value = k; pk.dispatchEvent(new Event('change')); $('date').dispatchEvent(new Event('change'));
+        $('date').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+    });
+  }
+  $('streakChip').onclick = function () { $('dashBtn').click(); };
+
   // ---------------- Day name under the workout date ----------------
   var DAYS_BM = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'], LAST_DAY_KEY = null;
   function paintDayName() {
@@ -1966,11 +2047,12 @@
     while (byD[k] && on(byD[k])) { cur++; k = addDays(k, -1); }
     var n = rows.length, avg = n ? rows.reduce(function (a, x) { return a + x.h; }, 0) / n : 0;
     var hit = rows.filter(on).length, enough = rows.filter(function (x) { return x.h >= 7 && x.h <= 9; }).length;
-    var tiles = [[n ? hm(avg * 60) : '–', 'Purata tidur'], [n, 'Malam'], [n ? Math.round(hit / n * 100) + '%' : '–', 'Capai target'],
-                 [enough, 'Cukup 7–9j'], [cur, 'Streak'], [best, 'Streak terbaik'],
-                 [avgClock(rows.map(function (x) { return x.start; })), 'Purata lelap'], [avgWake(rows.map(function (x) { return x.end; })), 'Purata bangun']];
-    $('sKpi').innerHTML = statRow({ v: n ? (Math.round(avg * 10) / 10) : '–', unit: n ? (S.lang === 'en' ? 'h' : 'j') : '', frac: n ? avg / tgt : 0, label: 'Purata tidur' },
+    var tiles = [[n ? hm(avg * 60) : '–', 'Purata tidur', 's-avg'], [n, 'Malam', 's-n'], [n ? Math.round(hit / n * 100) + '%' : '–', 'Capai target', 's-hit'],
+                 [enough, 'Cukup 7–9j', 's-ok'], [cur, 'Streak', 's-cur'], [best, 'Streak terbaik', 's-long'],
+                 [avgClock(rows.map(function (x) { return x.start; })), 'Purata lelap', 's-bed'], [avgWake(rows.map(function (x) { return x.end; })), 'Purata bangun', 's-wake']];
+    $('sKpi').innerHTML = statRow({ v: n ? (Math.round(avg * 10) / 10) : '–', unit: n ? (S.lang === 'en' ? 'h' : 'j') : '', frac: n ? avg / tgt : 0, label: 'Purata tidur', k: 's-avg' },
         [tiles[1], tiles[2], tiles[3], tiles[4]]) + statRow(null, [tiles[5], tiles[0], tiles[6], tiles[7]]);
+    [].forEach.call($('sKpi').querySelectorAll('[data-k]'), function (b) { b.onclick = function () { openKpi(b.dataset.k); }; });
     renderHeat(all, rg);
   }
   function renderHeat(all, rg, o) {
@@ -2074,7 +2156,8 @@
   function paintTitle() {
     var en = S.lang === 'en', d = new Date(), dash = $('dashView').style.display !== 'none';
     LANG_BUSY = true;
-    $('ltDate').textContent = (en ? DAYS_LONG_EN : DAYS_BM)[d.getDay()] + ' ' + d.getDate() + ' ' + (en ? MON_LONG_EN : MON_LONG_BM)[d.getMonth()];
+    $('ltDate').textContent = greet() + ' · ' + (en ? DAYS_LONG_EN : DAYS_BM)[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + (en ? MON_LONG_EN : MON_LONG_BM)[d.getMonth()].slice(0, 3);
+    $('weekStrip').style.display = dash ? 'none' : ''; paintHeaderExtras();
     $('ltTitle').textContent = dash ? 'Dashboard' : (en ? 'Today' : 'Hari Ini');
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) LANG_OBS.takeRecords();
     LANG_BUSY = false;
@@ -2136,7 +2219,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
