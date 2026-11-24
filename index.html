@@ -936,6 +936,18 @@
   .qm .qall { width:100%; display:flex; align-items:center; gap:8px; margin-top:4px; padding:11px 10px !important; background:var(--tile) !important; color:var(--ink) !important;
     border-radius:12px !important; font-size:15px; font-weight:600 !important; }
   .qm .qall .ico { width:18px; height:18px; color:var(--muted); } .qm .qall .qgo { margin-left:auto; }
+
+  /* card title icons: aligned with the text and gently alive all the time */
+  .title h1, .sleep h2 { display:flex !important; align-items:center; gap:8px; line-height:1.2 !important; }
+  .title h1 .ti, .sleep h2 .ti { width:24px; height:24px; flex:none; margin:0 !important; vertical-align:0; font-size:inherit; }
+  .title h1 .ti { color:#f97316; }
+  @keyframes tiFlame { 0%, 100% { transform:scale(1, 1) rotate(0deg); } 20% { transform:scale(1.04, 1.1) rotate(-3deg); }
+    45% { transform:scale(.97, 1.02) rotate(2deg); } 70% { transform:scale(1.03, 1.08) rotate(-1.5deg); } }
+  @keyframes tiGlow { 0%, 100% { opacity:1; } 50% { opacity:.82; } }
+  @keyframes tiMoon { 0%, 100% { transform:rotate(0deg) translateY(0); } 50% { transform:rotate(-12deg) translateY(-1px); } }
+  .title h1 .ti .fl { transform-box:fill-box; transform-origin:50% 100%; animation:tiFlame 1.6s ease-in-out infinite, tiGlow 1.6s ease-in-out infinite; }
+  .sleep h2 .ti .mn { transform-box:fill-box; transform-origin:50% 50%; animation:tiMoon 3.2s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .title h1 .ti .fl, .sleep h2 .ti .mn { animation:none; } }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
