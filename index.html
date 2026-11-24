@@ -586,6 +586,7 @@
   .ih.go .ry { animation:ihBlink .5s ease-in-out } .ih.go .id { animation:ihPop .4s ease-out } .ih.go .cr { animation:ihNudgeY .3s ease-in-out }
   @media (prefers-reduced-motion: reduce) { .ih.go * { animation:none !important } }
 </style>
+<script src="https://cdn.lordicon.com/lordicon.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -754,6 +755,7 @@
 
   <h4>Lain-lain</h4>
   <div class="links"><a id="optSheet" href="#" target="_blank">Buka Sheet &amp; Dashboard</a></div>
+  <p class="credit">Icons by <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a></p>
   <div class="links" style="margin-top:8px"><button type="button" id="optReset">↺ Set semula tetapan</button></div>
 </div>
 
@@ -1330,6 +1332,8 @@
   @container (max-width:200px) { .lt small .gr { display:none; } }
 
   .lchart .stt, .lchart .stt.on { transform:none; }
+
+  lord-icon.lord { display:inline-block; flex:none; vertical-align:middle; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -2244,6 +2248,44 @@
   }
 
 
+
+  // ---------------- Lordicon (free CDN icons) for the everyday UI icons ----------------
+  // Our own SVGs stay as the fallback: they are swapped only once the Lordicon player has loaded (offline = old icons).
+  var LORD = [
+    ['#homeBtn .ih-home', 'cnpvyndp', 'button'],        // system-regular-41-home
+    ['#dashBtn .ih-chart', 'zrtfxghu', 'button'],       // system-regular-16-assessment
+    ['#setBtn .ih-gear', 'lecprnjb', 'button'],         // system-regular-63-settings-cog
+    ['.cal .ih-cal', 'abfverha', '.dwrap'],             // system-regular-23-calendar
+    ['.dv .ih-clock', 'qznlhdss', '.dv'],               // 67-clock-outline
+    ['#tplIco .ih-pen', 'puvaffet', 'button'],          // 245-edit-document-outline
+    ['.clear .ih-refresh', 'akuwjdzh', 'button']        // 18-autorenew-outline
+  ];
+  function lordColor(el) { return getComputedStyle(el).color; }
+  function toHex(c) { var q = parseCss(c); return '#' + [q.r, q.g, q.b].map(function (v) { return ('0' + v.toString(16)).slice(-2); }).join(''); }
+  function lordSwap() {
+    if (!window.customElements || !customElements.get('lord-icon')) return;
+    LORD.forEach(function (m) {
+      [].forEach.call(document.querySelectorAll(m[0]), function (svg) {
+        if (svg.dataset.lord) return;
+        var r = svg.getBoundingClientRect(), cs0 = getComputedStyle(svg), w = Math.round(r.width) || parseFloat(cs0.width) || 18, h = Math.round(r.height) || parseFloat(cs0.height) || 18, col = toHex(lordColor(svg.parentNode));
+        var li = document.createElement('lord-icon');
+        li.setAttribute('src', 'https://cdn.lordicon.com/' + m[1] + '.json');
+        li.setAttribute('trigger', 'hover'); li.setAttribute('target', m[2]);
+        li.setAttribute('colors', 'primary:' + col + ',secondary:' + col);
+        li.className = 'lord'; li.style.width = w + 'px'; li.style.height = h + 'px';
+        svg.dataset.lord = '1'; svg.style.display = 'none';
+        svg.parentNode.insertBefore(li, svg);
+      });
+    });
+  }
+  function lordRecolor() {
+    [].forEach.call(document.querySelectorAll('lord-icon.lord'), function (li) { var c = toHex(lordColor(li.parentNode)); li.setAttribute('colors', 'primary:' + c + ',secondary:' + c); });
+  }
+  if (window.customElements) customElements.whenDefined('lord-icon').then(function () {
+    lordSwap();
+    var t = null; new MutationObserver(function () { clearTimeout(t); t = setTimeout(lordSwap, 120); }).observe(document.body, { childList: true, subtree: true });
+  });
+
   // ---------------- Personal Best: best single round per exercise (all records) ----------------
   function pbList() {
     var by = {};
@@ -2508,6 +2550,7 @@
     b.setProperty('--wk', pl.wk); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
     applySurfaces();
     paintPal(dark);
+    setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 0);
     b.setProperty('--headbg', dark ? head[2] : head[1]);
     b.setProperty('--headfg', typeof S.head === 'string' ? (lum(S.head) > 0.6 ? '#111' : '#fff') : (dark ? '#111' : '#fff'));
     $('themeBtn').classList.toggle('isdark', dark); $('themeBtn').title = dark ? 'Bright mode' : 'Dark mode';
