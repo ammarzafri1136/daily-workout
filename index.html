@@ -612,12 +612,12 @@
       </div>
       <div id="workDash">
       <div class="kpis" id="dKpi"></div>
-      <div class="ch"><h4>Workout vs Rest Day</h4><div id="cRatio"></div></div>
-      <div class="ch"><h4>Tidur & prestasi</h4><div id="cSP"></div></div>
-      <div class="ch"><h4>History workout</h4><div id="cWHeat"></div></div>
-      <div class="ch"><h4>Trend masa workout <small style="color:var(--muted);font-weight:700">minit</small></h4><div id="cDur"></div></div>
-      <div class="ch"><h4>Reps ikut latihan</h4><div id="cEx" class="hb"></div></div>
-      <div class="ch"><h4>Progress latihan <select id="dEx" aria-label="Latihan"></select></h4><div id="cProg"></div></div>
+      <div class="ch"><h4><span class="hic hwk" data-ic="dumbbell"></span>Workout vs Rest Day</h4><div id="cRatio"></div></div>
+      <div class="ch"><h4><span class="hic" data-ic="bed"></span>Tidur & prestasi</h4><div id="cSP"></div></div>
+      <div class="ch"><h4><span class="hic hwk" data-ic="cal"></span>History workout</h4><div id="cWHeat"></div></div>
+      <div class="ch"><h4><span class="hic hwk" data-ic="clock"></span>Trend masa workout <small style="color:var(--muted);font-weight:700">minit</small></h4><div id="cDur"></div></div>
+      <div class="ch"><h4><span class="hic hwk" data-ic="bars"></span>Reps ikut latihan</h4><div id="cEx" class="hb"></div></div>
+      <div class="ch"><h4><span class="hic hwk" data-ic="chart"></span>Progress latihan <select id="dEx" aria-label="Latihan"></select></h4><div id="cProg"></div></div>
       </div>
     </div>
   </div>
@@ -1334,6 +1334,23 @@
   .lchart .stt, .lchart .stt.on { transform:none; }
 
   lord-icon.lord { display:inline-block; flex:none; vertical-align:middle; }
+
+  /* workout dashboard card icons (live) */
+  .ch h4 .hic.hwk { color:var(--wk); }
+  .ch h4:has(> .hic) > select, .ch h4:has(> .hic) > small { margin-left:auto; }
+  .ch h4 .hic .ih-dumbbell .puh { animation:puH 1.4s cubic-bezier(.45,0,.3,1) infinite; }
+  .ch h4 .hic .ih-dumbbell .pub { animation:puB 1.4s cubic-bezier(.45,0,.3,1) infinite; }
+  .ch h4 .hic .ih-dumbbell .pua { animation:puA 1.4s cubic-bezier(.45,0,.3,1) infinite; }
+  .ch h4 .hic .ih-dumbbell .pug { stroke-width:1.2; opacity:.35; }
+  @keyframes hCal { 0%, 70%, 100% { transform:none; } 80% { transform:translateY(-1.5px); } 90% { transform:translateY(.5px); } }
+  .ch h4 .hic .ih-cal .cr { animation:hCal 2.4s ease-in-out infinite; } .ch h4 .hic .ih-cal .cr + .cr { animation-delay:.12s; }
+  @keyframes hClock { to { transform:rotate(360deg); } }
+  .ch h4 .hic .ih-clock .ch { transform-box:view-box; transform-origin:12px 12px; animation:hClock 4s linear infinite; }
+  @keyframes hBar { 0%, 100% { transform:scaleY(1); } 50% { transform:scaleY(.55); } }
+  .ch h4 .hic .ih-bars .b1, .ch h4 .hic .ih-bars .b2, .ch h4 .hic .ih-bars .b3 { transform-box:fill-box; transform-origin:50% 100%; animation:hBar 1.6s ease-in-out infinite; }
+  .ch h4 .hic .ih-bars .b2 { animation-delay:.2s; } .ch h4 .hic .ih-bars .b3 { animation-delay:.4s; }
+  .ch h4 .hic .ih-chart .cl { stroke-dasharray:1; animation:krDraw 2.6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .ch h4 .hic * { animation:none !important; } }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1464,6 +1481,7 @@
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
   ICONS.dumbbell = ["0 0 24 24", "<circle class=\"puh\" cx=\"18.6\" cy=\"11.6\" r=\"1.7\"/><path class=\"pub\" d=\"M3 20.5L16.2 13\"/><path class=\"pua\" d=\"M16.2 13L16.2 17L16.2 21\"/><path class=\"pug\" d=\"M1.5 22.5h21\"/>"];
   ICONS.lmoon = ["0 0 24 24", "<path class=\"lm\" d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>"];
+  ICONS.bars = ["0 0 24 24", "<path class=\"b1\" d=\"M5 20V12\"/><path class=\"b2\" d=\"M12 20V6\"/><path class=\"b3\" d=\"M19 20V9\"/><path d=\"M3 20h18\"/>"];
   ICONS.trophy = ["0 0 24 24", "<g class=\"tro\"><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"M7 4h10\"/><path d=\"M17 4v8a5 5 0 0 1-10 0V4\"/><path d=\"M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/><path d=\"M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/></g><path class=\"tsh\" d=\"M10 7.5v3\"/>"];
   ICONS.bed = ["0 0 24 24", "<path d=\"M7 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\"/><path d=\"M22 19v-3h-20\"/><path d=\"M2 10v9\"/><path d=\"M12 16h10v-2a3 3 0 0 0 -3 -3h-7v5z\"/><path class=\"zz z1\" d=\"M11 6.5h2l-2 2h2\"/><path class=\"zz z2\" d=\"M14.5 3.5h2.5l-2.5 2.5h2.5\"/><path class=\"zz z3\" d=\"M18.5 .5h3l-3 3h3\"/>"];
   ICONS.lift = ["0 0 24 24", "<g class=\"lb\"><path d=\"M2.5 4h19\"/><path d=\"M4.5 1.5v5\"/><path d=\"M19.5 1.5v5\"/></g><path class=\"la la1\" d=\"M9.3 12.6l-1.3 -8.6\"/><path class=\"la la2\" d=\"M14.7 12.6l1.3 -8.6\"/><circle class=\"lh\" cx=\"12\" cy=\"9.6\" r=\"1.5\"/><path d=\"M9.3 12.6h5.4\"/><path d=\"M12 12.6v4.6\"/><path d=\"M12 17.2l-3 4.3\"/><path d=\"M12 17.2l3 4.3\"/>"];
