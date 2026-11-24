@@ -2054,7 +2054,7 @@
         var k = addDays(wk, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
         if (k > t) cls += ' f'; if (k === t) cls += ' t';
         var sh = sleepH(k, slp[k]);
-        h += '<button type="button" data-d="' + k + '" class="' + cls + (sh !== null ? ' s' : '') + '"' + (sh !== null ? ' style="--sc:' + sleepColor(sh) + '"' : '') + '><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b>' + (k === t ? '<i></i>' : '') + '</button>';
+        h += '<button type="button" data-d="' + k + '" class="' + cls + (sh !== null ? ' s' : '') + '"' + (sh !== null ? ' style="--sc:' + sleepColor(sh) + '"' : '') + '><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b></button>';
       }
       h += '</div></div>';
     }
