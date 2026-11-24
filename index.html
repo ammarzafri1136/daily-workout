@@ -900,6 +900,11 @@
   .wk .t b { box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--accent); }
   .wk .f { opacity:.35; pointer-events:none; }
   .wk i { position:absolute; bottom:-5px; width:5px; height:5px; border-radius:50%; background:#a78bfa; }
+
+  /* one period button (current choice + chevron) instead of two */
+  .rsel .rmore { display:none !important; }
+  .rsel .rcur { flex:1 1 100% !important; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .rsel .rcur .rdn { width:16px; height:16px; opacity:.85; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -2015,7 +2020,7 @@
     var f = $(fltId), box = document.createElement('div'); box.className = 'rsel';
     box.innerHTML = '<button type="button" class="rcur"></button><button type="button" class="rmore">Tukar tempoh <svg class="ico ih ih-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="cv" d="M6 9l6 6l6 -6"/></svg></button>';
     f.parentNode.insertBefore(box, f); f.classList.add('hid');
-    var paint = function () { var on = f.querySelector('.on'); box.firstChild.innerHTML = '<svg class="ico ih ih-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ck" pathLength="1" d="M5 12l5 5l10 -10"/></svg> ' + esc(on ? on.textContent : ''); };
+    var paint = function () { var on = f.querySelector('.on'); box.firstChild.innerHTML = '<svg class="ico ih ih-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ck" pathLength="1" d="M5 12l5 5l10 -10"/></svg> ' + esc(on ? on.textContent : '') + ' ' + ic('down', 'rdn'); box.firstChild.title = 'Tukar tempoh'; };
     box.firstChild.onclick = function () { openRp(fltId); };
     box.lastChild.onclick = function () { openRp(fltId); };
     new MutationObserver(paint).observe(f, { subtree: true, attributes: true, attributeFilter: ['class'] });
