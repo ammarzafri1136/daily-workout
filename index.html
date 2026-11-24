@@ -643,7 +643,7 @@
     </div>
 
     <div class="sw" id="sw"><button type="button" class="swgo" id="swGo"></button><b class="swt" id="swT">00:00</b><button type="button" class="swx" id="swReset" aria-label="Set semula timer"></button><button type="button" class="swfill" id="swFill">Isi SEBENAR</button></div>
-    <div class="tplbar"><button type="button" class="tplbtn" id="tplBtn"><span id="tplIco"></span><span id="tplName">Template</span></button><span class="tplsub">Pilih untuk isi nama workout</span></div>
+    <div class="tplbar"><button type="button" class="tplbtn" id="tplBtn"><span id="tplIco"></span><span id="tplName">Template</span></button><button type="button" class="lastwk" id="lastWk" hidden></button></div>
     <div class="tbl">
       <table>
         <thead><tr><th>WORKOUT</th><th>ROUND 1</th><th>ROUND 2</th><th>ROUND 3</th><th>ROUND 4</th><th>ROUND 5</th></tr></thead>
@@ -1137,6 +1137,16 @@
   .rkp .kr li b { font-weight:700; color:var(--ink); }
   .rkp .kr i { width:7px; height:7px; border-radius:50%; flex:none; margin-top:6px; }
   .rkp .kr i.g { background:#22c55e; } .rkp .kr i.r { background:#ef4444; } .rkp .kr i.o { background:#f97316; } .rkp .kr i.y { background:#facc15; } .rkp .kr i.b { background:#3b82f6; }
+
+  /* last-workout peek beside the Template button */
+  .tplbar { display:flex; align-items:center; gap:8px; min-width:0; }
+  .tplbar .tplbtn { flex:none; }
+  .lastwk { flex:1; min-width:0; display:flex; align-items:center; gap:6px; border:0 !important; background:none !important; padding:4px 2px !important;
+    width:auto !important; height:auto !important; box-shadow:none !important; text-align:left; cursor:pointer; color:var(--muted) !important; font:inherit; font-size:12px !important; font-weight:500 !important; }
+  .lastwk[hidden] { display:none !important; }
+  .lastwk .lk { flex:none; font-weight:700; color:var(--ink); }
+  .lastwk .lv { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lastwk .ico { width:14px; height:14px; flex:none; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1373,7 +1383,7 @@
     RUN().withSuccessHandler(function (d) {
       $('cur').textContent = d.streaks.current; $('best').textContent = d.streaks.longest;
       $('sheetLink').href = d.sheetUrl; $('dSheet').href = d.sheetUrl;
-      REC = d.recent; REC_TODAY = d.today; STREAK = d.streaks.current; renderRecent(); paintHeaderExtras();
+      REC = d.recent; REC_TODAY = d.today; STREAK = d.streaks.current; renderRecent(); paintHeaderExtras(); paintLastWk();
     }).withFailureHandler(function () { $('days').innerHTML = '<div class="day"><small>Tak dapat muat rekod.</small></div>'; }).appGetRecent();
   }
   var REC = [], REC_TODAY = '', RREC = '7d';
@@ -1411,6 +1421,20 @@
     var m = v.match(/^(\d+):(\d{1,2})$/); if (m) return +m[1] + m[2] / 60;
     var h = /(\d+)\s*h/.exec(v), mm = /(\d+)\s*m(?!s)/.exec(v), ss = /(\d+)\s*s/.exec(v);
     return (h ? +h[1] * 60 : 0) + (mm ? +mm[1] : 0) + (ss ? ss[1] / 60 : 0);
+  }
+  // beside the Template button: a one-line peek at the last workout; tap for the full detail
+  function paintLastWk() {
+    var b = $('lastWk'); if (!b) return;
+    var en = S.lang === 'en', t = REC_TODAY || todayKey(), w = null;
+    (REC || []).forEach(function (x) { if (x.activity === 'Workout' && x.date <= t && (!w || x.date > w.date)) w = x; });
+    if (!w) { b.hidden = true; return; }
+    var q = w.date.split('-'), ago = Math.round((Date.parse(t) - Date.parse(w.date)) / 864e5);
+    var when = ago === 0 ? (en ? 'today' : 'hari ini') : ago === 1 ? (en ? 'yesterday' : 'semalam') : ago + (en ? ' days ago' : ' hari lepas');
+    var bits = [ago <= 1 ? when : q[2] + '/' + q[1], w.exercises + (en ? ' exercises' : ' latihan'), w.reps + ' reps'];
+    if (w.actual) bits.push(w.actual);
+    b.innerHTML = '<span class="lk">' + (en ? 'Last' : 'Terakhir') + '</span><span class="lv">' + esc(bits.join(' · ')) + '</span>' + ic('right');
+    b.setAttribute('aria-label', (en ? 'Last workout: ' : 'Workout terakhir: ') + bits.join(', '));
+    b.hidden = false; b.onclick = function () { openDetail(w.date); };
   }
   function renderRecSummary(list, rg) {
     var el = $('rSum'); if (!el) return;
@@ -3000,7 +3024,7 @@
     try { if (REC && REC.length) renderRecent(); } catch (e) {}
     try { if (DASH) renderDash(); } catch (e) {}
     try { paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC); } catch (e) {}
-    try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {}
+    try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {} try { paintLastWk(); } catch (e) {}
     applyLang(); renderSleepTip(sleepMins());
   }
   $('langBtn').onclick = function () { setLang(S.lang === 'en' ? 'bm' : 'en'); };
