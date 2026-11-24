@@ -418,7 +418,7 @@
   .streak b { display:block; font-size:24px; }
   .streak span { font-size:12px; color:var(--muted); }
   .day { display:flex; justify-content:space-between; border-top:1px solid var(--rule); padding:7px 2px; font-size:15px; }
-  .day .w { font-weight:800; }
+  .day .w { font-weight:800; color:var(--wk, var(--ink)); }
   .day .r { color:var(--rest-tx, var(--rest)); font-weight:800; }
   .day small { color:var(--muted); }
   .flag { color:var(--warn); font-weight:800; }
@@ -708,6 +708,7 @@
       <div><b id="cur">–</b><span>streak semasa</span></div>
       <div><b id="best">–</b><span>streak terpanjang</span></div>
     </div>
+    <div class="rsum" id="rSum"></div>
     <div id="days"><div class="day"><small>Memuatkan…</small></div></div>
   </div>
   </div>
@@ -950,6 +951,16 @@
   .title h1 .ti .fl { transform-box:fill-box; transform-origin:50% 100%; animation:tiFlame 1.6s ease-in-out infinite, tiGlow 1.6s ease-in-out infinite; }
   .sleep h2 .ti .mn { transform-box:fill-box; transform-origin:50% 50%; animation:tiMoon 3.2s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .title h1 .ti .fl, .sleep h2 .ti .mn { animation:none; } }
+
+  /* records summary panel */
+  .rsum { display:flex; gap:10px; align-items:flex-start; background:var(--tile); border-radius:16px; padding:11px 12px; margin:10px 0 6px; }
+  .rsum:empty { display:none; }
+  .rsum .si { width:30px; height:30px; flex:none; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .rsum .si svg { width:17px; height:17px; }
+  .rsum .rt { display:block; font-size:15px; font-weight:700; margin-bottom:2px; }
+  .rsum span { display:block; font-size:13px; line-height:1.45; color:var(--muted); }
+  .rsum span b { color:var(--ink); font-weight:700; }
+  .day .s { font-weight:800; color:var(--ink); }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1193,13 +1204,14 @@
     [].forEach.call($('rFilter').children, function (b) { b.classList.toggle('on', b.dataset.r === RREC); });
     $('rCustom').classList.toggle('on', RREC === 'custom'); $('rLabel').textContent = rg.label;
     var list = REC.filter(function (x) { return x.date >= rg.from && x.date <= rg.to; });
+      renderRecSummary(list, rg);
       var box = $('days'); box.innerHTML = '';
       if (!list.length) { box.innerHTML = '<div class="day"><small>' + (REC.length ? 'Tiada rekod dalam tempoh ini.' : 'Belum ada rekod.') + '</small></div>'; return; }
       list.forEach(function (x) {
         var row = document.createElement('div'); row.className = 'day'; row.setAttribute('role', 'button'); row.tabIndex = 0;
         row.onclick = function () { openDetail(x.date); };
         var p = x.date.split('-'), left = document.createElement('span');
-        left.innerHTML = '<span class="' + (x.activity === 'Workout' ? 'w' : 'r') + '"></span> <small></small>';
+        left.innerHTML = '<span class="' + (x.activity === 'Workout' ? 'w' : (x.activity === 'Sleep' ? 's' : 'r')) + '"></span> <small></small>';
         left.firstChild.textContent = p[2] + '/' + p[1] + '/' + p[0] + '  ' + (x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? '' : 'Rest Day'));
         left.lastChild.textContent = x.review === 'Needs Review' ? ' ⚠ semak' : '';
         if (x.review === 'Needs Review') left.lastChild.className = 'flag';
@@ -1209,6 +1221,52 @@
         var go = document.createElement('span'); go.className = 'go'; go.innerHTML = '<svg class="ico ih ih-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="cv" d="M9 6l6 6l-6 6"/></svg>'; right.appendChild(go);
         row.appendChild(left); row.appendChild(right); box.appendChild(row);
       });
+  }
+
+  // ---------------- Records summary: short progress / advice for the chosen period ----------------
+  function renderRecSummary(list, rg) {
+    var el = $('rSum'); if (!el) return;
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
+    var t = REC_TODAY || todayKey(), to = rg.to < t ? rg.to : t, from = rg.from;
+    var span = Math.max(1, Math.round((Date.parse(to) - Date.parse(from)) / 864e5) + 1);
+    var inR = function (k) { return k >= from && k <= to; };
+    var wd = {}, rd = {}, reps = 0;
+    list.forEach(function (x) { if (!inR(x.date)) return; if (x.activity === 'Workout') { wd[x.date] = 1; reps += +x.reps || 0; } else if (x.activity === 'Rest Day') rd[x.date] = 1; });
+    var nW = Object.keys(wd).length, nR = Object.keys(rd).length, cons = Math.round(100 * nW / span);
+    // previous period of the same length, for a trend
+    var pTo = addDays(from, -1), pFrom = addDays(from, -span), pReps = 0, pW = {};
+    (REC || []).forEach(function (x) { if (x.date >= pFrom && x.date <= pTo && x.activity === 'Workout') { pW[x.date] = 1; pReps += +x.reps || 0; } });
+    var nPW = Object.keys(pW).length;
+    // sleep in the period
+    var nights = (SLEEP_ALL || []).filter(function (x) { return inR(x.d); }), lo = slLo(), hi = slHi();
+    var avgS = nights.length ? nights.reduce(function (a, x) { return a + x.h; }, 0) / nights.length : null;
+    var okS = nights.filter(function (x) { return x.h >= lo && x.h <= hi; }).length;
+    // trailing rest run up to the last day of the period
+    var run = 0, k0 = (to === t && !wd[t] && !rd[t]) ? addDays(t, -1) : to;   // today not logged yet -> start from yesterday
+    for (var k = k0; k >= from && !wd[k]; k = addDays(k, -1)) run++;
+    var lines = [], tone = 'good', title;
+    var period = span === 1 ? T('Hari ini', 'This day') : span + T(' hari', ' days');
+    lines.push(T(period + ': <b>' + nW + ' workout</b>, ' + nR + ' rehat' + (reps ? ' · ' + reps + ' reps' : '') + '.',
+                 period + ': <b>' + nW + ' workout' + (nW === 1 ? '' : 's') + '</b>, ' + nR + ' rest' + (reps ? ' · ' + reps + ' reps' : '') + '.'));
+    if (span > 1 && (nPW || pReps)) {
+      if (reps && pReps) { var ch = Math.round(100 * (reps - pReps) / pReps); if (Math.abs(ch) >= 5) lines.push(T('Reps ' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% berbanding tempoh sebelum.', 'Reps ' + (ch > 0 ? 'up ' : 'down ') + Math.abs(ch) + '% on the previous period.')); }
+      else if (nW !== nPW) lines.push(T((nW > nPW ? 'Lebih' : 'Kurang') + ' ' + Math.abs(nW - nPW) + ' workout berbanding tempoh sebelum.', Math.abs(nW - nPW) + (nW > nPW ? ' more' : ' fewer') + ' workouts than the previous period.'));
+    }
+    if (avgS !== null) lines.push(T('Tidur purata <b>' + hm(avgS * 60) + '</b> · ' + okS + '/' + nights.length + ' malam dalam target ' + lo + '–' + hi + 'j.',
+                                    'Average sleep <b>' + hm(avgS * 60) + '</b> · ' + okS + '/' + nights.length + ' nights in the ' + lo + '–' + hi + 'h target.'));
+    var tip;
+    if (!nW && span >= 2) { tone = 'short'; title = T('Jom mula semula', "Let's get moving"); tip = T('Belum ada workout dalam tempoh ni. Mula dengan sesi ringkas 15 minit hari ini.', 'No workouts in this period yet. Start with a short 15-minute session today.'); }
+    else if (run >= 3 && to === t) { tone = 'short'; title = T(run + ' hari berturut rehat', run + ' rest days in a row'); tip = T('Badan dah cukup rehat — masa untuk kembali bergerak.', "You're well rested — time to move again."); }
+    else if (span >= 5 && cons < 30) { tone = 'info'; title = T('Konsisten ' + cons + '%', cons + '% consistency'); tip = T('Sasarkan sekurang-kurangnya 3 workout seminggu untuk nampak progress.', 'Aim for at least 3 workouts a week to see progress.'); }
+    else if (avgS !== null && avgS < lo) { tone = 'short'; title = T('Kurang tidur', 'Short on sleep'); tip = T('Tidur bawah ' + lo + 'j boleh lambatkan recovery otot. Cuba tidur 30 minit lebih awal.', 'Under ' + lo + 'h sleep slows muscle recovery. Try bed 30 minutes earlier.'); }
+    else if (span >= 5 && cons >= 60) { tone = 'good'; title = T('Hebat, konsisten ' + cons + '%!', 'Great, ' + cons + '% consistent!'); tip = T('Teruskan momentum ni. Tambah sedikit reps atau berat untuk terus maju.', 'Keep the momentum. Add a few reps or a little weight to keep improving.'); }
+    else if (nW) { tone = 'good'; title = T('Progress berjalan', 'Making progress'); tip = T('Bagus! Kekalkan rutin dan jaga tidur supaya badan pulih.', 'Nice! Keep the routine and protect your sleep so you recover.'); }
+    else { tone = 'info'; title = T('Ringkasan', 'Summary'); tip = T('Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.'); }
+    lines.push(tip);
+    var C = { short: '#ef4444', good: '#22c55e', info: '#64748b' }, I = { short: 'alert', good: 'check', info: 'bulb' };
+    el.innerHTML = '<i class="si" style="background:' + C[tone] + '">' + ic(I[tone]) + '</i><div><b class="rt">' + esc(title) + '</b>' +
+      lines.map(function (l) { return '<span>' + l + '</span>'; }).join('') + '</div>';
+    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) LANG_OBS.takeRecords();
   }
   [].forEach.call($('rFilter').children, function (b) {
     b.onclick = function () {
@@ -2208,7 +2266,7 @@
   // ---------------- Sleep insight (short tip that follows your sleep data) ----------------
   var SLEEP_ALL = null;
   function loadSleepAll() {
-    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); })
+    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); if (REC && REC.length) renderRecent(); })
       .withFailureHandler(function () {}).appGetDashboard();
   }
   function hm(min) { min = Math.round(min); return Math.floor(min / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (min % 60) + 'm'; }
