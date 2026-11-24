@@ -2077,12 +2077,12 @@
   // colour combos for the data: [name, workout light, workout dark, rest light, rest dark, rest text (light), accent light, accent dark]
   var PALS = [
     ['Klasik', '#7c3aed', '#a78bfa', '#facc15', '#facc15', '#a16207', '#2f6fed', '#3b82f6'],
-    ['Lautan', '#0284c7', '#38bdf8', '#f97316', '#fb923c', '#c2410c', '#0d9488', '#14b8a6'],
-    ['Senja', '#ea580c', '#fb923c', '#6366f1', '#818cf8', '#4f46e5', '#e11d48', '#f43f5e'],
-    ['Neon', '#db2777', '#f472b6', '#06b6d4', '#22d3ee', '#0e7490', '#7c3aed', '#8b5cf6'],
-    ['Hutan', '#15803d', '#4ade80', '#eab308', '#facc15', '#a16207', '#0f766e', '#14b8a6'],
-    ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b']
-  ];
+    ['Lautan', '#0284c7', '#38bdf8', '#f97316', '#fb923c', '#c2410c', '#0d9488', '#14b8a6', ['#ffffff', '#e9f3f9', '#132330', '#08131b']],
+    ['Senja', '#ea580c', '#fb923c', '#6366f1', '#818cf8', '#4f46e5', '#e11d48', '#f43f5e', ['#fffaf4', '#f6ece2', '#2a1d19', '#160f0d']],
+    ['Neon', '#db2777', '#f472b6', '#06b6d4', '#22d3ee', '#0e7490', '#7c3aed', '#8b5cf6', ['#ffffff', '#f2eefb', '#1c1531', '#0c0919']],
+    ['Hutan', '#15803d', '#4ade80', '#eab308', '#facc15', '#a16207', '#0f766e', '#14b8a6', ['#fbfdf8', '#ecf2e7', '#17231b', '#0b140e']],
+    ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b', ['#ffffff', '#eaecef', '#23272e', '#14171b']]
+  ];   // optional 9th item: surfaces [panel light, background light, panel dark, background dark]
   function palNow(dark) {        // -> {wk, rest, restTx, acc}
     if (S.palette === 'custom') {
       var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), rest = S.cRest || P0[3], acc = S.cAcc || (dark ? P0[7] : P0[6]);
@@ -2155,11 +2155,13 @@
   function applySurfaces() {
     var st = document.body.style;
     SURF.forEach(function (v) { st.removeProperty(v); });
-    var on = S.palette === 'custom' && (S.cPanel || S.cPage || S.cInk);
+    var dark = isDark(), P = S.palette === 'custom' ? null : PALS[+S.palette], sf = P && P[8];
+    var on = S.palette === 'custom' ? (S.cPanel || S.cPage || S.cInk) : sf;
     document.body.classList.toggle('csurf', !!on);
     if (!on) return;
-    var cs = getComputedStyle(document.body), panel = S.cPanel || cs.getPropertyValue('--paper').trim(), page = S.cPage || cs.getPropertyValue('--page').trim();
-    var ink = S.cInk || (lum(panel) > 0.55 ? '#111114' : '#f4f4f6');
+    var cs = getComputedStyle(document.body), panel, page, ink;
+    if (sf) { panel = dark ? sf[2] : sf[0]; page = dark ? sf[3] : sf[1]; ink = lum(panel) > 0.55 ? '#111114' : '#f4f4f6'; }
+    else { panel = S.cPanel || cs.getPropertyValue('--paper').trim(); page = S.cPage || cs.getPropertyValue('--page').trim(); ink = S.cInk || (lum(panel) > 0.55 ? '#111114' : '#f4f4f6'); }
     st.setProperty('--paper', panel); st.setProperty('--page', page); st.setProperty('--ink', ink);
     st.setProperty('--tile', mixC(panel, ink, .07)); st.setProperty('--soft', mixC(panel, ink, .05));
     st.setProperty('--line', mixC(panel, ink, .16)); st.setProperty('--rule', mixC(panel, ink, .1)); st.setProperty('--muted', mixC(ink, panel, .42));
@@ -2171,7 +2173,8 @@
     var dots = function (a, b2, c) { return '<span class="pd"><i style="background:' + a + '"></i><i style="background:' + b2 + '"></i><i style="background:' + c + '"></i></span>'; };
     var cp = palNow(dark), csel = S.palette === 'custom';
     box.innerHTML = PALS.map(function (P, i) {
-      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6]) + '<b>' + P[0] + '</b></button>';
+      var sf = P[8], bgc = sf ? (dark ? sf[3] : sf[1]) : '', fg = sf ? (lum(dark ? sf[2] : sf[0]) > 0.55 ? '#111114' : '#f4f4f6') : '';
+      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6]) + '<b>' + P[0] + '</b></button>';
     }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
     [].forEach.call(box.children, function (x) {
       x.onclick = function () {
