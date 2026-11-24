@@ -670,9 +670,7 @@
       <div class="chips" id="reasons"></div>
       <div class="rnote" id="restNoteBox"><label for="restNotes">Catatan (tidak wajib)</label>
       <textarea id="restNotes" rows="2" maxlength="300" placeholder="Tulis apa-apa nota… (tidak wajib)"></textarea></div>
-      <label>Tarikh rehat </label>
-      <span class="dwrap" style="display:inline-flex;max-width:220px"><input id="restDate" class="dmy" inputmode="numeric" placeholder="dd/mm/yyyy" maxlength="10" autocomplete="off" style="font:inherit;font-size:16px;padding:6px;border:2px solid #d4d4d4;border-radius:8px">
-        <span class="cal" title="Pilih tarikh"><svg class="ico ih ih-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path class="cr" d="M16 3v4"/><path class="cr" d="M8 3v4"/><path d="M4 11h16"/></svg><input type="date" id="restPick" tabindex="-1" aria-label="Pilih tarikh rehat"></span></span>
+      <div class="rfor" id="restFor"></div>
       <div class="actions"><button class="save" id="restSave">SIMPAN REST DAY</button></div>
     </div>
 
@@ -1083,6 +1081,15 @@
   @keyframes vInR { from { opacity:0; transform:translateX(28px) scale(.985); } to { opacity:1; transform:none; } }
   @keyframes vInL { from { opacity:0; transform:translateX(-28px) scale(.985); } to { opacity:1; transform:none; } }
   @media (prefers-reduced-motion: reduce) { .vout-l, .vout-r, .vin-l, .vin-r { animation:none !important; } }
+
+  .rfor { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; margin:12px 0 2px; padding:10px 12px; border-radius:12px; background:var(--tile); font-size:14px; color:var(--muted); }
+  .rfor b { color:var(--ink); font-weight:700; } .rfor small { flex-basis:100%; font-size:12px; }
+  .rfor.bad { color:#ef4444; }
+
+  .seg button.itab { display:flex; align-items:center; justify-content:center; padding:6px 4px !important; line-height:0; }
+  .seg button.itab .ico { width:19px; height:19px; }
+  .seg button.itab.on[data-t="w"] .ico { color:#f97316; } .seg button.itab.on[data-t="s"] .ico { color:#8b5cf6; }
+  .seg button.itab:not(.on) .ico { color:var(--muted); }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1214,6 +1221,14 @@
   function ic(n, cls) { n = ICON_ALIAS[n] || n; var I = ICONS[n] || ICONS.info, vb = I[0], sw = vb === '0 0 24 24' ? '2' : (vb === '0 0 32 32' ? '2.6' : '4');
     return '<svg class="ico ih ih-' + n + (cls ? ' ' + cls : '') + '" viewBox="' + vb + '" fill="none" stroke="currentColor" stroke-width="' + sw + '" stroke-linecap="' + (vb === '0 0 24 24' ? 'round' : 'square') + '" stroke-linejoin="round" aria-hidden="true">' + I[1] + '</svg>'; }
 
+  // Workout / Sleep tabs (Home + Dashboard): small icons instead of words
+  ['hTabs', 'dTabs'].forEach(function (id) {
+    [].forEach.call($(id).children, function (b) {
+      var w = b.dataset.t === 'w', lbl = w ? 'Workout' : 'Tidur';
+      b.innerHTML = ic(w ? 'flame' : 'moon'); b.setAttribute('aria-label', lbl); b.title = lbl; b.classList.add('itab');
+    });
+  });
+
   // itshover-style: replay an icon's motion on hover / tap
   (function () {
     function play(svg) { if (!svg) return; svg.classList.remove('go'); void svg.getBoundingClientRect(); svg.classList.add('go'); }
@@ -1284,10 +1299,10 @@
     }).withFailureHandler(function (e) { busy(false); show('bad', 'Gagal simpan: ' + (e && e.message ? e.message : e) + '. Kad anda masih ada — cuba lagi.'); })
       .appSaveWorkout(card);
   };
-  $('restBtn').onclick = function () { $('restPanel').classList.toggle('on'); if (!$('restDate').value) $('restDate').value = isoToDmy(todayKey()); };
+  $('restBtn').onclick = function () { if (!$('date').value) $('date').value = isoToDmy(todayKey()); paintRestFor(); $('restPanel').classList.toggle('on'); };
   $('restSave').onclick = function () {
-    var restIso = dmyToIso($('restDate').value);
-    if (!restIso) { $('restDate').classList.add('bad'); show('bad', 'Tarikh rehat tak sah. Guna format dd/mm/yyyy.'); return; }
+    var restIso = dmyToIso($('date').value);
+    if (!restIso) { $('date').classList.add('bad'); $('date').scrollIntoView({ behavior: 'smooth', block: 'center' }); show('bad', 'Tarikh tak sah. Isi tarikh dekat atas (dd/mm/yyyy).'); return; }
     if (EDIT && EDIT.kind === 'rest') {
       busy(true); show('warn', 'Menyimpan perubahan…');
       RUN().withSuccessHandler(function (res) {
@@ -1491,7 +1506,7 @@
   function startEditRest(key, r) {
     closeDetail(); showCardView(); setHTab('w');
     EDIT = { kind: 'rest', id: r.id, date: key, stash: readCard() };
-    $('restPanel').classList.add('on'); $('restDate').value = isoToDmy(key); reason = r.reason || ''; renderChips(); $('restNotes').value = r.notes || '';
+    $('restPanel').classList.add('on'); $('date').value = isoToDmy(key); paintRestFor(); reason = r.reason || ''; renderChips(); $('restNotes').value = r.notes || '';
     $('editText').textContent = 'Mengedit rest day ' + isoToDmy(key);
     $('editBar').classList.add('on'); $('restSave').textContent = 'SIMPAN PERUBAHAN';
     $('restPanel').scrollIntoView({ behavior: 'smooth' });
@@ -2016,7 +2031,6 @@
   applySettings();
 
   wireDate('date', 'datePick');
-  wireDate('restDate', 'restPick');
   wireDate('sleepDate', 'sleepPick');
   // picking another wake-up date starts with empty bedtime / wake time boxes
   function sleepDateChanged() { $('sleepStart').value = ''; $('sleepEnd').value = ''; SLEEP_EDIT = false; calcSleep(); $('sleepMsg').className = 'msg'; }
@@ -2494,6 +2508,16 @@
     LAST_DAY_KEY = iso;
     var p = iso ? iso.split('-') : null;
     $('dayName').textContent = p ? DAYS_BM[new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay()] : '';
+    paintRestFor();
+  }
+  // rest day uses the workout card's date (no separate date box)
+  function paintRestFor() {
+    var iso = dmyToIso($('date').value), en = S.lang === 'en', el = $('restFor'); if (!el) return;
+    if (!iso) { el.innerHTML = en ? 'Fill in the date at the top first.' : 'Isi tarikh dekat atas dulu.'; el.classList.add('bad'); return; }
+    var p = iso.split('-'), wd = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay();
+    var dn = (en ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] : DAYS_BM)[wd];
+    el.classList.remove('bad');
+    el.innerHTML = '<span>' + (en ? 'Rest day for' : 'Rest day untuk') + '</span><b>' + dn + ', ' + isoToDmy(iso) + '</b><small>' + (en ? 'Uses the date above' : 'Ikut tarikh di atas') + '</small>';
   }
   ['input', 'change'].forEach(function (ev) { $('date').addEventListener(ev, paintDayName); });
   setInterval(paintDayName, 400);
@@ -2905,7 +2929,7 @@
     try { if (REC && REC.length) renderRecent(); } catch (e) {}
     try { if (DASH) renderDash(); } catch (e) {}
     try { paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC); } catch (e) {}
-    try { calcSleep(); } catch (e) {}
+    try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {}
     applyLang(); renderSleepTip(sleepMins());
   }
   $('langBtn').onclick = function () { setLang(S.lang === 'en' ? 'bm' : 'en'); };
