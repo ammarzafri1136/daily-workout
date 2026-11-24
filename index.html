@@ -623,7 +623,8 @@
   </div>
 
   <div id="cardView">
-  <div class="card">
+  <div class="seg htabs" id="hTabs"><button type="button" data-t="w" class="on">Workout</button><button type="button" data-t="s">Sleep</button></div>
+  <div class="card" id="wkCard">
     <div class="editbar" id="editBar"><span id="editText">Mengedit</span><button type="button" class="theme" id="editCancel">Batal</button></div>
     <div class="title">
       <svg viewBox="0 0 80 40" aria-hidden="true"><rect x="0" y="18" width="20" height="4" rx="2"/><rect x="22" y="10" width="7" height="20" rx="2"/><rect x="31" y="4" width="8" height="32" rx="2"/><rect x="39" y="17" width="41" height="6" rx="2"/></svg>
@@ -1068,6 +1069,10 @@
   .tped-f .tpact { display:flex; gap:8px; margin-top:12px; }
   .tped-f .tpact button { flex:1; padding:12px !important; border-radius:12px !important; background:var(--tile) !important; color:var(--ink) !important; font-weight:700 !important; }
   .tped-f .tpact .set { background:var(--accent) !important; color:#fff !important; }
+
+  .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
+  .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
+  #cardView > .sleep { margin-top:0; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1407,7 +1412,7 @@
       sl.innerHTML = '<div class="meta">Tidur <span>' + esc(d.sleep.start) + ' → ' + esc(d.sleep.end) + '</span> <span>' + esc(d.sleep.text) + '</span>' + (d.sleep.awake ? ' <span>terjaga ' + hmTxt(d.sleep.awake) + '</span>' : '') + '</div>' +
         '<div class="acts"><button type="button" class="rest"><svg class="ico ih ih-pen" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="pg"><path d="M20 6 L26 12"/><path d="m10.5,27.5l-8,2 2-8L22.257,3.743c1.657-1.657,4.343-1.657,6,0s1.657,4.343,0,6L10.5,27.5Z"/></g></svg> Edit</button><button type="button" class="del"><svg class="ico ih ih-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="tl" d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path class="tl" d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></svg> Padam</button></div>';
       var sb = sl.querySelectorAll('.acts button');
-      sb[0].onclick = function () { closeDetail(); showCardView(); $('sleepDate').value = isoToDmy(d.date); $('sleepStart').value = d.sleep.start; $('sleepEnd').value = d.sleep.end; $('sleepAwake').value = d.sleep.awake ? ('0' + Math.floor(d.sleep.awake / 60)).slice(-2) + ':' + ('0' + d.sleep.awake % 60).slice(-2) : ''; calcSleep(); SLEEP_EDIT = true; $('sleepCard').scrollIntoView({ behavior: 'smooth' }); };
+      sb[0].onclick = function () { closeDetail(); showCardView(); setHTab('s'); $('sleepDate').value = isoToDmy(d.date); $('sleepStart').value = d.sleep.start; $('sleepEnd').value = d.sleep.end; $('sleepAwake').value = d.sleep.awake ? ('0' + Math.floor(d.sleep.awake / 60)).slice(-2) + ':' + ('0' + d.sleep.awake % 60).slice(-2) : ''; calcSleep(); SLEEP_EDIT = true; $('sleepCard').scrollIntoView({ behavior: 'smooth' }); };
       sb[1].onclick = function () { confirmDelete(sb[1], 'sleep', d.date); };
       box.appendChild(sl);
     }
@@ -1452,9 +1457,19 @@
     if (kind === 'sleep') run.appDeleteSleep(id); else run.appDeleteEntry(kind, id);
   }
   function alertBad(e) { show('bad', 'Gagal: ' + (e && e.message ? e.message : e)); }
+  // Home tabs: Workout card / Sleep card (same idea as the dashboard tabs)
+  var HTAB = 'w';
+  try { HTAB = localStorage.getItem('dw-htab') || 'w'; } catch (e) {}
+  function setHTab(t) {
+    HTAB = t === 's' ? 's' : 'w'; try { localStorage.setItem('dw-htab', HTAB); } catch (e) {}
+    [].forEach.call($('hTabs').children, function (b) { b.classList.toggle('on', b.dataset.t === HTAB); });
+    $('wkCard').style.display = HTAB === 'w' ? '' : 'none'; $('sleepCard').style.display = HTAB === 's' ? '' : 'none';
+  }
+  [].forEach.call($('hTabs').children, function (b) { b.onclick = function () { setHTab(b.dataset.t); }; });
+  setHTab(HTAB);
   function showCardView() { if ($('dashView').style.display !== 'none') toggleDash(); }
   function startEditWorkout(key, w) {
-    closeDetail(); showCardView();
+    closeDetail(); showCardView(); setHTab('w');
     var stash = readCard();
     EDIT = { kind: 'workout', id: w.id, date: key, stash: stash };
     var rows = w.rows.slice(0, 5).map(function (r) { return { name: r.name, cells: r.cells }; });
@@ -1464,7 +1479,7 @@
     window.scrollTo(0, 0);
   }
   function startEditRest(key, r) {
-    closeDetail(); showCardView();
+    closeDetail(); showCardView(); setHTab('w');
     EDIT = { kind: 'rest', id: r.id, date: key, stash: readCard() };
     $('restPanel').classList.add('on'); $('restDate').value = isoToDmy(key); reason = r.reason || ''; renderChips(); $('restNotes').value = r.notes || '';
     $('editText').textContent = 'Mengedit rest day ' + isoToDmy(key);
@@ -2441,7 +2456,7 @@
       b.onclick = function () {
         var k = b.dataset.d; if (k > t) return;
         if ((by[k] || []).length) { openDetail(k); return; }
-        var pk = $('datePick'); pk.value = k; pk.dispatchEvent(new Event('change')); $('date').dispatchEvent(new Event('change'));
+        setHTab('w'); var pk = $('datePick'); pk.value = k; pk.dispatchEvent(new Event('change')); $('date').dispatchEvent(new Event('change'));
         $('date').scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
     });
