@@ -688,9 +688,10 @@
       <div class="box tm"><label class="k" for="sleepStart">TIDUR</label><span class="dv tp"><b class="tv tph" id="sleepStartTv">--:--</b><svg class="ico ih ih-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mn" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg><input type="time" id="sleepStart" aria-label="Waktu tidur"></span></div>
       <div class="box tm"><label class="k" for="sleepEnd">BANGUN</label><span class="dv tp"><b class="tv tph" id="sleepEndTv">--:--</b><svg class="ico ih ih-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><g class="sr"><path d="M12 5l0 .01"/><path d="M17 7l0 .01"/><path d="M19 12l0 .01"/><path d="M17 17l0 .01"/><path d="M12 19l0 .01"/><path d="M7 17l0 .01"/><path d="M5 12l0 .01"/><path d="M7 7l0 .01"/></g></svg><input type="time" id="sleepEnd" aria-label="Waktu bangun"></span></div>
     </div>
-    <div class="sdur" id="sleepDur"></div>
+    <div class="srow2"><div class="box tm"><label class="k" for="sleepAwake">AWAKE</label><span class="dv tp"><b class="tv tph" id="sleepAwakeTv">0j 0m</b><svg class="ico ih ih-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path class="ch" d="M12 7v5l3 3"/></svg><input type="time" id="sleepAwake" aria-label="Masa terjaga (jam:minit)"></span></div>
+      <div class="sdur" id="sleepDur"></div></div>
     <div class="stip" id="sleepTip"></div>
-    <div class="actions" style="margin-top:0"><button type="button" class="save" id="sleepSave">SIMPAN TIDUR</button></div>
+    <div class="actions" style="margin-top:0"><button type="button" class="save" id="sleepSave">SIMPAN TIDUR</button><button type="button" class="clear" id="sleepClear" title="Kosongkan (yang belum disimpan)" aria-label="Kosongkan"><svg class="ico ih ih-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="rf"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></g></svg></button></div>
     <div class="msg" id="sleepMsg"></div>
   </div>
 
@@ -750,8 +751,8 @@
   <div class="wnote">Muncul sebagai pilihan bila tekan kotak WORKOUT dalam kad.</div>
 
   <h4>Tidur</h4>
-  <div class="row"><div>Target tidur (jam)<small>Garisan target dalam graf Sleep Tracker</small></div>
-    <div class="mm"><input id="optSleepT" inputmode="decimal" maxlength="4" placeholder="8" aria-label="Target tidur jam">j</div></div>
+  <div class="row"><div>Target tidur (julat)<small>Dalam julat = hijau · bawah = merah · lebih = oren</small></div>
+    <div class="mm"><input id="optSleepLo" inputmode="decimal" maxlength="4" placeholder="7" aria-label="Target tidur minimum (jam)">–<input id="optSleepT" inputmode="decimal" maxlength="4" placeholder="8" aria-label="Target tidur maksimum (jam)">j</div></div>
 
   <h4>Lain-lain</h4>
   <div class="links"><a id="optSheet" href="#" target="_blank">Buka Sheet &amp; Dashboard</a></div>
@@ -913,6 +914,15 @@
     background:var(--paper); color:var(--ink) !important; border-radius:999px; font-size:15px; font-weight:700 !important; text-decoration:none !important; }
   .dlink.sbtn:active { transform:scale(.97); }
   .dlink.sbtn .ico { width:18px; height:18px; color:var(--muted); }
+
+  /* sleep: AWAKE (time awake in the night) next to the result */
+  .srow2 { display:grid; grid-template-columns:1.3fr 2fr; gap:6px; align-items:center; margin:0 0 10px; }
+  .srow2 .box { flex-direction:column; align-items:stretch; padding:4px 6px 6px; min-height:0; gap:3px; min-width:0; max-width:none; }
+  .srow2 .k { font-size:11px; letter-spacing:.3px; line-height:1.2; }
+  .srow2 .dv { height:32px; padding:0 6px; } .srow2 .dv svg { width:15px; height:15px; }
+  .srow2 .sdur { margin:0 !important; flex-direction:column; align-items:center; gap:0; text-align:center; }
+  .srow2 .sdur span { font-size:12px; color:var(--muted); font-weight:500; }
+  .srow2 .sdur small { display:block; font-size:11px; color:var(--muted); font-weight:500; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1198,10 +1208,10 @@
     if (!d.workouts.length && !d.rests.length && !d.sleep) { box.innerHTML = '<div class="empty">Tiada rekod pada tarikh ini.</div>'; return; }
     if (d.sleep) {
       var sl = document.createElement('div'); sl.className = 'sess';
-      sl.innerHTML = '<div class="meta">Tidur <span>' + esc(d.sleep.start) + ' → ' + esc(d.sleep.end) + '</span> <span>' + esc(d.sleep.text) + '</span></div>' +
+      sl.innerHTML = '<div class="meta">Tidur <span>' + esc(d.sleep.start) + ' → ' + esc(d.sleep.end) + '</span> <span>' + esc(d.sleep.text) + '</span>' + (d.sleep.awake ? ' <span>awake ' + hmTxt(d.sleep.awake) + '</span>' : '') + '</div>' +
         '<div class="acts"><button type="button" class="rest"><svg class="ico ih ih-pen" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="pg"><path d="M20 6 L26 12"/><path d="m10.5,27.5l-8,2 2-8L22.257,3.743c1.657-1.657,4.343-1.657,6,0s1.657,4.343,0,6L10.5,27.5Z"/></g></svg> Edit</button><button type="button" class="del"><svg class="ico ih ih-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="tl" d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path class="tl" d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></svg> Padam</button></div>';
       var sb = sl.querySelectorAll('.acts button');
-      sb[0].onclick = function () { closeDetail(); showCardView(); $('sleepDate').value = isoToDmy(d.date); $('sleepStart').value = d.sleep.start; $('sleepEnd').value = d.sleep.end; calcSleep(); SLEEP_EDIT = true; $('sleepCard').scrollIntoView({ behavior: 'smooth' }); };
+      sb[0].onclick = function () { closeDetail(); showCardView(); $('sleepDate').value = isoToDmy(d.date); $('sleepStart').value = d.sleep.start; $('sleepEnd').value = d.sleep.end; $('sleepAwake').value = d.sleep.awake ? ('0' + Math.floor(d.sleep.awake / 60)).slice(-2) + ':' + ('0' + d.sleep.awake % 60).slice(-2) : ''; calcSleep(); SLEEP_EDIT = true; $('sleepCard').scrollIntoView({ behavior: 'smooth' }); };
       sb[1].onclick = function () { confirmDelete(sb[1], 'sleep', d.date); };
       box.appendChild(sl);
     }
@@ -1276,25 +1286,32 @@
 
   // ---------------- Sleep tracker ----------------
   var SLEEP_EDIT = false;
-  function sleepMins() {
+  // time awake during the night, entered as a duration h:mm (01:40 = 1h 40m)
+  function awakeMins() { var v = $('sleepAwake').value; if (!v) return 0; var p = v.split(':'); return (+p[0]) * 60 + (+p[1] || 0); }
+  function bedMins() {
     var a = $('sleepStart').value, b = $('sleepEnd').value;
     if (!a || !b) return null;
     var p = a.split(':'), q = b.split(':'), d = (+q[0] * 60 + +q[1]) - (+p[0] * 60 + +p[1]);
     if (d <= 0) d += 1440;
     return d;
   }
+  // NET sleep = time in bed minus time awake
+  function sleepMins() { var d = bedMins(); return d === null ? null : Math.max(0, d - awakeMins()); }
+  function hmTxt(m) { return Math.floor(m / 60) + 'j ' + (m % 60) + 'm'; }
   function calcSleep() {
     ['sleepStart', 'sleepEnd'].forEach(function (id) { var v = $(id).value, tv = $(id + 'Tv'); if (!tv) return; tv.textContent = v || '--:--'; tv.classList.toggle('tph', !v); });
-    var m = sleepMins();
+    var aw = awakeMins(), atv = $('sleepAwakeTv'); atv.textContent = hmTxt(aw); atv.classList.toggle('tph', !aw);
+    var m = sleepMins(), bed = bedMins();
     $('sleepDur').innerHTML = m === null ? ''
-      : '<b>' + Math.floor(m / 60) + 'j ' + (m % 60) + 'm</b>' + (m > 14 * 60 ? '⚠ lama sangat — semak waktu' : 'tempoh tidur');
+      : (aw && aw >= bed ? '<b>–</b>⚠ awake lebih dari masa di katil'
+      : '<b>' + hmTxt(m) + '</b><span>' + (m > 14 * 60 ? '⚠ lama sangat — semak waktu' : (aw ? 'tidur bersih<small>' + hmTxt(bed) + ' di katil − ' + hmTxt(aw) + ' awake</small>' : 'tempoh tidur')) + '</span>');
     $('sleepDur').style.display = m === null ? 'none' : '';
     if (typeof renderSleepTip === 'function') renderSleepTip(m);
   }
-  ['sleepStart', 'sleepEnd'].forEach(function (id) { $(id).addEventListener('input', calcSleep); $(id).addEventListener('change', calcSleep); });
+  ['sleepStart', 'sleepEnd', 'sleepAwake'].forEach(function (id) { $(id).addEventListener('input', calcSleep); $(id).addEventListener('change', calcSleep); });
   function resetSleepCard() {
     $('sleepDate').value = isoToDmy(todayKey());
-    $('sleepStart').value = ''; $('sleepEnd').value = ''; SLEEP_EDIT = false; calcSleep();
+    $('sleepStart').value = ''; $('sleepEnd').value = ''; $('sleepAwake').value = ''; SLEEP_EDIT = false; calcSleep();
   }
   function saveSleep(overwrite) {
     var iso = dmyToIso($('sleepDate').value);
@@ -1316,9 +1333,18 @@
       }
       $('sleepMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }).withFailureHandler(function (e) { btn.disabled = false; btn.textContent = 'SIMPAN TIDUR'; show('bad', 'Gagal: ' + (e && e.message ? e.message : e), null, 'sleepMsg'); })
-      .appSaveSleep({ date: iso, start: $('sleepStart').value, end: $('sleepEnd').value, overwrite: overwrite || SLEEP_EDIT });
+      .appSaveSleep({ date: iso, start: $('sleepStart').value, end: $('sleepEnd').value, awake: awakeMins(), overwrite: overwrite || SLEEP_EDIT });
   }
   $('sleepSave').onclick = function () { saveSleep(false); };
+  var RF_ICON = '<svg class="ico ih ih-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="rf"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></g></svg>';
+  // clear the sleep card (unsaved input only) — tap twice to confirm, like the workout card
+  $('sleepClear').onclick = function () {
+    var b = $('sleepClear');
+    if (b.dataset.arm) { delete b.dataset.arm; b.innerHTML = RF_ICON; var keep = $('sleepDate').value; resetSleepCard(); $('sleepMsg').textContent = ''; return; }
+    b.dataset.arm = '1'; b.textContent = 'Pasti?';
+    setTimeout(function () { if (b.dataset.arm) { delete b.dataset.arm; b.innerHTML = RF_ICON; } }, 2500);
+  };
+
 
   function renderSleepChart() {
     var el = $('cSleep'), all = (DASH && DASH.sleep) || [], rg = dRange();
@@ -1343,14 +1369,15 @@
       if (nd <= 2) lab = isoToDmy(kk);
       g += '<text x="' + xi(i) + '" y="' + (H - B + 13) + '" font-size="' + (nd > 28 ? 7.5 : 9) + '" text-anchor="middle" fill="currentColor" opacity=".6">' + lab + '</text>';
     });
-    var tgt = S.sleepTarget || 8;
-    g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(tgt) + '" y2="' + y(tgt) + '" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 4"/>';
+    var tgt = slLo(), okMax = slHi();
+    g += '<rect x="' + L + '" width="' + (W - R - L) + '" y="' + y(okMax) + '" height="' + Math.max(1, y(tgt) - y(okMax)) + '" fill="#22c55e" opacity=".1" rx="3"/>' +
+      '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(tgt) + '" y2="' + y(tgt) + '" stroke="#22c55e" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>' +
+      '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(okMax) + '" y2="' + y(okMax) + '" stroke="#22c55e" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>';
     var pts = rows.map(function (r) { return x(r.d) + ',' + y(r.h); });
     if (rows.length > 1) g += '<defs><linearGradient id="sga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--pen)" stop-opacity=".4"/><stop offset="1" stop-color="var(--pen)" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="M' + x(rows[0].d) + ',' + (H - B) + ' L' + pts.join(' L') + ' L' + x(rows[rows.length - 1].d) + ',' + (H - B) + ' Z" fill="url(#sga)"/>';
     g += '<polyline fill="none" stroke="var(--pen)" stroke-width="2" stroke-linejoin="round" points="' + pts.join(' ') + '"/>';
     // below target = red X, target to 9h = green tick, over 9h = amber triangle (too much sleep)
-    var okMax = Math.max(9, tgt);
     rows.forEach(function (r) {
       var cx = x(r.d), cy = y(r.h), mk;
       if (r.h < tgt) mk = '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#ef4444" stroke="var(--paper)" stroke-width="1.5"/>';
@@ -1360,10 +1387,10 @@
     });
     var hs = rows.map(function (r) { return r.h; }), avg = hs.reduce(function (a, b) { return a + b; }, 0) / hs.length;
     var fmt = function (h) { var t = Math.round(h * 60); return Math.floor(t / 60) + 'j ' + (t % 60) + 'm'; };
-    el.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--muted);font-weight:700">' + esc(rg.label) + ' · garis putus = target ' + tgt + 'j</div>' +
+    el.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--muted);font-weight:700">' + esc(rg.label) + ' · jalur hijau = target ' + tgt + '–' + okMax + 'j</div>' +
       '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg>' +
       '<div class="slg"><span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#ef4444"/></svg>Bawah target</span>' +
-      '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#22c55e"/></svg>Capai target</span>' +
+      '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#22c55e"/></svg>Target ' + tgt + '–' + okMax + 'j</span>' +
       '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#f59e0b"/></svg>Lebih ' + okMax + ' jam</span></div>' +
       '<div class="skpi"><div><b>' + fmt(avg) + '</b>Purata</div><div><b>' + rows.length + '</b>Malam</div><div><b>' + fmt(Math.min.apply(null, hs)) +
       '</b>Terpendek</div><div><b>' + fmt(Math.max.apply(null, hs)) + '</b>Terpanjang</div></div>';
@@ -1575,17 +1602,17 @@
     }
     else if (id.indexOf('s-') === 0) {
       // sleep stats -> list of the matching nights
-      var tg = S.sleepTarget || 8, okM = Math.max(9, tg), allS = DASH.sleep || [], nts = allS.filter(function (x) { return inRange(x.d); });
+      var tg = slLo(), okM = slHi(), allS = DASH.sleep || [], nts = allS.filter(function (x) { return inRange(x.d); });
       var onT = function (x) { return x.h >= tg && x.h <= okM; };
       var mark = function (x) { return '<i class="sdot" style="background:' + (x.h < tg ? '#ef4444' : (x.h <= okM ? '#22c55e' : '#f59e0b')) + '"></i>'; };
-      var srow = function (x, extra) { return row(x.d, mark(x) + ' ' + x.text + ' · ' + x.start + ' → ' + x.end + (extra || '')); };
+      var srow = function (x, extra) { return row(x.d, mark(x) + ' ' + x.text + ' · ' + x.start + ' → ' + x.end + (x.awake ? ' · awake ' + hmTxt(x.awake) : '') + (extra || '')); };
       var sd = function (a) { return a.slice().sort(function (p, q) { return p.d < q.d ? 1 : -1; }); };
       var avgH = nts.length ? nts.reduce(function (a, x) { return a + x.h; }, 0) / nts.length : 0;
       if (id === 's-avg' || id === 's-n') { title = id === 's-n' ? 'Malam direkod' : 'Purata tidur'; sum = nts.length + ' malam' + (nts.length ? ' · purata ' + hm(avgH * 60) : ''); html = sd(nts).map(function (x) { return srow(x); }).join(''); }
       else if (id === 's-hit') { var hitN = nts.filter(onT); title = 'Capai target (' + tg + 'j)'; sum = hitN.length + ' / ' + nts.length + ' malam';
         html = '<div class="grp">Capai target</div>' + (sd(hitN).map(function (x) { return srow(x); }).join('') || '<div class="empty">Tiada.</div>') +
           '<div class="grp">Tak capai</div>' + (sd(nts.filter(function (x) { return !onT(x); })).map(function (x) { return srow(x); }).join('') || '<div class="empty">Tiada.</div>'); }
-      else if (id === 's-ok') { var okN = nts.filter(function (x) { return x.h >= 7 && x.h <= 9; }); title = 'Tidur cukup 7–9 jam'; sum = okN.length + ' malam'; html = sd(okN).map(function (x) { return srow(x); }).join(''); }
+      else if (id === 's-ok') { var okN = nts.filter(function (x) { return x.h < tg; }); title = 'Kurang tidur (bawah ' + tg + 'j)'; sum = okN.length + ' malam'; html = sd(okN).map(function (x) { return srow(x); }).join(''); }
       else if (id === 's-cur' || id === 's-long') {
         var byS = {}; allS.forEach(function (x) { byS[x.d] = x; });
         var runsS = [], curR = null; allS.slice().sort(function (p, q) { return p.d < q.d ? -1 : 1; }).forEach(function (x) {
@@ -1631,7 +1658,7 @@
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, lang: 'bm', saved: [], workouts: null };
+  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -1691,13 +1718,14 @@
   $('themeBtn').onclick = function () { S.theme = isDark() ? 'light' : 'dark'; saveSettings(); applySettings(); };
   $('optLarge').onchange = function () { S.large = this.checked; saveSettings(); applySettings(); };
   $('optNames').onchange = function () { S.autoNames = this.checked; saveSettings(); };
-  $('optSleepT').addEventListener('input', function () { var v = parseFloat(this.value.replace(',', '.')); S.sleepTarget = v > 0 && v < 16 ? v : 8; saveSettings(); if (DASH) renderDash(); });
+  $('optSleepT').addEventListener('input', function () { var v = parseFloat(this.value.replace(',', '.')); S.sleepTarget = v > 0 && v < 16 ? v : 8; saveSettings(); if (DASH) renderDash(); calcSleep(); });
+  $('optSleepLo').addEventListener('input', function () { var v = parseFloat(this.value.replace(',', '.')); S.sleepMin = v > 0 && v < 16 ? v : 7; saveSettings(); if (DASH) renderDash(); calcSleep(); });
   function readDefTarget() { S.defTarget = durBad($('defT').value) ? S.defTarget : durText($('defT').value); saveSettings(); }
   wireDur('defT');
   $('defT').addEventListener('input', readDefTarget);
   function openSettings() {
     $('defT').value = durShow(S.defTarget);
-    $('optSleepT').value = S.sleepTarget || 8;
+    $('optSleepT').value = S.sleepTarget || 8; $('optSleepLo').value = S.sleepMin || 7;
     $('sheet').classList.add('on'); $('sheetBg').classList.add('on');
   }
   function closeSettings() { $('sheet').classList.remove('on'); $('sheetBg').classList.remove('on'); }
@@ -2049,8 +2077,11 @@
   paintDTab();
 
   // ---------------- Sleep dashboard: KPIs + heatmap ----------------
-  // colours: under 6h red · 6–6.9h yellow · 7–9h green · over 9h blue
-  function sleepColor(h) { return h < 6 ? '#ef4444' : (h < 7 ? '#eab308' : (h <= 9 ? '#22c55e' : '#3b82f6')); }
+  // sleep target is a RANGE (default 7–8h): inside = green, under = red, over = amber
+  function slLo() { var lo = +S.sleepMin || 7, hi = +S.sleepTarget || 8; return Math.min(lo, hi); }
+  function slHi() { var lo = +S.sleepMin || 7, hi = +S.sleepTarget || 8; return Math.max(lo, hi); }
+  function slTxt() { return slLo() + '–' + slHi() + 'j'; }
+  function sleepColor(h) { return h < slLo() ? '#ef4444' : (h <= slHi() ? '#22c55e' : '#f59e0b'); }
   function hClock(h) { var t = Math.round(h * 60); return Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2); }
   function avgClock(list) {
     var v = list.map(clockMin).filter(function (c) { return c !== null; });
@@ -2066,7 +2097,7 @@
   }
   function renderSleepDash() {
     if (!DASH) return;
-    var all = DASH.sleep || [], rg = dRange(), tgt = S.sleepTarget || 8, okMax = Math.max(9, tgt);
+    var all = DASH.sleep || [], rg = dRange(), tgt = slLo(), okMax = slHi();
     var rows = all.filter(function (x) { return x.d >= rg.from && x.d <= rg.to; });
     var on = function (x) { return x.h >= tgt && x.h <= okMax; };
     // target streaks over all nights
@@ -2076,9 +2107,9 @@
     var cur = 0, k = byD[DASH.today] ? DASH.today : addDays(DASH.today, -1);
     while (byD[k] && on(byD[k])) { cur++; k = addDays(k, -1); }
     var n = rows.length, avg = n ? rows.reduce(function (a, x) { return a + x.h; }, 0) / n : 0;
-    var hit = rows.filter(on).length, enough = rows.filter(function (x) { return x.h >= 7 && x.h <= 9; }).length;
+    var hit = rows.filter(on).length, enough = rows.filter(function (x) { return x.h < tgt; }).length;
     var tiles = [[n ? hm(avg * 60) : '–', 'Purata tidur', 's-avg'], [n, 'Malam', 's-n'], [n ? Math.round(hit / n * 100) + '%' : '–', 'Capai target', 's-hit'],
-                 [enough, 'Cukup 7–9j', 's-ok'], [cur, 'Streak', 's-cur'], [best, 'Streak terbaik', 's-long'],
+                 [enough, 'Kurang tidur', 's-ok'], [cur, 'Streak', 's-cur'], [best, 'Streak terbaik', 's-long'],
                  [avgClock(rows.map(function (x) { return x.start; })), 'Purata lelap', 's-bed'], [avgWake(rows.map(function (x) { return x.end; })), 'Purata bangun', 's-wake']];
     $('sKpi').innerHTML = statRow({ v: n ? (Math.round(avg * 10) / 10) : '–', unit: n ? (S.lang === 'en' ? 'h' : 'j') : '', frac: n ? avg / tgt : 0, label: 'Purata tidur', k: 's-avg' },
         [tiles[1], tiles[2], tiles[3], tiles[4]]) + statRow(null, [tiles[5], tiles[0], tiles[6], tiles[7]]);
@@ -2113,7 +2144,7 @@
         var bg = colOf(x);
         return '<i class="has" data-d="' + key + '" style="background:' + bg + ';color:' + (lum(bg) > 0.6 ? '#111' : '#fff') + '" title="' + esc(tip(x) + ' · ' + labOf(x)) + '">' + d + '</i>';
       }).join('') + '</div></div></div>';
-    html += o.legend || '<div class="hml"><span style="--c:#ef4444">Bawah 6j</span><span style="--c:#eab308">6–6.9j</span><span style="--c:#22c55e">7–9j</span><span style="--c:#3b82f6">Lebih 9j</span></div>';
+    html += o.legend || '<div class="hml"><span style="--c:#ef4444">Bawah ' + slLo() + 'j</span><span style="--c:#22c55e">' + slTxt() + '</span><span style="--c:#f59e0b">Lebih ' + slHi() + 'j</span></div>';
     el.innerHTML = html;
     [].forEach.call(el.querySelectorAll('[data-d]'), function (c) { c.onclick = function () { openDetail(c.dataset.d); }; });
     var w = el.querySelector('.hst-s'); if (w) w.scrollLeft = w.scrollWidth;
@@ -2133,12 +2164,12 @@
   function isLate(t) { var c = clockMin(t); return c !== null && c < 5 * 60; }          // went to bed after midnight
   function renderSleepTip(m) {
     var box = $('sleepTip'); if (!box) return;
-    var en = S.lang === 'en', tgt = S.sleepTarget || 8, okMax = Math.max(9, tgt), k, title, text;
+    var en = S.lang === 'en', tgt = slLo(), okMax = slHi(), k, title, text;
     var T = function (bm, e) { return en ? e : bm; };
     if (m !== null && m !== undefined) {                       // live advice for the night being entered
       var h = m / 60, late = isLate($('sleepStart').value);
       if (h < tgt && late) { k = 'late'; title = T('Tidur lewat & kurang', 'Late and short sleep'); text = T('Hanya ' + hm(m) + '. Masuk tidur sebelum 23:00 untuk capai ' + tgt + 'j.', 'Only ' + hm(m) + '. Get to bed before 23:00 to reach ' + tgt + 'h.'); }
-      else if (h < tgt) { k = 'short'; title = T('Kurang tidur', 'Not enough sleep'); text = T('Kurang ' + hm(tgt * 60 - m) + ' dari target ' + tgt + 'j. Cuba tidur lebih awal malam ni.', hm(tgt * 60 - m) + ' below your ' + tgt + 'h target. Try an earlier night tonight.'); }
+      else if (h < tgt) { k = 'short'; title = T('Kurang tidur', 'Not enough sleep'); text = T('Kurang ' + hm(tgt * 60 - m) + ' dari target ' + tgt + '–' + okMax + 'j. Cuba tidur lebih awal malam ni.', hm(tgt * 60 - m) + ' below your ' + tgt + '–' + okMax + 'h target. Try an earlier night tonight.'); }
       else if (h > okMax) { k = 'long'; title = T('Tidur terlalu lama', 'Overslept'); text = T('Lebih ' + okMax + 'j boleh buat badan rasa lesu. Sasarkan ' + tgt + '–' + okMax + 'j.', 'Over ' + okMax + 'h can leave you groggy. Aim for ' + tgt + '–' + okMax + 'h.'); }
       else if (late) { k = 'late'; title = T('Tidur lewat', 'Late sleep'); text = T('Tempoh cukup, tapi waktu terbaik tidur sebelum 23:00. Selalu tidur lewat boleh lemahkan imun badan.', 'Enough hours, but bedtime is best before 23:00. Staying up late often can weaken immunity.'); }
       else { k = 'good'; title = T('Tidur cukup', 'Good sleep'); text = T(hm(m) + ' — dalam julat sihat. Kekalkan waktu tidur yang sama.', hm(m) + ' — in the healthy range. Keep the same bedtime.'); }
@@ -2155,7 +2186,7 @@
         var mean = bt.reduce(function (a, c) { return a + c; }, 0) / (bt.length || 1);
         var sd = Math.sqrt(bt.reduce(function (a, c) { return a + (c - mean) * (c - mean); }, 0) / (bt.length || 1));
         if (lates * 2 >= wk.length && wk.length >= 2) { k = 'late'; title = T('Selalu tidur lewat', 'Often sleeping late'); text = T(lates + '/' + wk.length + ' malam tidur lepas 12 malam. Cuba masuk tidur sebelum 23:00.', lates + ' of ' + wk.length + ' nights after midnight. Try bed before 23:00.'); }
-        else if (avg < tgt) { k = 'short'; title = T('Purata 7 hari: ' + hm(avg * 60), '7-day average: ' + hm(avg * 60)); text = T('Bawah target ' + tgt + 'j. Cuba tidur 30 minit lebih awal.', 'Below your ' + tgt + 'h target. Try going to bed 30 minutes earlier.'); }
+        else if (avg < tgt) { k = 'short'; title = T('Purata 7 hari: ' + hm(avg * 60), '7-day average: ' + hm(avg * 60)); text = T('Bawah target ' + tgt + '–' + okMax + 'j. Cuba tidur 30 minit lebih awal.', 'Below your ' + tgt + '–' + okMax + 'h target. Try going to bed 30 minutes earlier.'); }
         else if (sd > 60 && bt.length >= 3) { k = 'info'; title = T('Waktu tidur tak konsisten', 'Irregular bedtime'); text = T('Waktu tidur berubah lebih sejam. Tidur pada jam yang sama setiap malam.', 'Bedtime shifts by over an hour. Sleep at the same time each night.'); }
         else if (avg > okMax) { k = 'long'; title = T('Purata 7 hari: ' + hm(avg * 60), '7-day average: ' + hm(avg * 60)); text = T('Lebih ' + okMax + 'j sehari. Tidur berlebihan boleh buat badan lesu.', 'Over ' + okMax + 'h a night. Too much sleep can leave you sluggish.'); }
         else { k = 'good'; title = T('Corak tidur bagus', 'Good sleep pattern'); text = T('Purata ' + hm(avg * 60) + ', ' + hit + '/' + wk.length + ' malam capai target. Teruskan!', 'Average ' + hm(avg * 60) + ', ' + hit + ' of ' + wk.length + ' nights on target. Keep it up!'); }
@@ -2249,7 +2280,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = oren': 'In range = green · under = red · over = amber', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
@@ -2262,7 +2293,7 @@
     [/(^|· )Tidur (\d)/g, '$1Sleep $2'], [/(\d+)j (\d+)m/g, '$1h $2m'], [/(\d+(?:\.\d+)?)j\b/g, '$1h'], [/(\d+) latihan\b/g, '$1 exercises'], [/(\d+) sesi\b/g, '$1 sessions'],
     [/(\d+) hari berturut-turut \(semua rekod\)/, '$1 days in a row (all records)'], [/(\d+) hari berturut-turut/, '$1 days in a row'],
     [/ — workout hari ini untuk mula streak baru/, ' — work out today to start a new streak'], [/(\d+) hari bermasa/, '$1 timed days'],
-    [/(\d+) hari\b/, '$1 days'], [/ — tekan untuk edit/, ' — tap to edit'], [/garis putus = target/, 'dashed line = target'],
+    [/(\d+) hari\b/, '$1 days'], [/ — tekan untuk edit/, ' — tap to edit'], [/garis putus = target/, 'dashed line = target'], [/jalur hijau = target/, 'green band = target'],
     [/^7 hari · /, '7 days · '], [/^Tahun (\d+)/, 'Year $1'], [/^Semua rekod$/, 'All records'], [/^Rehat (\d+)/, 'Rest $1'],
     [/\b(Mac|Mei|Ogo|Okt|Dis) (\d{4})/, function (m, a, y) { return { Mac: 'Mar', Mei: 'May', Ogo: 'Aug', Okt: 'Oct', Dis: 'Dec' }[a] + ' ' + y; }],
     [/^Lebih (\d+(?:\.\d+)?) jam$/, 'Over $1 hours'], [/^Gagal simpan: /, 'Save failed: '], [/^Gagal: /, 'Failed: '], [/Tak dapat muat dashboard: /, "Couldn't load dashboard: "], [/Tak dapat muat: /, "Couldn't load: "],
