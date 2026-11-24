@@ -1073,6 +1073,16 @@
   .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
   #cardView > .sleep { margin-top:0; }
+
+  /* view switch animation */
+  #cardView, #dashView { will-change:auto; }
+  .vout-l { animation:vOutL .14s ease-in forwards; } .vout-r { animation:vOutR .14s ease-in forwards; }
+  .vin-r { animation:vInR .34s cubic-bezier(.22,1,.36,1) both; } .vin-l { animation:vInL .34s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes vOutL { to { opacity:0; transform:translateX(-18px) scale(.985); } }
+  @keyframes vOutR { to { opacity:0; transform:translateX(18px) scale(.985); } }
+  @keyframes vInR { from { opacity:0; transform:translateX(28px) scale(.985); } to { opacity:1; transform:none; } }
+  @keyframes vInL { from { opacity:0; transform:translateX(-28px) scale(.985); } to { opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce) { .vout-l, .vout-r, .vin-l, .vin-r { animation:none !important; } }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1633,12 +1643,25 @@
   function sundayOf(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10); }
   function weekStart(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); }
   function esc(t) { var x = document.createElement('span'); x.textContent = t; return x.innerHTML; }
+  // Home <-> Dashboard: old view slides/fades out, new one slides in from the side of its tab
+  var VIEW_T = 0;
   function setView(dash) {
-    $('dashView').style.display = dash ? 'block' : 'none'; $('cardView').style.display = dash ? 'none' : 'block';
+    var inV = $(dash ? 'dashView' : 'cardView'), outV = $(dash ? 'cardView' : 'dashView'), tok = ++VIEW_T;
     $('dashBtn').classList.toggle('on', dash); $('homeBtn').classList.toggle('on', !dash);
-    window.scrollTo(0, 0);
-    if (dash) loadDash();
+    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function swap() {
+      if (tok !== VIEW_T) return;
+      outV.classList.remove('vout-l', 'vout-r'); outV.style.display = 'none';
+      inV.classList.remove('vout-l', 'vout-r'); inV.style.display = 'block'; window.scrollTo(0, 0);
+      if (!calm) { inV.classList.remove('vin-l', 'vin-r'); void inV.offsetWidth; inV.classList.add(dash ? 'vin-r' : 'vin-l'); }
+      if (dash) loadDash();
+    }
+    if (calm || outV.style.display === 'none') { swap(); return; }
+    inV.classList.remove('vin-l', 'vin-r'); outV.classList.remove('vin-l', 'vin-r');
+    outV.classList.add(dash ? 'vout-l' : 'vout-r');
+    setTimeout(swap, 140);
   }
+  ['cardView', 'dashView'].forEach(function (id) { $(id).addEventListener('animationend', function (e) { if (e.target === this) this.classList.remove('vin-l', 'vin-r'); }); });
   function toggleDash() { setView($('dashView').style.display === 'none'); }
   $('dashBtn').onclick = function () { setView(true); };
   $('homeBtn').onclick = function () { setView(false); };
