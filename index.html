@@ -899,9 +899,11 @@
   .wk b { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; background:var(--tile); }
   .wk .w b { background:var(--pen); color:#fff; } body.dark .wk .w b { color:#111; }
   .wk .r b { background:var(--rest); color:#111; }
-  .wk .t b { box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--accent); }
+  .wk .t b { box-shadow:none; }
+  .wk .s b { box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--sc); }
   .wk .f { opacity:.35; pointer-events:none; }
-  .wk i { position:absolute; bottom:-5px; width:5px; height:5px; border-radius:50%; background:#a78bfa; }
+  .wk i { position:absolute; bottom:-8px; width:5px; height:5px; border-radius:50%; background:var(--accent); }
+  .wk .t small { color:var(--accent); font-weight:700; }
 
   /* one period button (current choice + chevron) instead of two */
   .rsel .rmore { display:none !important; }
@@ -2024,6 +2026,11 @@
   var STREAK = null;
   function greet() { var h = new Date().getHours(), en = S.lang === 'en';
     return h < 12 ? (en ? 'Good morning' : 'Selamat pagi') : h < 15 ? (en ? 'Good afternoon' : 'Selamat tengah hari') : h < 19 ? (en ? 'Good evening' : 'Selamat petang') : (en ? 'Good night' : 'Selamat malam'); }
+  function sleepH(k, txt) {
+    if (SLEEP_ALL) { for (var i = SLEEP_ALL.length - 1; i >= 0; i--) if (SLEEP_ALL[i].d === k) return SLEEP_ALL[i].h; }
+    if (!txt) return null;
+    var m = /(\d+)\s*[jh]\s*(\d+)?/.exec(String(txt)); return m ? (+m[1]) + (+(m[2] || 0)) / 60 : null;
+  }
   function paintHeaderExtras() {
     var c = $('streakChip'); if (!c) return;
     c.innerHTML = ic('flame') + '<b>' + (STREAK === null ? '–' : STREAK) + '</b>';
@@ -2031,7 +2038,7 @@
     c.classList.toggle('zero', !STREAK);
     // week strip: Sunday-first weeks, swipe left for older weeks; always opens on this week
     var w = $('weekStrip'), t = REC_TODAY || todayKey(), by = {}, slp = {};
-    (REC || []).forEach(function (x) { (by[x.date] = by[x.date] || []).push(x.activity); if (x.sleep || x.activity === 'Sleep') slp[x.date] = 1; });
+    (REC || []).forEach(function (x) { (by[x.date] = by[x.date] || []).push(x.activity); if (x.sleep) slp[x.date] = x.sleep; else if (x.activity === 'Sleep' && !slp[x.date]) slp[x.date] = ''; });
     var sun = function (k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10); };
     var first = t; Object.keys(by).forEach(function (k) { if (k < first) first = k; });
     var cur = sun(t), start = sun(first); if (Date.parse(cur) - Date.parse(start) > 52 * 7 * 864e5) start = addDays(cur, -52 * 7);
@@ -2044,7 +2051,8 @@
       for (var i = 0; i < 7; i++) {
         var k = addDays(wk, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
         if (k > t) cls += ' f'; if (k === t) cls += ' t';
-        h += '<button type="button" data-d="' + k + '" class="' + cls + '"><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b>' + (slp[k] ? '<i></i>' : '') + '</button>';
+        var sh = sleepH(k, slp[k]);
+        h += '<button type="button" data-d="' + k + '" class="' + cls + (sh !== null ? ' s' : '') + '"' + (sh !== null ? ' style="--sc:' + sleepColor(sh) + '"' : '') + '><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b>' + (k === t ? '<i></i>' : '') + '</button>';
       }
       h += '</div></div>';
     }
@@ -2198,7 +2206,7 @@
   // ---------------- Sleep insight (short tip that follows your sleep data) ----------------
   var SLEEP_ALL = null;
   function loadSleepAll() {
-    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; renderSleepTip(sleepMins()); })
+    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); })
       .withFailureHandler(function () {}).appGetDashboard();
   }
   function hm(min) { min = Math.round(min); return Math.floor(min / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (min % 60) + 'm'; }
