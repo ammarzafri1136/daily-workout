@@ -591,7 +591,7 @@
 <div class="wrap">
   <nav class="nav">
     <div class="tabs" role="tablist"><button type="button" id="homeBtn" class="on" role="tab">Home</button><button type="button" id="dashBtn" role="tab">Dashboard</button></div>
-    <button type="button" class="stk" id="streakChip" title="Streak workout" aria-label="Streak workout"></button>
+    <button type="button" class="stk" id="streakChip" title="Streak workout" aria-label="Streak workout"></button><button type="button" class="ib pbbtn" id="pbBtn" title="Personal Best" aria-label="Personal Best"></button><span class="navsp" aria-hidden="true"></span>
     <button type="button" class="ib txt" id="langBtn" title="Bahasa / Language" aria-label="Bahasa / Language">BM</button>
     <button type="button" class="ib" id="themeBtn" title="Dark / Bright mode" aria-label="Dark mode"><svg class="ico ih ih-moon hi tm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mn" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg><svg class="ico ih ih-sun hi ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><g class="sr"><path d="M12 5l0 .01"/><path d="M17 7l0 .01"/><path d="M19 12l0 .01"/><path d="M17 17l0 .01"/><path d="M12 19l0 .01"/><path d="M7 17l0 .01"/><path d="M5 12l0 .01"/><path d="M7 7l0 .01"/></g></svg></button>
     <button type="button" class="ib" id="setBtn" title="Settings" aria-label="Settings"><svg class="ico ih ih-gear hi" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="gr"><circle class="gc" cx="16" cy="16" r="5"/><path d="m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z"/></g></svg></button>
@@ -612,7 +612,6 @@
       <div id="workDash">
       <div class="kpis" id="dKpi"></div>
       <div class="ch"><h4>Workout vs Rest Day</h4><div id="cRatio"></div></div>
-      <div class="ch"><h4><span class="hic pbic" data-ic="trophy"></span>Personal Best</h4><div id="cPB"></div></div>
       <div class="ch"><h4>Tidur & prestasi</h4><div id="cSP"></div></div>
       <div class="ch"><h4>History workout</h4><div id="cWHeat"></div></div>
       <div class="ch"><h4>Trend masa workout <small style="color:var(--muted);font-weight:700">minit</small></h4><div id="cDur"></div></div>
@@ -1320,6 +1319,15 @@
   .pbr .pbgo { width:14px; height:14px; color:var(--muted); flex:none; }
   .pbh { font-size:11px; color:var(--muted); margin:8px 2px 0; }
   .kl.tip .pbt { width:14px; height:14px; color:#f59e0b; vertical-align:-2px; }
+
+  /* header: Personal Best button next to the streak chip; spacer on the right keeps the title centred */
+  #pbBtn { order:1; width:auto !important; min-width:44px; height:36px !important; padding:0 12px !important; border-radius:999px !important; position:relative; display:inline-flex; align-items:center; justify-content:center; gap:4px;
+    background:rgba(245,158,11,.16) !important; color:#b45309 !important; flex:none; font-size:15px; } body.dark #pbBtn { color:#fbbf24 !important; } #pbBtn b { font-weight:800; }
+  #pbBtn .ico { width:18px; height:18px; overflow:visible; }
+  #pbBtn .pbdot { position:absolute; top:5px; right:5px; width:7px; height:7px; border-radius:50%; background:#ef4444; box-shadow:0 0 0 2px var(--page); }
+  .navsp { order:3; width:50px; flex:none; }
+  .nav .lt { container-type:inline-size; } .nav .lt small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+  @container (max-width:200px) { .lt small .gr { display:none; } }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1696,6 +1704,7 @@
   }
     // full explanation + the data behind one Summary & Tips line (opens in the detail sheet)
   function openTip(kind, x) {
+    DBACK = function () { openTip(kind, x); };
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, c = x.c, p = x.p;
     var dd = function (k) { return isoToDmy(k); }, rngTxt = function (a, b) { return a === b ? dd(a) : dd(a) + ' – ' + dd(b); };
     var kv = function (rows) { return '<div class="tkv">' + rows.map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>'; };
@@ -2210,7 +2219,7 @@
   // ---------------- Personal Best: best single round per exercise (all records) ----------------
   function pbList() {
     var by = {};
-    ((DASH && DASH.ex) || []).forEach(function (x) {
+    ((DASH && DASH.ex) || EXH || []).forEach(function (x) {
       if (x.review) return;
       var k = x.n.trim().toLowerCase(), o = by[k] || (by[k] = { n: x.n.trim(), sec: false, best: 0, bd: '', tot: 0, td: '', kg: 0, kd: '', list: [] });
       if (x.u === 'seconds') o.sec = true;
@@ -2222,23 +2231,33 @@
     return Object.keys(by).map(function (k) { var o = by[k]; if (!o.best) { o.best = o.tot; o.bd = o.td; } return o; }).filter(function (o) { return o.best > 0; })
       .sort(function (a, b) { return a.bd < b.bd ? 1 : (a.bd > b.bd ? -1 : a.n.localeCompare(b.n)); });
   }
-  function renderPB() {
-    var el = $('cPB'); if (!el) return;
-    var en = S.lang === 'en', L = pbList(), t = (DASH && DASH.today) || todayKey();
-    if (!L.length) { el.innerHTML = '<div class="empty">' + (en ? 'Save a workout to start your records.' : 'Simpan workout untuk mula rekod terbaik.') + '</div>'; return; }
-    el.innerHTML = '<div class="pbl">' + L.map(function (o, i) {
-      var fresh = o.bd >= addDays(t, -6);
-      return '<button type="button" class="pbr" data-i="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span>' +
-        '<span class="pbv"><b>' + fmtV(o.best, o.sec) + '</b><small>' + (o.sec ? '' : ' reps') + (o.kg ? ' · ' + o.kg + 'kg' : '') + ' · ' + o.bd.slice(8) + '/' + o.bd.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
-    }).join('') + '</div><div class="pbh">' + (en ? 'Best single set for each exercise · all records' : 'Set terbaik untuk setiap latihan · semua rekod') + '</div>';
-    [].forEach.call(el.querySelectorAll('.pbr'), function (b) { b.onclick = function () { openPB(L[+b.dataset.i]); }; });
+  function openPBList() {
+    DBACK = openPBList;
+    var en = S.lang === 'en', L = pbList(), t = REC_TODAY || todayKey();
+    $('detailBack').style.display = 'none';
+    $('dTitle').textContent = 'Personal Best';
+    var body = !L.length ? '<div class="empty">' + (en ? 'Save a workout to start your records.' : 'Simpan workout untuk mula rekod terbaik.') + '</div>'
+      : '<p class="ttx">' + (en ? 'Your best single set for each exercise, from all your records. NEW = beaten in the last 7 days.' : 'Set terbaik kau untuk setiap latihan, dari semua rekod. BARU = dipecahkan dalam 7 hari terakhir.') + '</p><div class="pbl">' + L.map(function (o, i) {
+        var fresh = o.bd >= addDays(t, -6);
+        return '<button type="button" class="pbr" data-i="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span>' +
+          '<span class="pbv"><b>' + fmtV(o.best, o.sec) + '</b><small>' + (o.sec ? '' : ' reps') + (o.kg ? ' · ' + o.kg + 'kg' : '') + ' · ' + o.bd.slice(8) + '/' + o.bd.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
+      }).join('') + '</div>';
+    $('dBody').innerHTML = '<div class="kl tip">' + body + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.pbr'), function (b) { b.onclick = function () { openPB(L[+b.dataset.i], true); }; });
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
-  function openPB(o) {
+  function paintPBBtn() {
+    var b = $('pbBtn'); if (!b) return;
+    var L = pbList(), t = REC_TODAY || todayKey(), fresh = L.some(function (o) { return o.bd >= addDays(t, -6); });
+    b.innerHTML = ic('trophy') + (fresh ? '<i class="pbdot"></i>' : '');
+  }
+  $('pbBtn').onclick = openPBList;
+  function openPB(o, fromList) {
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
     var L = o.list.slice().sort(function (a, b) { return a.d < b.d ? 1 : -1; });
     var first = L[L.length - 1], firstBest = Math.max.apply(null, (first.r || []).filter(function (v) { return v != null; }).concat([0]));
     var gain = firstBest && o.best > firstBest ? Math.round(100 * (o.best - firstBest) / firstBest) : 0;
-    $('detailBack').style.display = 'none';
+    $('detailBack').style.display = fromList ? '' : 'none';
     $('dTitle').textContent = o.n;
     var kv = [[T('Set terbaik', 'Best set'), fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + ' · ' + isoToDmy(o.bd).slice(0, 5)],
       [T('Sesi terbaik (jumlah)', 'Best session (total)'), fmtV(o.tot, o.sec) + ' · ' + (o.td ? isoToDmy(o.td).slice(0, 5) : '–')],
@@ -2251,7 +2270,8 @@
         return '<div class="day" data-d="' + x.d + '"><span class="w">' + isoToDmy(x.d) + (isPB ? ' ' + ic('trophy', 'pbt') : '') + '</span><span>' +
           (rs.length ? rs.map(function (v) { return fmtV(v, o.sec); }).join(' · ') : fmtV(x.t, o.sec)) + (+x.kg ? ' · ' + x.kg + 'kg' : '') + ' <b class="go">' + ic('right') + '</b></span></div>';
       }).join('') + '</div>';
-    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
+    DBACK = fromList ? openPBList : null;
+    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { DBACK = function () { openPB(o, fromList); }; openDetail(d2.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
   function renderDash() {
@@ -2284,7 +2304,6 @@
       '<div title="Rehat" style="flex:' + rd.length + ';background:' + restC + ';color:' + (lum(restC) > 0.5 ? '#111' : '#fff') + '">' + (rd.length ? ic('coffee') + '<b>' + rd.length + '</b>' : '') + '</div></div>' : '<div class="empty">Tiada data.</div>';
 
     renderSleepPerf();
-    renderPB();
     // workout heatmap: blue = workout (shows minutes), yellow = rest day
     renderHeat(DASH.days, dRange(), { el: 'cWHeat',
       col: function (x) { return x.a === 'Workout' ? penC : restC; },
@@ -2319,7 +2338,7 @@
     return runs;
   }
   function openKpi(id) {
-    LAST_KPI = id;
+    LAST_KPI = id; DBACK = function () { openKpi(id); };
     var rg = dRange(), days = DASH.days.filter(function (x) { return inRange(x.d); }), ex = DASH.ex.filter(function (x) { return inRange(x.d); });
     var wd = days.filter(function (x) { return x.a === 'Workout'; }), rd = days.filter(function (x) { return x.a !== 'Workout'; });
     var row = function (k, right) { return '<div class="day" data-d="' + k + '"><span>' + isoToDmy(k) + '</span><span>' + right + ' <b class="go"><svg class="ico ih ih-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="cv" d="M9 6l6 6l-6 6"/></svg></b></span></div>'; };
@@ -2381,7 +2400,8 @@
     [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (el) { el.onclick = function () { openDetail(el.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
-  $('detailBack').onclick = function () { if (LAST_KPI) openKpi(LAST_KPI); };
+  var DBACK = null;   // what the sheet's Back button returns to (KPI list, tip, Personal Best list)
+  $('detailBack').onclick = function () { if (DBACK) DBACK(); else if (LAST_KPI) openKpi(LAST_KPI); };
 
   function renderProgress() {
     if (!DASH) return;
@@ -3037,7 +3057,28 @@
       };
     });
   }
-  $('streakChip').onclick = function () { $('dashBtn').click(); };
+  // streak chip -> sheet with the streak explained + the last 14 days
+  function openStreak() {
+    DBACK = openStreak;
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, t = REC_TODAY || todayKey(), wd = {}, rd = {}, last = null;
+    (REC || []).forEach(function (r) { if (r.activity === 'Workout') { wd[r.date] = r; if (r.date <= t && (!last || r.date > last)) last = r.date; } else if (r.activity === 'Rest Day') rd[r.date] = 1; });
+    var cur = STREAK || 0, best = +($('best').textContent) || 0, days = []; for (var i = 0; i < 14; i++) days.push(addDays(t, -i));
+    var wk14 = days.filter(function (k) { return wd[k]; }).length;
+    var msg = cur ? T('Kau dah workout ' + cur + ' hari berturut-turut. Workout hari ini (atau esok paling lewat) untuk sambung streak — kalau terlepas sehari, streak mula semula dari 0.',
+        "You've trained " + cur + ' days in a row. Train today (or tomorrow at the latest) to keep it going — miss a day and it starts again from 0.')
+      : T('Tiada streak aktif sekarang' + (last ? ' — workout terakhir pada ' + isoToDmy(last) : '') + '. Satu workout hari ini cukup untuk mula streak baru. Rekod terbaik kau ' + best + ' hari berturut-turut.',
+        'No active streak right now' + (last ? ' — your last workout was on ' + isoToDmy(last) : '') + '. One workout today starts a new one. Your best is ' + best + ' days in a row.');
+    $('detailBack').style.display = 'none';
+    $('dTitle').textContent = 'Streak · ' + cur + T(' hari', cur === 1 ? ' day' : ' days');
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + msg + '</p><div class="tkv">' +
+      [[T('Streak semasa', 'Current streak'), cur], [T('Streak terbaik', 'Best streak'), best], [T('Workout terakhir', 'Last workout'), last ? isoToDmy(last).slice(0, 5) : '–'], [T('Workout (14 hari)', 'Workouts (14 days)'), wk14 + ' / 14']]
+        .map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div><div class="grp">' + T('14 hari terakhir', 'Last 14 days') + '</div>' +
+      days.map(function (k) { var w = wd[k]; return '<div class="day" data-d="' + k + '"><span class="' + (w ? 'w' : (rd[k] ? 'r' : '')) + '">' + isoToDmy(k) + '</span><span>' +
+        (w ? '✓ ' + w.exercises + T(' latihan', ' exercises') + ' · ' + w.reps + ' reps' : (rd[k] ? T('Rehat', 'Rest') : (k === t ? T('Belum ada rekod', 'Nothing yet') : '–'))) + ' <b class="go">' + ic('right') + '</b></span></div>'; }).join('') + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { DBACK = openStreak; openDetail(d2.dataset.d, true); }; });
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
+  }
+  $('streakChip').onclick = openStreak;
 
   // ---------------- Day name under the workout date ----------------
   var DAYS_BM = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'], LAST_DAY_KEY = null;
@@ -3238,7 +3279,7 @@
   // ---------------- Sleep insight (short tip that follows your sleep data) ----------------
   var SLEEP_ALL = null;
   function loadSleepAll() {
-    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; EXH = (d && d.ex) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); updateHints(); if (REC && REC.length) renderRecent(); })
+    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; EXH = (d && d.ex) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); try { paintPBBtn(); } catch (e) {} updateHints(); if (REC && REC.length) renderRecent(); })
       .withFailureHandler(function () {}).appGetDashboard();
   }
   function hm(min) { min = Math.round(min); return Math.floor(min / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (min % 60) + 'm'; }
@@ -3299,7 +3340,7 @@
   function paintTitle() {
     var en = S.lang === 'en', d = new Date();
     LANG_BUSY = true;
-    $('ltDate').textContent = greet() + ' · ' + (en ? DAYS_LONG_EN : DAYS_BM)[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + (en ? MON_LONG_EN : MON_LONG_BM)[d.getMonth()].slice(0, 3);
+    $('ltDate').innerHTML = '<span class="gr">' + greet() + ' · </span>' + (en ? DAYS_LONG_EN : DAYS_BM)[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + (en ? MON_LONG_EN : MON_LONG_BM)[d.getMonth()].slice(0, 3);   // greeting hides itself when the header is narrow
     paintHeaderExtras();   // header + week strip are the same on Home and Dashboard
     $('ltTitle').textContent = en ? 'Today' : 'Hari Ini';
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
