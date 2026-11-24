@@ -887,7 +887,11 @@
   #setBtn { min-width:56px; }
   .lt small { text-transform:none !important; letter-spacing:0 !important; font-size:12px !important; font-weight:500 !important; }
   /* this-week strip */
-  .wk { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:4px; background:var(--paper); border-radius:22px; padding:10px 8px; margin:0 0 12px; }
+  .wk { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; background:var(--paper); border-radius:22px; padding:8px 0 12px; margin:0 0 12px; }
+  .wk::-webkit-scrollbar { display:none; }
+  .wkp { flex:0 0 100%; scroll-snap-align:start; padding:0 8px; box-sizing:border-box; }
+  .wkl { font-size:11px; font-weight:600; color:var(--muted); text-align:center; margin:0 0 6px; }
+  .wkg { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:4px; }
   .wk button { display:flex; flex-direction:column; align-items:center; gap:4px; background:none !important; padding:0 !important; color:var(--ink); position:relative; }
   .wk small { font-size:11px; color:var(--muted); font-weight:500; }
   .wk b { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; background:var(--tile); }
@@ -1357,6 +1361,7 @@
   var MON = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ogo', 'Sep', 'Okt', 'Nov', 'Dis'];
   function ddmm(k) { var p = k.split('-'); return p[2] + '/' + p[1]; }
   function monLabel(ym) { var p = ym.split('-'); return MON[+p[1] - 1] + ' ' + p[0]; }
+  function sundayOf(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10); }
   function weekStart(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); }
   function esc(t) { var x = document.createElement('span'); x.textContent = t; return x.innerHTML; }
   function setView(dash) {
@@ -1941,16 +1946,28 @@
     c.innerHTML = ic('flame') + '<b>' + (STREAK === null ? '–' : STREAK) + '</b>';
     c.title = (S.lang === 'en' ? 'Workout streak: ' : 'Streak workout: ') + (STREAK || 0) + (S.lang === 'en' ? ' day(s)' : ' hari');
     c.classList.toggle('zero', !STREAK);
-    var w = $('weekStrip'), t = REC_TODAY || todayKey(), mon = weekStart(t), by = {};
-    var slp = {}; (REC || []).forEach(function (x) { (by[x.date] = by[x.date] || []).push(x.activity); if (x.sleep || x.activity === 'Sleep') slp[x.date] = 1; });
-    var en = S.lang === 'en', L = en ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['I', 'S', 'R', 'K', 'J', 'S', 'A'], h = '';
-    for (var i = 0; i < 7; i++) {
-      var k = addDays(mon, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
-      if (k > t) cls += ' f'; if (k === t) cls += ' t';
-      h += '<button type="button" data-d="' + k + '" class="' + cls + '"><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b>' + (slp[k] ? '<i></i>' : '') + '</button>';
+    // week strip: Sunday-first weeks, swipe left for older weeks; always opens on this week
+    var w = $('weekStrip'), t = REC_TODAY || todayKey(), by = {}, slp = {};
+    (REC || []).forEach(function (x) { (by[x.date] = by[x.date] || []).push(x.activity); if (x.sleep || x.activity === 'Sleep') slp[x.date] = 1; });
+    var sun = function (k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10); };
+    var first = t; Object.keys(by).forEach(function (k) { if (k < first) first = k; });
+    var cur = sun(t), start = sun(first); if (Date.parse(cur) - Date.parse(start) > 52 * 7 * 864e5) start = addDays(cur, -52 * 7);
+    var en = S.lang === 'en', L = en ? ['S', 'M', 'T', 'W', 'T', 'F', 'S'] : ['A', 'I', 'S', 'R', 'K', 'J', 'S'];
+    var MS = en ? MON_LONG_EN : MON_LONG_BM, h = '';
+    for (var wk = start; wk <= cur; wk = addDays(wk, 7)) {
+      var end = addDays(wk, 6), lab = wk === cur ? (en ? 'This week' : 'Minggu ini') :
+        (+wk.slice(8)) + ' ' + MS[+wk.slice(5, 7) - 1].slice(0, 3) + ' – ' + (+end.slice(8)) + ' ' + MS[+end.slice(5, 7) - 1].slice(0, 3);
+      h += '<div class="wkp"><div class="wkl">' + lab + '</div><div class="wkg">';
+      for (var i = 0; i < 7; i++) {
+        var k = addDays(wk, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
+        if (k > t) cls += ' f'; if (k === t) cls += ' t';
+        h += '<button type="button" data-d="' + k + '" class="' + cls + '"><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b>' + (slp[k] ? '<i></i>' : '') + '</button>';
+      }
+      h += '</div></div>';
     }
     w.innerHTML = h;
-    [].forEach.call(w.children, function (b) {
+    w.scrollLeft = w.scrollWidth;
+    [].forEach.call(w.querySelectorAll('button[data-d]'), function (b) {
       b.onclick = function () {
         var k = b.dataset.d; if (k > t) return;
         if ((by[k] || []).length) { openDetail(k); return; }
@@ -2067,9 +2084,9 @@
     if (to > DASH.today) to = DASH.today;
     if (from > to) from = to;
     if ((Date.parse(to) - Date.parse(from)) / 864e5 > 370) from = addDays(to, -370);
-    var start = weekStart(from), keys = []; for (var kk = start; kk <= addDays(weekStart(to), 6); kk = addDays(kk, 1)) keys.push(kk);
+    var start = sundayOf(from), keys = []; for (var kk = start; kk <= addDays(sundayOf(to), 6); kk = addDays(kk, 1)) keys.push(kk);
     var cols = keys.length / 7, en = S.lang === 'en', mon = '', lastM = '';
-    var WDN = en ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab', 'Aha'];
+    var WDN = en ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Aha', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'];
     for (var c = 0; c < cols; c++) {
       var mk = keys[c * 7 + 6].slice(0, 7);
       mon += '<span>' + (mk !== lastM ? (en ? MON_LONG_EN : MON_LONG_BM)[+mk.slice(5) - 1].slice(0, 3) : '') + '</span>'; lastM = mk;
@@ -2219,7 +2236,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
