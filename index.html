@@ -1247,6 +1247,8 @@
   .title h1 .ih-dumbbell .fa, .rkp .kr .ih-dumbbell .fa { animation:curlFa 1.7s cubic-bezier(.45,0,.3,1) infinite; }
   .title h1 .ih-dumbbell .bcp, .rkp .kr .ih-dumbbell .bcp { animation:curlBcp 1.7s cubic-bezier(.45,0,.3,1) infinite; }
   .ratio .ih-dumbbell .fa { transform:rotate(-30deg); transform-box:view-box; transform-origin:8px 17px; }
+
+  .rkp .kt { cursor:pointer; transition:transform .12s; } .rkp .kt:active { transform:scale(.97); }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1570,17 +1572,17 @@
       var cls = kind === 'neutral' ? 'z' : (a > b ? 'up' : 'dn');
       return '<em class="' + cls + '">' + (a > b ? '▲ ' : '▼ ') + txt + '</em>';
     }
-    function tile(lbl, val, d) { return '<div class="kt"><span>' + lbl + '</span><b>' + val + '</b>' + d + '</div>'; }
+    function tile(lbl, val, d, k) { return '<div class="kt" data-k="' + k + '" role="button" tabindex="0"><span>' + lbl + '</span><b>' + val + '</b>' + d + '</div>'; }
     var cur = +($('cur').textContent) || 0, best = +($('best').textContent) || 0;
     var dmy = function (k) { var q = k.split('-'); return q[2] + '/' + q[1]; };
     var head = '<div class="kh"><small>' + T('vs tempoh sebelum', 'vs previous period') + ' (' + (span === 1 ? dmy(pFrom) : dmy(pFrom) + ' – ' + dmy(pTo)) + ')</small></div>';
     var grid = '<div class="kg">' +
-      tile('Workout', c.w + '<i>/' + span + '</i>', dl(c.w, p.w, 'n')) +
-      tile(T('Rehat', 'Rest'), c.r, dl(c.r, p.r, 'neutral')) +
-      tile('Reps', c.reps.toLocaleString(), dl(c.reps, p.reps)) +
-      tile(T('Masa workout', 'Workout time'), c.min >= 60 ? Math.floor(c.min / 60) + T('j ', 'h ') + (c.min % 60) + 'm' : c.min + 'm', dl(c.min, p.min)) +
-      tile(T('Purata tidur', 'Avg sleep'), c.sl === null ? '–' : hm(c.sl * 60), dl(c.sl, p.sl, 'sl')) +
-      tile('Streak', cur + '<i> ' + T('hari', cur === 1 ? 'day' : 'days') + '</i>', '<em class="z">' + T('terbaik ', 'best ') + best + '</em>') + '</div>';
+      tile('Workout', c.w + '<i>/' + span + '</i>', dl(c.w, p.w, 'n'), 'k-w') +
+      tile(T('Rehat', 'Rest'), c.r, dl(c.r, p.r, 'neutral'), 'k-r') +
+      tile('Reps', c.reps.toLocaleString(), dl(c.reps, p.reps), 'k-reps') +
+      tile(T('Masa workout', 'Workout time'), c.min >= 60 ? Math.floor(c.min / 60) + T('j ', 'h ') + (c.min % 60) + 'm' : c.min + 'm', dl(c.min, p.min), 'k-min') +
+      tile(T('Purata tidur', 'Avg sleep'), c.sl === null ? '–' : hm(c.sl * 60), dl(c.sl, p.sl, 'sl'), 'k-sl') +
+      tile('Streak', cur + '<i> ' + T('hari', cur === 1 ? 'day' : 'days') + '</i>', '<em class="z">' + T('terbaik ', 'best ') + best + '</em>', 'k-streak') + '</div>';
     // recommendations: one short line each, coloured dot = tone
     var R = [], cons = Math.round(100 * c.w / span), run = 0;
     var k0 = (to === t && !c.wd[t] && !c.rd[t]) ? addDays(t, -1) : to;
@@ -1606,6 +1608,11 @@
     if (!R.length) add('#3b82f6', 'bulb', 'Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.', 'info');
     el.innerHTML = head + grid + '<div class="kl">' + T('RINGKASAN & CADANGAN', 'SUMMARY & TIPS') + '</div><ul class="kr">' + R.slice(0, 4).join('') + '</ul>';
     var ctx = { c: c, p: p, from: from, to: to, pFrom: pFrom, pTo: pTo, span: span, cons: cons, run: run, k0: k0, lo: lo, hi: hi, hasP: hasP };
+    ctx.cur = cur; ctx.best = best;
+    [].forEach.call(el.querySelectorAll('.kt[data-k]'), function (tl) {
+      tl.onclick = function () { openTip(tl.dataset.k, ctx); };
+      tl.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tl.onclick(); } };
+    });
     [].forEach.call(el.querySelectorAll('.kr li[data-i]'), function (li) {
       li.onclick = function () { openTip(KIND[+li.dataset.i], ctx); };
       li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.onclick(); } };
@@ -1664,7 +1671,45 @@
         'Since ' + (lastW ? 'your last workout on ' + dd(lastW) : 'the start of this period') + ', ' + x.run + ' days have passed without a workout. 1–2 rest days help recovery, but more than 3 can make you lose momentum. Do a light session today to restart.');
       html = kv([[T('Workout terakhir', 'Last workout'), lastW ? dd(lastW) : '–'], [T('Hari tanpa workout', 'Days without a workout'), x.run]]) +
         grp(T('Hari-hari tersebut', 'Those days')) + days.map(function (k) { return row(k, c.rd[k] ? T('Hari rehat', 'Rest day') : T('Tiada rekod', 'Not logged'), c.rd[k] ? 'r' : ''); }).join('');
-    } else if (kind === 'sleep') {
+    } else if (kind === 'k-w') {
+      var pct = Math.round(100 * c.w / x.span);
+      title = 'Workout · ' + c.w + ' / ' + x.span;
+      text = T('Bilangan hari kau workout dalam tempoh ' + rngTxt(x.from, x.to) + '. ' + c.w + ' dari ' + x.span + ' hari (' + pct + '%)' + (x.hasP ? ', berbanding ' + p.w + ' dalam tempoh sebelum.' : '.') + ' Sasaran mingguan kau ' + (S.weekGoal || 4) + ' workout.',
+        'Days you trained in ' + rngTxt(x.from, x.to) + '. ' + c.w + ' of ' + x.span + ' days (' + pct + '%)' + (x.hasP ? ', versus ' + p.w + ' in the previous period.' : '.') + ' Your weekly goal is ' + (S.weekGoal || 4) + ' workouts.');
+      html = kv([[T('Sekarang', 'Now'), c.w], [T('Sebelum', 'Before'), x.hasP ? p.w : '–'], [T('Peratus hari', 'Share of days'), pct + '%'], [T('Workout terakhir', 'Last workout'), lastW ? dd(lastW) : '–']]) +
+        grp(T('Hari workout', 'Workout days')) + (recs(x.from, x.to, 'Workout').map(wrow).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'k-r') {
+      title = T('Hari rehat · ', 'Rest days · ') + c.r;
+      text = T('Hari yang kau simpan sebagai Rest Day (termasuk rehat automatik untuk hari yang tak diisi). Rehat penting untuk otot pulih — 1–2 hari rehat antara sesi biasanya cukup. ' + unlogged + ' hari lagi dalam tempoh ni tiada rekod langsung.',
+        'Days saved as a Rest Day (including automatic rest for days left empty). Rest lets muscles recover — 1–2 rest days between sessions is usually enough. ' + unlogged + ' more days in this period have no record at all.');
+      html = kv([[T('Sekarang', 'Now'), c.r], [T('Sebelum', 'Before'), x.hasP ? p.r : '–'], ['Workout', c.w], [T('Tiada rekod', 'Not logged'), unlogged]]) +
+        grp(T('Hari rehat', 'Rest days')) + (recs(x.from, x.to, 'Rest Day').map(function (r) { return row(r.date, esc(r.reason || T('Rehat', 'Rest')), 'r'); }).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'k-reps') {
+      var aC = c.w ? Math.round(c.reps / c.w) : 0, aP = p.w ? Math.round(p.reps / p.w) : 0;
+      title = 'Reps · ' + c.reps.toLocaleString();
+      text = T('Jumlah semua reps dari setiap latihan dalam tempoh ni (latihan masa seperti plank tak dikira sebagai reps). Purata ' + aC + ' reps setiap workout' + (x.hasP ? ', berbanding ' + aP + ' sebelum ni.' : '.') + ' Reps yang naik secara beransur tanda kekuatan bertambah.',
+        'Total reps from every exercise in this period (timed moves like plank are not counted as reps). ' + aC + ' reps per workout on average' + (x.hasP ? ', versus ' + aP + ' before.' : '.') + ' Reps rising gradually is a sign you are getting stronger.');
+      html = kv([[T('Sekarang', 'Now'), c.reps], [T('Sebelum', 'Before'), x.hasP ? p.reps : '–'], [T('Purata / workout', 'Avg / workout'), aC], [T('Sebelum / workout', 'Before / workout'), x.hasP ? aP : '–']]) +
+        grp(T('Setiap workout', 'Each workout')) + (recs(x.from, x.to, 'Workout').map(wrow).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'k-min') {
+      var mm = function (v) { return v >= 60 ? Math.floor(v / 60) + T('j ', 'h ') + (v % 60) + 'm' : v + 'm'; }, aM = c.w ? Math.round(c.min / c.w) : 0;
+      title = T('Masa workout · ', 'Workout time · ') + mm(c.min);
+      text = T('Jumlah masa SEBENAR yang kau isi untuk setiap workout. Purata ' + aM + ' minit setiap sesi' + (x.hasP ? ', berbanding ' + mm(p.min) + ' jumlah dalam tempoh sebelum.' : '.') + ' Workout yang tiada masa SEBENAR tak dikira — guna timer untuk isi automatik.',
+        'Total ACTUAL time you entered for each workout. ' + aM + ' minutes per session on average' + (x.hasP ? ', versus ' + mm(p.min) + ' in total for the previous period.' : '.') + ' Workouts without an ACTUAL time are not counted — use the timer to fill it in.');
+      html = kv([[T('Sekarang', 'Now'), mm(c.min)], [T('Sebelum', 'Before'), x.hasP ? mm(p.min) : '–'], [T('Purata / sesi', 'Avg / session'), aM + 'm'], [T('Tiada masa', 'No time entered'), recs(x.from, x.to, 'Workout').filter(function (r) { return !r.actual; }).length]]) +
+        grp(T('Setiap workout', 'Each workout')) + (recs(x.from, x.to, 'Workout').map(function (r) { return row(r.date, r.actual ? esc(r.actual) : T('tiada masa', 'no time'), 'w'); }).join('') || '<div class="empty">–</div>');
+    } else if (kind === 'k-streak') {
+      var wset = {}; (REC || []).forEach(function (r) { if (r.activity === 'Workout') wset[r.date] = 1; });
+      var t0 = REC_TODAY || todayKey(), last14 = []; for (var q = 0; q < 14; q++) last14.push(addDays(t0, -q));
+      title = 'Streak · ' + x.cur + T(' hari', x.cur === 1 ? ' day' : ' days');
+      text = T('Streak ialah bilangan hari berturut-turut kau workout, sehingga hari ini atau semalam. Streak semasa ' + x.cur + ' hari; paling panjang pernah ' + x.best + ' hari. Satu workout hari ini cukup untuk mula atau sambung streak.',
+        'Your streak is the number of days in a row you trained, up to today or yesterday. Current streak ' + x.cur + ' days; your best is ' + x.best + ' days. One workout today is enough to start or extend it.');
+      html = kv([[T('Semasa', 'Current'), x.cur], [T('Terbaik', 'Best'), x.best]]) + grp(T('14 hari terakhir', 'Last 14 days')) +
+        last14.map(function (k2) { return row(k2, wset[k2] ? '✓ Workout' : (c.rd[k2] ? T('Rehat', 'Rest') : '–'), wset[k2] ? 'w' : (c.rd[k2] ? 'r' : '')); }).join('');
+    } else if (kind === 'k-sl' && c.sl === null) {
+      title = T('Purata tidur', 'Avg sleep');
+      text = T('Belum ada rekod tidur dalam tempoh ni. Isi waktu tidur dan bangun dalam tab Tidur — tempoh dikira automatik.', 'No sleep logged in this period yet. Enter bed and wake times in the Sleep tab — hours are worked out for you.');
+    } else if (kind === 'sleep' || kind === 'k-sl') {
       var ns = (SLEEP_ALL || []).filter(function (q) { return q.d >= x.from && q.d <= x.to; }).sort(function (q, w) { return q.d < w.d ? 1 : -1; });
       var shortN = ns.filter(function (q) { return q.h < x.lo; }).length, longN = ns.filter(function (q) { return q.h > x.hi; }).length;
       var mn = ns.reduce(function (a, q) { return !a || q.h < a.h ? q : a; }, null), mx = ns.reduce(function (a, q) { return !a || q.h > a.h ? q : a; }, null);
