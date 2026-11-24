@@ -747,7 +747,7 @@
 
   <h4>Lain-lain</h4>
   <div class="links"><a id="optSheet" href="#" target="_blank">Buka Sheet &amp; Dashboard</a></div>
-  <div class="links" style="margin-top:8px"><button type="button" id="optReset">↺ Set semula settings</button></div>
+  <div class="links" style="margin-top:8px"><button type="button" id="optReset">↺ Set semula tetapan</button></div>
 </div>
 
 <script>
@@ -1293,7 +1293,7 @@
     var C = { short: '#ef4444', warn: '#facc15', low: '#f97316', good: '#22c55e', prog: '#8b5cf6', info: '#64748b' };
     el.innerHTML = '<i class="si" style="background:' + C[tone] + ';color:' + (tone === 'warn' ? '#111' : '#fff') + '">' + ic(icon, 'go') + '</i><div><b class="rt">' + esc(title) + '</b>' +
       lines.map(function (l) { return '<span>' + l + '</span>'; }).join('') + '</div>';
-    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) LANG_OBS.takeRecords();
+    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
   }
   [].forEach.call($('rFilter').children, function (b) {
     b.onclick = function () {
@@ -1320,7 +1320,7 @@
     if (!d.workouts.length && !d.rests.length && !d.sleep) { box.innerHTML = '<div class="empty">Tiada rekod pada tarikh ini.</div>'; return; }
     if (d.sleep) {
       var sl = document.createElement('div'); sl.className = 'sess';
-      sl.innerHTML = '<div class="meta">Tidur <span>' + esc(d.sleep.start) + ' → ' + esc(d.sleep.end) + '</span> <span>' + esc(d.sleep.text) + '</span>' + (d.sleep.awake ? ' <span>awake ' + hmTxt(d.sleep.awake) + '</span>' : '') + '</div>' +
+      sl.innerHTML = '<div class="meta">Tidur <span>' + esc(d.sleep.start) + ' → ' + esc(d.sleep.end) + '</span> <span>' + esc(d.sleep.text) + '</span>' + (d.sleep.awake ? ' <span>terjaga ' + hmTxt(d.sleep.awake) + '</span>' : '') + '</div>' +
         '<div class="acts"><button type="button" class="rest"><svg class="ico ih ih-pen" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="pg"><path d="M20 6 L26 12"/><path d="m10.5,27.5l-8,2 2-8L22.257,3.743c1.657-1.657,4.343-1.657,6,0s1.657,4.343,0,6L10.5,27.5Z"/></g></svg> Edit</button><button type="button" class="del"><svg class="ico ih ih-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="tl" d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path class="tl" d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></svg> Padam</button></div>';
       var sb = sl.querySelectorAll('.acts button');
       sb[0].onclick = function () { closeDetail(); showCardView(); $('sleepDate').value = isoToDmy(d.date); $('sleepStart').value = d.sleep.start; $('sleepEnd').value = d.sleep.end; $('sleepAwake').value = d.sleep.awake ? ('0' + Math.floor(d.sleep.awake / 60)).slice(-2) + ':' + ('0' + d.sleep.awake % 60).slice(-2) : ''; calcSleep(); SLEEP_EDIT = true; $('sleepCard').scrollIntoView({ behavior: 'smooth' }); };
@@ -1415,8 +1415,8 @@
     var aw = awakeMins(), atv = $('sleepAwakeTv'); atv.textContent = hmTxt(aw); atv.classList.toggle('tph', !aw);
     var m = sleepMins(), bed = bedMins();
     $('sleepDur').innerHTML = m === null ? ''
-      : (aw && aw >= bed ? '<b>–</b>⚠ awake lebih dari masa di katil'
-      : '<b>' + hmTxt(m) + '</b><span>' + (m > 14 * 60 ? '⚠ lama sangat — semak waktu' : (aw ? 'tidur bersih<small>' + hmTxt(bed) + ' di katil − ' + hmTxt(aw) + ' awake</small>' : 'tempoh tidur')) + '</span>');
+      : (aw && aw >= bed ? '<b>–</b>⚠ terjaga lebih dari masa di katil'
+      : '<b>' + hmTxt(m) + '</b><span>' + (m > 14 * 60 ? '⚠ lama sangat — semak waktu' : (aw ? 'tidur bersih<small>' + hmTxt(bed) + ' di katil − ' + hmTxt(aw) + ' terjaga</small>' : 'tempoh tidur')) + '</span>');
     $('sleepDur').style.display = m === null ? 'none' : '';
     if (typeof renderSleepTip === 'function') renderSleepTip(m);
   }
@@ -1726,7 +1726,7 @@
       var tg = slLo(), okM = slHi(), allS = DASH.sleep || [], nts = allS.filter(function (x) { return inRange(x.d); });
       var onT = function (x) { return x.h >= tg && x.h <= okM; };
       var mark = function (x) { return '<i class="sdot" style="background:' + (x.h < tg ? '#ef4444' : (x.h <= okM ? '#22c55e' : '#3b82f6')) + '"></i>'; };
-      var srow = function (x, extra) { return row(x.d, mark(x) + ' ' + x.text + ' · ' + x.start + ' → ' + x.end + (x.awake ? ' · awake ' + hmTxt(x.awake) : '') + (extra || '')); };
+      var srow = function (x, extra) { return row(x.d, mark(x) + ' ' + x.text + ' · ' + x.start + ' → ' + x.end + (x.awake ? ' · terjaga ' + hmTxt(x.awake) : '') + (extra || '')); };
       var sd = function (a) { return a.slice().sort(function (p, q) { return p.d < q.d ? 1 : -1; }); };
       var avgH = nts.length ? nts.reduce(function (a, x) { return a + x.h; }, 0) / nts.length : 0;
       if (id === 's-avg' || id === 's-n') { title = id === 's-n' ? 'Malam direkod' : 'Purata tidur'; sum = nts.length + ' malam' + (nts.length ? ' · purata ' + hm(avgH * 60) : ''); html = sd(nts).map(function (x) { return srow(x); }).join(''); }
@@ -1859,7 +1859,7 @@
     QM.innerHTML =
       '<div class="qr"><span>' + ic(isDark() ? 'moon' : 'sun') + (en ? 'Dark mode' : 'Mod gelap') + '</span><label class="switch"><input type="checkbox" id="qmDark"' + (isDark() ? ' checked' : '') + '><span></span></label></div>' +
       '<div class="qr"><span>' + (en ? 'Language' : 'Bahasa') + '</span><div class="seg qseg"><button type="button" data-l="bm" class="' + (en ? '' : 'on') + '">BM</button><button type="button" data-l="en" class="' + (en ? 'on' : '') + '">EN</button></div></div>' +
-      '<button type="button" class="qall">' + ic('gear') + (en ? 'All settings' : 'Semua settings') + ic('right', 'qgo') + '</button>';
+      '<button type="button" class="qall">' + ic('gear') + (en ? 'All settings' : 'Semua tetapan') + ic('right', 'qgo') + '</button>';
     $('qmDark').onchange = function () { S.theme = this.checked ? 'dark' : 'light'; saveSettings(); applySettings(); paintQM(); };
     [].forEach.call(QM.querySelectorAll('[data-l]'), function (b) { b.onclick = function () { setLang(b.dataset.l); setTimeout(function () { paintTitle(); paintQM(); }, 0); }; });
     QM.querySelector('.qall').onclick = function () { closeQM(); openSettings(); };
@@ -2395,7 +2395,7 @@
     box.innerHTML = '<i class="si" style="background:' + C[k] + '">' + ic(I[k]) + '</i><div><b></b><span></span></div>';
     var siv = box.querySelector('svg.ih'); if (siv) siv.classList.add('go');
     box.querySelector('b').textContent = title; box.querySelector('span').textContent = text;
-    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) LANG_OBS.takeRecords();
+    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
     LANG_BUSY = false;
   }
   loadSleepAll();
@@ -2417,7 +2417,7 @@
     $('ltDate').textContent = greet() + ' · ' + (en ? DAYS_LONG_EN : DAYS_BM)[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + (en ? MON_LONG_EN : MON_LONG_BM)[d.getMonth()].slice(0, 3);
     $('weekStrip').style.display = dash ? 'none' : ''; paintHeaderExtras();
     $('ltTitle').textContent = dash ? 'Dashboard' : (en ? 'Today' : 'Hari Ini');
-    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) LANG_OBS.takeRecords();
+    if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
     LANG_BUSY = false;
   }
   ['homeBtn', 'dashBtn', 'langBtn'].forEach(function (id) { $(id).addEventListener('click', function () { setTimeout(paintTitle, 0); }); });
@@ -2447,7 +2447,7 @@
     'Ulang nama workout terakhir': 'Repeat last workout names', 'Warna kad': 'Card colour', 'Warna tulisan': 'Pen colour',
     'Warna': 'Colour', 'Warna tersuai': 'Custom colour', 'Simpan warna ini': 'Save this colour',
     'hari / minggu': 'days / week', 'minit': 'minutes', 'tempoh tidur dikira automatik': 'sleep time is worked out automatically',
-    'tempoh tidur': 'time asleep', '⚠ lama sangat — semak waktu': '⚠ very long — check the times', '↺ Set semula settings': '↺ Reset settings',
+    'tempoh tidur': 'time asleep', '⚠ lama sangat — semak waktu': '⚠ very long — check the times', '↺ Set semula tetapan': '↺ Reset settings', 'Tahun sebelum': 'Previous year', 'Tahun seterusnya': 'Next year', 'Target tidur maksimum (jam)': 'Sleep target maximum (hours)', 'Target tidur minimum (jam)': 'Sleep target minimum (hours)', 'terjaga': 'awake', 'TERJAGA': 'AWAKE', 'Semua tetapan': 'All settings', 'Tetapan': 'Settings',
     'BANGUN': 'WAKE UP', 'TIDUR': 'BEDTIME', 'Padam': 'Delete', 'Tidur': 'Sleep',
     'Buka Sheet & Dashboard': 'Open Sheet & Dashboard', 'Ikut telefon': 'Follow phone', 'Memuatkan…': 'Loading…',
     'Menyimpan…': 'Saving…', 'Memadam…': 'Deleting…', 'Pasti?': 'Sure?', 'GANTI REKOD LAMA?': 'REPLACE OLD RECORD?',
@@ -2487,6 +2487,9 @@
     'Pilih workout': 'Choose workout', 'Taip nama lain…': 'Type another name…', '✕ Kosongkan': '✕ Clear'
   };
   var EN_RE = [
+    [/: Rehat · R$/, ': Rest · R'], [/ di katil − /, ' in bed − '], [/ terjaga$/, ' awake'], [/^terjaga /, 'awake '], [/ · terjaga /, ' · awake '], [/(\d+) \/ (\d+) malam/, '$1 / $2 nights'], [/(\d+) malam\b/g, '$1 nights'],
+    [/^Capai target/, 'Hit target'], [/^Bawah (\d)/, 'Under $1'], [/^Lebih (\d+(?:\.\d+)?)j$/, 'Over $1h'], [/^Kurang tidur \(bawah /, 'Short sleep (under '],
+    [/^Tidur purata$/, 'Average sleep'], [/^(\d+) hari · /, '$1 days · '],
     [/(^|· )Tidur (\d)/g, '$1Sleep $2'], [/(\d+)j (\d+)m/g, '$1h $2m'], [/(\d+(?:\.\d+)?)j\b/g, '$1h'], [/(\d+) latihan\b/g, '$1 exercises'], [/(\d+) sesi\b/g, '$1 sessions'],
     [/(\d+) hari berturut-turut \(semua rekod\)/, '$1 days in a row (all records)'], [/(\d+) hari berturut-turut/, '$1 days in a row'],
     [/ — workout hari ini untuk mula streak baru/, ' — work out today to start a new streak'], [/(\d+) hari bermasa/, '$1 timed days'],
@@ -2503,6 +2506,28 @@
     [/\. Ganti\?/, '. Replace?'], [/ Tekan butang sekali lagi untuk ganti\./, ' Tap the button again to replace.'],
     [/Isi waktu tidur dan waktu bangun \(contoh (.+) dan (.+)\)\./, 'Enter bedtime and wake time (e.g. $1 and $2).']
   ];
+
+  // English source text -> Malay (used when the language is BM), so both languages are complete
+  var BM = {
+    'Today': 'Hari ini', 'Yest.': 'Semalam', 'Yesterday': 'Semalam', 'Custom': 'Pilih', 'Range': 'Julat', 'This week': 'Minggu ini',
+    'ACTUAL': 'SEBENAR', 'TARGET': 'SASARAN', 'AWAKE': 'TERJAGA', 'DATE': 'TARIKH', 'DURATION (MIN)': 'TEMPOH (MIN)', 'WAKE-UP DATE': 'TARIKH BANGUN',
+    'WORKOUT': 'WORKOUT', 'Actual': 'Sebenar', 'Target': 'Sasaran', 'Dark': 'Gelap', 'Bright': 'Cerah', 'Dark mode': 'Mod gelap', 'Bright mode': 'Mod cerah',
+    'Settings': 'Tetapan', 'Edit': 'Ubah', 'Sleep': 'Tidur', 'Sleep Tracker': 'Rekod Tidur', 'Daily Workout': 'Workout Harian',
+    'Rest Day': 'Hari Rehat', 'Workout vs Rest Day': 'Workout vs Hari Rehat', 'History workout': 'Sejarah workout', 'History tidur': 'Sejarah tidur',
+    'Progress latihan': 'Kemajuan latihan', 'Home': 'Utama', 'Target default': 'Target asal', 'Streak workout': 'Streak workout',
+    'Actual (minit:saat)': 'Sebenar (minit:saat)', 'Target (minit:saat)': 'Sasaran (minit:saat)', 'Target default (minit:saat)': 'Target asal (minit:saat)',
+    'Dark / Bright mode': 'Mod gelap / cerah', 'Bawah target': 'Bawah target', 'SIMPAN WORKOUT': 'SIMPAN WORKOUT'
+  };
+  var BM_RE = [
+    [/^ROUND (\d+)$/, 'SET $1'], [/^Workout (\d+) round (\d+)$/, 'Workout $1 set $2'], [/^(\d+)\/(\d+)\/(\d+) {2}Rest Day$/, '$1/$2/$3  Hari Rehat'],
+    [/^Rest (\d+)$/, 'Rehat $1']
+  ];
+  function trBM(s) {
+    var t = s.trim(); if (!t) return s;
+    if (BM[t] !== undefined) return s.replace(t, BM[t]);
+    var o = s; BM_RE.forEach(function (r) { o = o.replace(r[0], r[1]); }); return o;
+  }
+  function trL(s) { return S.lang === 'en' ? trEN(s) : trBM(s); }
   function trEN(s) {
     var t = s.trim(); if (!t) return s;
     if (EN[t] !== undefined) return s.replace(t, EN[t]);
@@ -2513,14 +2538,14 @@
     if (n.nodeType === 3) {
       if (!n.parentElement || n.parentElement.closest('script,style,textarea')) return;
       var o = ORIG.get(n);
-      if (o === undefined || (n.nodeValue !== o && n.nodeValue !== trEN(o))) { o = n.nodeValue; ORIG.set(n, o); }
-      var v = S.lang === 'en' ? trEN(o) : o; if (n.nodeValue !== v) n.nodeValue = v;
+      if (o === undefined || (n.nodeValue !== o && n.nodeValue !== trEN(o) && n.nodeValue !== trBM(o))) { o = n.nodeValue; ORIG.set(n, o); }
+      var v = trL(o); if (n.nodeValue !== v) n.nodeValue = v;
     } else if (n.nodeType === 1) {
       ATTRS.forEach(function (a) {
         if (!n.hasAttribute(a)) return;
         var k = 'bm' + a.replace(/-/g, ''), cur = n.getAttribute(a);
-        if (n.dataset[k] === undefined || (cur !== n.dataset[k] && cur !== trEN(n.dataset[k]))) n.dataset[k] = cur;
-        var v = S.lang === 'en' ? trEN(n.dataset[k]) : n.dataset[k]; if (cur !== v) n.setAttribute(a, v);
+        if (n.dataset[k] === undefined || (cur !== n.dataset[k] && cur !== trEN(n.dataset[k]) && cur !== trBM(n.dataset[k]))) n.dataset[k] = cur;
+        var v = trL(n.dataset[k]); if (cur !== v) n.setAttribute(a, v);
       });
       for (var c = n.firstChild; c; c = c.nextSibling) trNode(c);
     }
@@ -2533,8 +2558,17 @@
     [].forEach.call($('optLang').children, function (x) { x.classList.toggle('on', x.dataset.v === (S.lang || 'bm')); });
     LANG_OBS.takeRecords(); LANG_BUSY = false;
   }
+  // translate pending DOM changes now (instead of dropping them)
+  function langApply(ms) {
+    ms.forEach(function (m) {
+      if (m.type === 'childList') [].forEach.call(m.addedNodes, trNode);
+      else if (m.type === 'characterData') trNode(m.target);
+      else if (m.type === 'attributes') trNode(m.target);
+    });
+  }
+  function flushLang() { var was = LANG_BUSY; LANG_BUSY = true; langApply(LANG_OBS.takeRecords()); LANG_OBS.takeRecords(); LANG_BUSY = was; }
   var LANG_OBS = new MutationObserver(function (ms) {
-    if (LANG_BUSY || S.lang !== 'en') return;
+    if (LANG_BUSY) return;
     LANG_BUSY = true;
     ms.forEach(function (m) {
       if (m.type === 'childList') [].forEach.call(m.addedNodes, trNode);
@@ -2544,7 +2578,15 @@
     LANG_OBS.takeRecords(); LANG_BUSY = false;
   });
   LANG_OBS.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS });
-  function setLang(l) { S.lang = l; saveSettings(); applyLang(); renderSleepTip(sleepMins()); }
+  function setLang(l) {
+    S.lang = l; saveSettings();
+    try { if (typeof paintTitle === 'function') paintTitle(); } catch (e) {}
+    try { if (REC && REC.length) renderRecent(); } catch (e) {}
+    try { if (DASH) renderDash(); } catch (e) {}
+    try { paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC); } catch (e) {}
+    try { calcSleep(); } catch (e) {}
+    applyLang(); renderSleepTip(sleepMins());
+  }
   $('langBtn').onclick = function () { setLang(S.lang === 'en' ? 'bm' : 'en'); };
   [].forEach.call($('optLang').children, function (x) { x.onclick = function () { setLang(x.dataset.v); }; });
   window.__langReady = true;
