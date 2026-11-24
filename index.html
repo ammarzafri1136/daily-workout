@@ -612,6 +612,7 @@
       <div id="workDash">
       <div class="kpis" id="dKpi"></div>
       <div class="ch"><h4>Workout vs Rest Day</h4><div id="cRatio"></div></div>
+      <div class="ch"><h4><span class="hic pbic" data-ic="trophy"></span>Personal Best</h4><div id="cPB"></div></div>
       <div class="ch"><h4>Tidur & prestasi</h4><div id="cSP"></div></div>
       <div class="ch"><h4>History workout</h4><div id="cWHeat"></div></div>
       <div class="ch"><h4>Trend masa workout <small style="color:var(--muted);font-weight:700">minit</small></h4><div id="cDur"></div></div>
@@ -1303,6 +1304,22 @@
   .ch h4 .hic .ico { width:22px; height:22px; overflow:visible; }
   .ch h4 .hic .ih-bed .zz { opacity:0; animation:zzz 2.4s ease-in-out infinite; }
   .ch h4 .hic .ih-moon .mn { transform-box:fill-box; transform-origin:50% 50%; animation:tiMoon 3.2s ease-in-out infinite; }
+
+  /* Personal Best card */
+  .ch h4 .hic.pbic { color:#f59e0b; }
+  @keyframes troBob { 0%, 100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-1.2px) rotate(-6deg); } }
+  @keyframes troShine { 0%, 60%, 100% { opacity:0; } 75% { opacity:1; } }
+  .ih-trophy .tro { transform-box:view-box; transform-origin:12px 20px; animation:troBob 2.2s ease-in-out infinite; }
+  .ih-trophy .tsh { opacity:0; animation:troShine 2.2s ease-in-out infinite; }
+  .pbl { display:flex; flex-direction:column; gap:6px; }
+  .pbr { display:flex !important; align-items:center; gap:8px; width:100% !important; height:auto !important; padding:10px 12px !important; border-radius:12px !important;
+    background:var(--tile) !important; border:0 !important; box-shadow:none !important; color:var(--ink) !important; text-align:left; font:inherit; }
+  .pbr .pbn { flex:1; min-width:0; font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pbr .pbn em { font-style:normal; font-size:10px; font-weight:800; margin-left:6px; padding:2px 6px; border-radius:6px; background:#f59e0b; color:#111; vertical-align:1px; }
+  .pbr .pbv { text-align:right; white-space:nowrap; } .pbr .pbv b { font-size:16px; font-weight:800; } .pbr .pbv small { font-size:11px; color:var(--muted); }
+  .pbr .pbgo { width:14px; height:14px; color:var(--muted); flex:none; }
+  .pbh { font-size:11px; color:var(--muted); margin:8px 2px 0; }
+  .kl.tip .pbt { width:14px; height:14px; color:#f59e0b; vertical-align:-2px; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1433,6 +1450,7 @@
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
   ICONS.dumbbell = ["0 0 24 24", "<circle class=\"puh\" cx=\"18.6\" cy=\"11.6\" r=\"1.7\"/><path class=\"pub\" d=\"M3 20.5L16.2 13\"/><path class=\"pua\" d=\"M16.2 13L16.2 17L16.2 21\"/><path class=\"pug\" d=\"M1.5 22.5h21\"/>"];
   ICONS.lmoon = ["0 0 24 24", "<path class=\"lm\" d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>"];
+  ICONS.trophy = ["0 0 24 24", "<g class=\"tro\"><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"M7 4h10\"/><path d=\"M17 4v8a5 5 0 0 1-10 0V4\"/><path d=\"M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/><path d=\"M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/></g><path class=\"tsh\" d=\"M10 7.5v3\"/>"];
   ICONS.bed = ["0 0 24 24", "<path d=\"M7 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\"/><path d=\"M22 19v-3h-20\"/><path d=\"M2 10v9\"/><path d=\"M12 16h10v-2a3 3 0 0 0 -3 -3h-7v5z\"/><path class=\"zz z1\" d=\"M11 6.5h2l-2 2h2\"/><path class=\"zz z2\" d=\"M14.5 3.5h2.5l-2.5 2.5h2.5\"/><path class=\"zz z3\" d=\"M18.5 .5h3l-3 3h3\"/>"];
   ICONS.lift = ["0 0 24 24", "<g class=\"lb\"><path d=\"M2.5 4h19\"/><path d=\"M4.5 1.5v5\"/><path d=\"M19.5 1.5v5\"/></g><path class=\"la la1\" d=\"M9.3 12.6l-1.3 -8.6\"/><path class=\"la la2\" d=\"M14.7 12.6l1.3 -8.6\"/><circle class=\"lh\" cx=\"12\" cy=\"9.6\" r=\"1.5\"/><path d=\"M9.3 12.6h5.4\"/><path d=\"M12 12.6v4.6\"/><path d=\"M12 17.2l-3 4.3\"/><path d=\"M12 17.2l3 4.3\"/>"];
   function ic(n, cls) { n = ICON_ALIAS[n] || n; var I = ICONS[n] || ICONS.info, vb = I[0], sw = vb === '0 0 24 24' ? '2' : (vb === '0 0 32 32' ? '2.6' : '4');
@@ -2188,6 +2206,54 @@
     return h + '</div>';
   }
 
+
+  // ---------------- Personal Best: best single round per exercise (all records) ----------------
+  function pbList() {
+    var by = {};
+    ((DASH && DASH.ex) || []).forEach(function (x) {
+      if (x.review) return;
+      var k = x.n.trim().toLowerCase(), o = by[k] || (by[k] = { n: x.n.trim(), sec: false, best: 0, bd: '', tot: 0, td: '', kg: 0, kd: '', list: [] });
+      if (x.u === 'seconds') o.sec = true;
+      o.list.push(x);
+      (x.r || []).forEach(function (v) { if (v != null && (v > o.best || (v === o.best && x.d < o.bd))) { if (v > o.best || !o.bd) o.bd = x.d; o.best = Math.max(o.best, v); } });
+      if (x.t > o.tot) { o.tot = x.t; o.td = x.d; }
+      if (+x.kg > o.kg) { o.kg = +x.kg; o.kd = x.d; }
+    });
+    return Object.keys(by).map(function (k) { var o = by[k]; if (!o.best) { o.best = o.tot; o.bd = o.td; } return o; }).filter(function (o) { return o.best > 0; })
+      .sort(function (a, b) { return a.bd < b.bd ? 1 : (a.bd > b.bd ? -1 : a.n.localeCompare(b.n)); });
+  }
+  function renderPB() {
+    var el = $('cPB'); if (!el) return;
+    var en = S.lang === 'en', L = pbList(), t = (DASH && DASH.today) || todayKey();
+    if (!L.length) { el.innerHTML = '<div class="empty">' + (en ? 'Save a workout to start your records.' : 'Simpan workout untuk mula rekod terbaik.') + '</div>'; return; }
+    el.innerHTML = '<div class="pbl">' + L.map(function (o, i) {
+      var fresh = o.bd >= addDays(t, -6);
+      return '<button type="button" class="pbr" data-i="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span>' +
+        '<span class="pbv"><b>' + fmtV(o.best, o.sec) + '</b><small>' + (o.sec ? '' : ' reps') + (o.kg ? ' · ' + o.kg + 'kg' : '') + ' · ' + o.bd.slice(8) + '/' + o.bd.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
+    }).join('') + '</div><div class="pbh">' + (en ? 'Best single set for each exercise · all records' : 'Set terbaik untuk setiap latihan · semua rekod') + '</div>';
+    [].forEach.call(el.querySelectorAll('.pbr'), function (b) { b.onclick = function () { openPB(L[+b.dataset.i]); }; });
+  }
+  function openPB(o) {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
+    var L = o.list.slice().sort(function (a, b) { return a.d < b.d ? 1 : -1; });
+    var first = L[L.length - 1], firstBest = Math.max.apply(null, (first.r || []).filter(function (v) { return v != null; }).concat([0]));
+    var gain = firstBest && o.best > firstBest ? Math.round(100 * (o.best - firstBest) / firstBest) : 0;
+    $('detailBack').style.display = 'none';
+    $('dTitle').textContent = o.n;
+    var kv = [[T('Set terbaik', 'Best set'), fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + ' · ' + isoToDmy(o.bd).slice(0, 5)],
+      [T('Sesi terbaik (jumlah)', 'Best session (total)'), fmtV(o.tot, o.sec) + ' · ' + (o.td ? isoToDmy(o.td).slice(0, 5) : '–')],
+      [T('Berat tertinggi', 'Heaviest'), o.kg ? o.kg + 'kg · ' + isoToDmy(o.kd).slice(0, 5) : '–'], [T('Sesi direkod', 'Sessions logged'), L.length]];
+    var txt = T('Rekod terbaik kau untuk ' + o.n + ' ialah ' + fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + ' dalam satu set, pada ' + isoToDmy(o.bd) + '.' + (gain ? ' Itu ' + gain + '% lebih baik dari sesi pertama kau.' : '') + ' Untuk pecahkan rekod, cuba tambah ' + (o.sec ? '5 saat' : '1–2 reps') + ' pada set pertama sesi akan datang.',
+      'Your best for ' + o.n + ' is ' + fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + ' in one set, on ' + isoToDmy(o.bd) + '.' + (gain ? ' That is ' + gain + '% better than your first session.' : '') + ' To beat it, try adding ' + (o.sec ? '5 seconds' : '1–2 reps') + ' to your first set next time.');
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + txt + '</p><div class="tkv">' + kv.map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
+      '<div class="grp">' + T('Setiap sesi', 'Each session') + '</div>' + L.map(function (x) {
+        var rs = (x.r || []).filter(function (v) { return v != null; }), isPB = x.d === o.bd && (rs.indexOf(o.best) >= 0 || (!rs.length && x.t === o.best));
+        return '<div class="day" data-d="' + x.d + '"><span class="w">' + isoToDmy(x.d) + (isPB ? ' ' + ic('trophy', 'pbt') : '') + '</span><span>' +
+          (rs.length ? rs.map(function (v) { return fmtV(v, o.sec); }).join(' · ') : fmtV(x.t, o.sec)) + (+x.kg ? ' · ' + x.kg + 'kg' : '') + ' <b class="go">' + ic('right') + '</b></span></div>';
+      }).join('') + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
+  }
   function renderDash() {
     if (!DASH) return;
     paintFilter();
@@ -2218,6 +2284,7 @@
       '<div title="Rehat" style="flex:' + rd.length + ';background:' + restC + ';color:' + (lum(restC) > 0.5 ? '#111' : '#fff') + '">' + (rd.length ? ic('coffee') + '<b>' + rd.length + '</b>' : '') + '</div></div>' : '<div class="empty">Tiada data.</div>';
 
     renderSleepPerf();
+    renderPB();
     // workout heatmap: blue = workout (shows minutes), yellow = rest day
     renderHeat(DASH.days, dRange(), { el: 'cWHeat',
       col: function (x) { return x.a === 'Workout' ? penC : restC; },
