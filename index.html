@@ -1055,6 +1055,19 @@
   .sw.has .swfill { display:block; padding:8px 12px !important; border-radius:999px !important; background:var(--accent) !important; color:#fff !important; font-size:13px; font-weight:700 !important; white-space:nowrap; }
   .sw.run .swgo { background:rgba(59,130,246,.15) !important; }
   .swp { width:10px; height:10px; border-left:3px solid currentColor; border-right:3px solid currentColor; box-sizing:border-box; display:inline-block; }
+
+  .tp .tped { color:var(--accent) !important; }
+  .tped-f label { display:block; font-size:12px; font-weight:600; color:var(--muted); margin:10px 2px 6px; }
+  .tped-f input { width:100%; box-sizing:border-box; font-size:16px; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--tile); color:var(--ink); }
+  .tped-f input.bad { border-color:#ef4444; }
+  .tped-f .tpr { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .tped-f .tpr span { width:18px; text-align:center; font-size:13px; font-weight:700; color:var(--muted); }
+  .tped-f .tpr input { flex:1; min-width:0; }
+  .tped-f .tpclr { width:38px !important; height:38px; padding:0 !important; flex:none; display:flex; align-items:center; justify-content:center; border-radius:10px !important; background:var(--tile) !important; color:var(--muted) !important; }
+  .tped-f .tpclr .ico { width:16px; height:16px; }
+  .tped-f .tpact { display:flex; gap:8px; margin-top:12px; }
+  .tped-f .tpact button { flex:1; padding:12px !important; border-radius:12px !important; background:var(--tile) !important; color:var(--ink) !important; font-weight:700 !important; }
+  .tped-f .tpact .set { background:var(--accent) !important; color:#fff !important; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -2319,11 +2332,13 @@
     $('tpList').innerHTML = (has ? '<div class="tpw">' + (en ? 'The card already has numbers — picking a template clears them.' : 'Kad dah ada nombor — pilih template akan kosongkan nombor tu.') + '</div>' : '') +
       L.map(function (t, i) {
         return '<div class="tpi"><button type="button" class="opt" data-i="' + i + '"><span><b>' + esc(t.n) + '</b><small>' + esc(t.x.filter(Boolean).join(' · ')) + '</small></span></button>' +
+          '<button type="button" class="tpdel tped" data-e="' + i + '" aria-label="Ubah template">' + ic('pen') + '</button>' +
           '<button type="button" class="tpdel" data-d="' + i + '" aria-label="Padam template">' + ic('trash') + '</button></div>';
       }).join('') +
       '<div class="tpnew"><input id="tpNewName" maxlength="24" placeholder="' + (en ? 'Name, e.g. Push Day' : 'Nama, contoh Push Day') + '"><button type="button" id="tpSave">' + (en ? 'Save this card' : 'Simpan kad ini') + '</button></div>' +
       '<small class="tpnote">' + (en ? 'Saves the workout names on the card (up to 5) as a new template.' : 'Simpan nama workout dalam kad (sehingga 5) sebagai template baru.') + '</small>';
     [].forEach.call($('tpList').querySelectorAll('[data-i]'), function (b) { b.onclick = function () { closeTp(); applyTpl(tpls()[+b.dataset.i]); }; });
+    [].forEach.call($('tpList').querySelectorAll('[data-e]'), function (b) { b.onclick = function () { editTp(+b.dataset.e); }; });
     [].forEach.call($('tpList').querySelectorAll('[data-d]'), function (b) {
       b.onclick = function () {
         if (!b.dataset.arm) { b.dataset.arm = '1'; b.classList.add('arm'); setTimeout(function () { delete b.dataset.arm; b.classList.remove('arm'); }, 2500); return; }
@@ -2338,6 +2353,26 @@
       S.templates = L2; S.lastTpl = nm; saveSettings(); paintTplBtn(); openTp();
     };
     $('tp').classList.add('on'); $('tpBg').classList.add('on');
+  }
+
+  // edit one template: rename + change its workouts (up to the card's row count)
+  function editTp(idx) {
+    var en = S.lang === 'en', t = tpls()[idx], opts = wlist().map(function (n) { return '<option value="' + esc(n) + '">'; }).join(''), f = '';
+    for (var i = 0; i < ROWS; i++) f += '<div class="tpr"><span>' + (i + 1) + '</span><input class="tpx" list="tpNames" maxlength="40" value="' + esc(t.x[i] || '') + '" placeholder="' + (en ? 'Workout ' : 'Workout ') + (i + 1) + '"><button type="button" class="tpclr" data-c="' + i + '" aria-label="Kosongkan">' + ic('x') + '</button></div>';
+    $('tpList').innerHTML = '<div class="tped-f"><label>' + (en ? 'Template name' : 'Nama template') + '</label><input id="tpEName" maxlength="24" value="' + esc(t.n) + '">' +
+      '<label>' + (en ? 'Workouts (in order)' : 'Workout (ikut susunan)') + '</label>' + f + '<datalist id="tpNames">' + opts + '</datalist>' +
+      '<div class="tpact"><button type="button" id="tpECancel">' + (en ? 'Cancel' : 'Batal') + '</button><button type="button" class="set" id="tpESave">' + (en ? 'Save' : 'Simpan') + '</button></div></div>';
+    [].forEach.call($('tpList').querySelectorAll('.tpclr'), function (b) { b.onclick = function () { var inp = $('tpList').querySelectorAll('.tpx')[+b.dataset.c]; inp.value = ''; inp.focus(); }; });
+    $('tpECancel').onclick = openTp;
+    $('tpESave').onclick = function () {
+      var nm = $('tpEName').value.trim(), xs = [].map.call($('tpList').querySelectorAll('.tpx'), function (i) { return i.value.trim(); }).filter(Boolean);
+      if (!nm) { $('tpEName').classList.add('bad'); $('tpEName').focus(); return; }
+      if (!xs.length) { show('bad', en ? 'Add at least one workout.' : 'Isi sekurang-kurangnya satu workout.'); return; }
+      var L2 = tpls().slice(), dup = L2.some(function (q, j) { return j !== idx && q.n.toLowerCase() === nm.toLowerCase(); });
+      if (dup) { $('tpEName').classList.add('bad'); show('bad', en ? 'Another template already has that name.' : 'Nama tu dah digunakan template lain.'); return; }
+      if (S.lastTpl === L2[idx].n) S.lastTpl = nm;
+      L2[idx] = { n: nm, x: xs }; S.templates = L2; saveSettings(); paintTplBtn(); openTp();
+    };
   }
   $('tplBtn').onclick = openTp;
   paintTplBtn();
@@ -2725,7 +2760,7 @@
     'Kosongkan': 'Clear', 'Batal': 'Cancel', 'saat': 'seconds', 'Tempoh': 'Duration', 'Taip guna keyboard': 'Type with keyboard',
     'Ahad': 'Sunday', 'Isnin': 'Monday', 'Selasa': 'Tuesday', 'Rabu': 'Wednesday', 'Khamis': 'Thursday', 'Jumaat': 'Friday', 'Sabtu': 'Saturday',
     'Catatan (tidak wajib)': 'Remark (optional)', 'Tulis apa-apa nota… (tidak wajib)': 'Write any note… (optional)',
-    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Set semula timer': 'Reset timer', 'Sasaran mingguan': 'Weekly goal', 'Bilangan workout seminggu (Ahad–Sabtu)': 'Workouts per week (Sun–Sat)', 'Sasaran workout seminggu': 'Workouts per week goal', 'Pilih untuk isi nama workout': 'Pick to fill the workout names', 'Template workout': 'Workout templates', 'Tidur & prestasi': 'Sleep & performance', 'Padam template': 'Delete template', 'Julat sendiri…': 'Custom range…', '14 hari': '14 days', '30 hari': '30 days', '90 hari': '90 days', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
+    'Heatmap workout': 'Workout heatmap', 'History workout': 'Workout history', 'History tidur': 'Sleep history', 'Statistik tidur': 'Sleep statistic', 'Konsisten': 'Consistency', 'Seret untuk lihat lagi': 'Drag to see more', 'Set semula timer': 'Reset timer', 'Sasaran mingguan': 'Weekly goal', 'Bilangan workout seminggu (Ahad–Sabtu)': 'Workouts per week (Sun–Sat)', 'Sasaran workout seminggu': 'Workouts per week goal', 'Pilih untuk isi nama workout': 'Pick to fill the workout names', 'Template workout': 'Workout templates', 'Tidur & prestasi': 'Sleep & performance', 'Padam template': 'Delete template', 'Ubah template': 'Edit template', 'Julat sendiri…': 'Custom range…', '14 hari': '14 days', '30 hari': '30 days', '90 hari': '90 days', 'Mod gelap': 'Dark mode', 'Semua settings': 'All settings', 'Kurang tidur': 'Short sleep', 'Target tidur (julat)': 'Sleep target (range)', 'Dalam julat = hijau · bawah = merah · lebih = biru': 'In range = green · under = red · over = blue', 'Kosongkan (yang belum disimpan)': 'Clear (unsaved input)', 'tidur bersih': 'net sleep', 'Masa terjaga (jam:minit)': 'Time awake (h:mm)', 'Buka Google Sheet': 'Open Google Sheet', 'Malam direkod': 'Nights logged', 'Tidur cukup 7–9 jam': 'Slept 7–9 hours', 'Streak tidur semasa': 'Current sleep streak', 'Streak tidur terbaik': 'Best sleep streak', 'Waktu lelap': 'Bedtimes', 'Waktu bangun': 'Wake times', 'Tak capai': 'Missed', 'Capai target': 'Hit target', 'Minggu ini': 'This week', 'Streak workout': 'Workout streak', 'Minggu ini': 'This week', 'Tiada rekod': 'No record', 'Heatmap tidur': 'Sleep heatmap', 'Purata tidur': 'Avg sleep', 'Cukup 7–9j': '7–9h nights', 'Streak terbaik': 'Best streak', 'Purata lelap': 'Avg bedtime', 'Purata bangun': 'Avg wake',
     'Streak target': 'Target streak', 'Purata waktu tidur': 'Avg bedtime', 'Purata waktu bangun': 'Avg wake time',
     'Isn': 'Mon', 'Sel': 'Tue', 'Rab': 'Wed', 'Kha': 'Thu', 'Jum': 'Fri', 'Sab': 'Sat', 'Aha': 'Sun',
     'Bawah 6j': 'Under 6h', '6–6.9j': '6–6.9h', '7–9j': '7–9h', 'Lebih 9j': 'Over 9h', 'Mac': 'Mar', 'Mei': 'May', 'Ogo': 'Aug', 'Okt': 'Oct', 'Dis': 'Dec',
