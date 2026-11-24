@@ -1095,6 +1095,15 @@
   @media (prefers-reduced-motion: reduce) { .title h1 .ih-lift * { animation:none !important; } }
   /* Workout vs Rest bar: icon + number instead of words */
   .ratio div { gap:5px; } .ratio .ico { width:17px; height:17px; flex:none; } .ratio b { font-weight:800; }
+
+  /* Workout/Sleep tabs: the white pill slides between the two buttons */
+  .htabs, .dtabs { position:relative; isolation:isolate; }
+  .htabs::before, .dtabs::before { content:''; position:absolute; z-index:-1; top:2px; bottom:2px; left:2px; width:calc(50% - 3px); border-radius:8px;
+    background:var(--paper); box-shadow:0 3px 8px rgba(0,0,0,.12), 0 1px 1px rgba(0,0,0,.06); transition:transform .32s cubic-bezier(.25,.8,.3,1); }
+  body.dark .htabs::before, body.dark .dtabs::before { background:#48484e; }
+  .htabs:has(> [data-t="s"].on)::before, .dtabs:has(> [data-t="s"].on)::before { transform:translateX(calc(100% + 2px)); }
+  .htabs button.on, .dtabs button.on { background:none !important; box-shadow:none !important; }
+  .htabs button, .dtabs button { position:relative; z-index:1; transition:color .25s; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1480,15 +1489,22 @@
     if (kind === 'sleep') run.appDeleteSleep(id); else run.appDeleteEntry(kind, id);
   }
   function alertBad(e) { show('bad', 'Gagal: ' + (e && e.message ? e.message : e)); }
+  // slide/fade a panel in (used by Home/Dashboard and the Workout/Sleep tabs)
+  function slideIn(el, fromRight) {
+    if (!el || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    el.classList.remove('vin-l', 'vin-r'); void el.offsetWidth; el.classList.add(fromRight ? 'vin-r' : 'vin-l');
+    if (!el.__vinBound) { el.__vinBound = true; el.addEventListener('animationend', function (e) { if (e.target === el) el.classList.remove('vin-l', 'vin-r'); }); }
+  }
   // Home tabs: Workout card / Sleep card (same idea as the dashboard tabs)
   var HTAB = 'w';
   try { HTAB = localStorage.getItem('dw-htab') || 'w'; } catch (e) {}
-  function setHTab(t) {
-    HTAB = t === 's' ? 's' : 'w'; try { localStorage.setItem('dw-htab', HTAB); } catch (e) {}
+  function setHTab(t, anim) {
+    var prev = HTAB; HTAB = t === 's' ? 's' : 'w'; try { localStorage.setItem('dw-htab', HTAB); } catch (e) {}
     [].forEach.call($('hTabs').children, function (b) { b.classList.toggle('on', b.dataset.t === HTAB); });
     $('wkCard').style.display = HTAB === 'w' ? '' : 'none'; $('sleepCard').style.display = HTAB === 's' ? '' : 'none';
+    if (anim && prev !== HTAB) slideIn($(HTAB === 's' ? 'sleepCard' : 'wkCard'), HTAB === 's');
   }
-  [].forEach.call($('hTabs').children, function (b) { b.onclick = function () { setHTab(b.dataset.t); }; });
+  [].forEach.call($('hTabs').children, function (b) { b.onclick = function () { setHTab(b.dataset.t, true); }; });
   setHTab(HTAB);
   function showCardView() { if ($('dashView').style.display !== 'none') toggleDash(); }
   function startEditWorkout(key, w) {
@@ -2601,12 +2617,13 @@
   // ---------------- Dashboard tabs: Workout / Sleep ----------------
   var DTAB = 'w';
   try { DTAB = localStorage.getItem('dw-dtab') || 'w'; } catch (e) {}
-  function paintDTab() {
+  function paintDTab(anim) {
     [].forEach.call($('dTabs').children, function (b) { b.classList.toggle('on', b.dataset.t === DTAB); });
     $('workDash').style.display = DTAB === 'w' ? '' : 'none'; $('sleepDash').style.display = DTAB === 's' ? '' : 'none';
+    if (anim) slideIn($(DTAB === 's' ? 'sleepDash' : 'workDash'), DTAB === 's');
   }
   [].forEach.call($('dTabs').children, function (b) {
-    b.onclick = function () { DTAB = b.dataset.t; try { localStorage.setItem('dw-dtab', DTAB); } catch (e) {} paintDTab(); };
+    b.onclick = function () { var ch = DTAB !== b.dataset.t; DTAB = b.dataset.t; try { localStorage.setItem('dw-dtab', DTAB); } catch (e) {} paintDTab(ch); };
   });
   paintDTab();
 
