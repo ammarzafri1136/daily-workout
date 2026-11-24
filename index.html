@@ -1219,6 +1219,14 @@
   .ih-bed .z2 { animation-delay:.6s !important; } .ih-bed .z3 { animation-delay:1.2s !important; }
   .ratio .ih-bed .zz, .ratio .ih-dumbbell .mv { display:none; }
   @media (prefers-reduced-motion: reduce) { .ih-dumbbell *, .ih-bed * { animation:none !important; } .ih-bed .zz { opacity:1; } }
+
+  /* bottom bar follows the theme's button colour */
+  .tabs button.on, body.dark .tabs button.on, body.csurf .tabs button.on { color:var(--accent) !important; }
+  .tabs::before { background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, rgba(255,255,255,.85)), color-mix(in srgb, var(--accent) 10%, rgba(255,255,255,.5))) !important;
+    border-color:color-mix(in srgb, var(--accent) 30%, rgba(255,255,255,.8)) !important; }
+  body.dark .tabs::before, body.csurf .tabs::before { background:color-mix(in srgb, var(--accent) 24%, transparent) !important; border-color:color-mix(in srgb, var(--accent) 40%, transparent) !important; }
+  body.dark .tabs button.on { color:color-mix(in srgb, var(--accent) 40%, #fff) !important; }
+  body.csurf:not(.dark) .tabs::before { background:color-mix(in srgb, var(--accent) 16%, rgba(255,255,255,.7)) !important; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
