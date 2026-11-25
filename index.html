@@ -786,7 +786,7 @@
   <h4>Lain-lain</h4>
   <div class="links"><a id="optSheet" href="#" target="_blank">Buka Sheet &amp; Dashboard</a></div>
   <p class="credit">Icons by <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a></p>
-  <p class="credit">Exercise data by <a href="https://repdb.co" target="_blank" rel="noopener">RepDB (repdb.co)</a></p>
+  <p class="credit">Exercise illustrations: <a href="https://github.com/bryllim/workout-guide" target="_blank" rel="noopener">Workout Guide</a> by Bryl Lim, based on <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></p>
   <div class="links" style="margin-top:8px"><button type="button" id="optReset">↺ Set semula tetapan</button></div>
 </div>
 
@@ -1407,13 +1407,14 @@
   .kc .kca > span { flex:1; min-width:0; } .kc .kca small { display:block; font-size:12px; font-weight:500; color:var(--muted); margin-top:2px; }
   .kc .kcn .kca { font-weight:600; font-size:13.5px; line-height:1.4; }
   .kc .kcgo { width:15px; height:15px; color:var(--muted); flex:none; }
-  .kc .kcimg { position:relative; border-radius:16px; overflow:hidden; margin-bottom:8px; background:#dff0fb; aspect-ratio:1 / 1; width:min(100%, 300px); margin-left:auto; margin-right:auto; }
-  .kc .kcimg + .kcanw svg.kcan { max-height:150px; }
-  .kc .kcimg img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block; }
-  .kc .kcimg img.b { animation:kcXf 2.8s ease-in-out infinite; }
-  @keyframes kcXf { 0%, 30% { opacity:0; } 45%, 80% { opacity:1; } 95%, 100% { opacity:0; } }
-  @media (prefers-reduced-motion: reduce) { .kc .kcimg img.b { animation:none; opacity:0; } }
-  .kc .kcimg .kcanl { background:rgba(255,255,255,.85); color:#334155; padding:2px 8px; border-radius:8px; }
+  .kc .kcimg { position:relative; border-radius:16px; overflow:hidden; margin:0 auto 8px; background:var(--tile); aspect-ratio:1 / 1; width:min(100%, 300px); }
+  .kc .kcimg .kcf { position:absolute; inset:6% 6% 12%; background:var(--wk); -webkit-mask:var(--m) center / contain no-repeat; mask:var(--m) center / contain no-repeat; opacity:0; }
+  .kc .kcimg .f1 { animation:kcF1 2.6s infinite; } .kc .kcimg .f2 { animation:kcF2 2.6s infinite; } .kc .kcimg .f3 { animation:kcF3 2.6s infinite; }
+  @keyframes kcF1 { 0%, 22% { opacity:1; } 27%, 100% { opacity:0; } }
+  @keyframes kcF2 { 0%, 22% { opacity:0; } 27%, 47% { opacity:1; } 52%, 72% { opacity:0; } 77%, 97% { opacity:1; } 100% { opacity:0; } }
+  @keyframes kcF3 { 0%, 47% { opacity:0; } 52%, 72% { opacity:1; } 77%, 100% { opacity:0; } }
+  @media (prefers-reduced-motion: reduce) { .kc .kcimg .kcf { animation:none; } .kc .kcimg .f1 { opacity:1; } }
+  .kc .kcimg .kcprobe { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
   .kc .kccr { font-size:11.5px; color:var(--muted); margin:10px 2px 4px; } .kc .kccr a { color:var(--muted); }
 
   .kc .kcanw { position:relative; background:var(--tile); border-radius:16px; padding:6px 6px 26px; margin-bottom:8px; }
@@ -2911,7 +2912,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
-    ['2026-11-25', ['Pustaka latihan kini guna ilustrasi sebenar RepDB (pose mula ⇄ puncak) untuk 20 latihan.', 'The exercise library now uses real RepDB illustrations (start ⇄ peak pose) for 20 exercises.'], 'f-credits'],
+    ['2026-11-25', ['Pustaka latihan kini guna lukisan Workout Guide 3 frame yang bergerak dan ikut warna tema (19 latihan; sit up guna animasi figura).', 'The exercise library now uses 3-frame Workout Guide drawings that move and follow your theme colour (19 exercises; sit up uses the figure animation).'], 'f-credits'],
     ['2026-11-25', ['Swipe kiri/kanan di mana-mana pada Utama & Dashboard untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right anywhere on Home & the Dashboard to switch Workout, Sleep and Walk.'], 'g-swipe'],
     ['2026-11-25', ['Pustaka latihan kini ada animasi form yang betul (main sendiri) untuk 20 latihan, dan artikel ada grafik dari data kau.', 'The exercise library now has auto-playing correct-form animations for 20 exercises, and articles have graphics from your own data.'], 'k-tech'],
     ['2026-11-25', ['Senarai Template ikut warna tema.', 'The template list follows your colour theme.'], 'g-tpl'],
@@ -3058,7 +3059,7 @@
       T('Tekan menu ⋮ → <b>Add to Home screen</b> / <b>Install app</b>.', 'Tap the ⋮ menu → <b>Add to Home screen</b> / <b>Install app</b>.'),
       T('App dibuka penuh skrin macam app biasa.', 'It then opens full screen like a normal app.')]), null, 'install pwa home screen');
     add('f-data', 'faq', T('Di mana data aku disimpan?', 'Where is my data stored?'), T('Semua rekod disimpan dalam Google Sheet <b>DAILY WORKOUT DATABASE</b> dalam Google Drive kau sendiri. Buka melalui Tetapan → <b>Buka Sheet &amp; Dashboard</b>. Rekod yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b>, jadi masih boleh dipulihkan dari situ.', 'All records live in the Google Sheet <b>DAILY WORKOUT DATABASE</b> in your own Google Drive. Open it from Settings → <b>Open Sheet &amp; Dashboard</b>. Deleted records are first copied to the <b>DELETED (BACKUP)</b> tab, so they can still be restored from there.'), ['set', T('Buka Tetapan', 'Open Settings')], 'data sheet google backup simpan');
-    add('f-credits', 'faq', T('Kredit ilustrasi & ikon', 'Illustration & icon credits'), T('Ilustrasi latihan: <b>Exercise data by <a href="https://repdb.co" target="_blank" rel="noopener">RepDB (repdb.co)</a></b> — lesen percuma untuk kegunaan dalam app. Ikon beranimasi: <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a>. Animasi figura dan grafik lain dilukis khas untuk app ni. Kalau gambar latihan tak keluar (contohnya tiada internet kali pertama), app tunjuk animasi figura sebagai ganti.', 'Exercise illustrations: <b>Exercise data by <a href="https://repdb.co" target="_blank" rel="noopener">RepDB (repdb.co)</a></b> — free licence for in-app use. Animated icons: <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a>. The figure animations and other graphics are drawn for this app. If an exercise picture cannot load (e.g. offline the first time), the app shows the figure animation instead.'), ['set', T('Buka Tetapan', 'Open Settings')], 'credit kredit repdb lordicon licence lesen');
+    add('f-credits', 'faq', T('Kredit ilustrasi & ikon', 'Illustration & icon credits'), T('Ilustrasi latihan: <b><a href="https://github.com/bryllim/workout-guide" target="_blank" rel="noopener">Workout Guide</a></b> oleh Bryl Lim, berdasarkan lukisan <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a>, lesen <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Perubahan: app warnakan lukisan ikut tema dan mainkan 3 frame berulang; fail asal tak diubah. Ikon beranimasi: <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a>. Animasi figura dan grafik lain dilukis khas untuk app ni. Kalau gambar latihan tak keluar (contohnya tiada internet kali pertama), app tunjuk animasi figura sebagai ganti.', 'Exercise illustrations: <b><a href="https://github.com/bryllim/workout-guide" target="_blank" rel="noopener">Workout Guide</a></b> by Bryl Lim, based on <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a> artwork, licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Changes: the app tints the drawings to your theme and plays the 3 frames in a loop; the original files are unchanged. Animated icons: <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a>. The figure animations and other graphics are drawn for this app. If an exercise picture cannot load (e.g. offline the first time), the app shows the figure animation instead.'), ['set', T('Buka Tetapan', 'Open Settings')], 'credit kredit workout guide everkinetic lordicon licence lesen');
     add('f-review', 'faq', T('Kenapa ada tanda ⚠ semak?', 'Why is there a ⚠ check mark?'), T('App menanda latihan bila nama atau nombornya tak pasti. Tekan hari tu, betulkan latihan dan simpan — tanda akan hilang. Jumlah “Perlu semak” juga ada dalam Dashboard.', 'The app flags an exercise when its name or numbers look uncertain. Tap that day, fix the exercise and save — the mark goes away. The “Needs review” count is also on the Dashboard.'), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'review semak warning');
     add('f-rest', 'faq', T('Kenapa ada hari rehat yang aku tak isi?', 'Why are there rest days I did not log?'), T('Hari lepas yang langsung tiada workout atau rehat diisi automatik sebagai rehat (sebab: diisi automatik). Kalau sebenarnya kau workout hari tu, isi workout untuk tarikh tu — rekod rehat automatik akan diganti.', 'Past days with no workout or rest are filled in automatically as rest (reason: filled automatically). If you actually trained that day, log the workout for that date — the automatic rest is replaced.'), null, 'auto rest rehat automatik');
     return A;
@@ -3314,18 +3315,20 @@
     }
     return '';
   }
-  // RepDB illustrations (free tier, attribution required: "Exercise data by RepDB (repdb.co)"). Two poses cross-fade like a short clip.
+  // Exercise frames: Workout Guide by Bryl Lim, based on Everkinetic — CC BY-SA 4.0 (credited in Settings and the Knowledge Centre).
+  // Three line-art frames per move, shown as a theme-coloured mask and played 1 → 2 → 3 → 2 like a short clip.
   var KC_IMG_BASE = 'https://ammarzafri1136.github.io/daily-workout/ex/';
-  var KC_IMG = { 'Push up': 'push-up', 'Squat': 'bodyweight-squat', 'Lunge': 'lunge', 'Sit up': 'sit-ups', 'Crunch': 'crunches', 'Jumping jack': 'jumping-jacks',
-    'Mountain climber': 'mountain-climbers', 'Pull up': 'pull-up', 'Dips': 'bench-dips', 'Glute bridge': 'glute-bridge', 'Bicep curl': 'bicep-curl',
-    'Shoulder press': 'dumbbell-shoulder-press', 'Deadlift (dumbbell)': 'dumbbell-romanian-deadlift', 'Russian twist': 'russian-twist', 'Superman': 'superman',
-    'Plank': 'plank*', 'Side plank': 'side-plank*', 'Wall sit': 'wall-sit*', 'Burpee': 'burpees*', 'High knees': 'high-knees*' };   // * = one pose only
+  var KC_IMG = { 'Push up': 'push-up', 'Squat': 'bodyweight-squat', 'Lunge': 'forward-lunge', 'Plank': 'plank', 'Side plank': 'side-plank', 'Burpee': 'burpee',
+    'Crunch': 'crunch', 'Jumping jack': 'jumping-jack', 'Mountain climber': 'mountain-climber', 'Pull up': 'pull-up', 'Dips': 'bench-dip', 'Glute bridge': 'glute-bridge',
+    'Bicep curl': 'bicep-curl', 'Shoulder press': 'standing-dumbbell-press', 'Deadlift (dumbbell)': 'dumbbell-romanian-deadlift', 'Russian twist': 'russian-twist',
+    'Wall sit': 'wall-sit', 'High knees': 'high-knees', 'Superman': 'superman' };   // Sit up has no frames: the figure animation is used
+  var KC_CREDIT_BM = 'Ilustrasi: <a href="https://github.com/bryllim/workout-guide" target="_blank" rel="noopener">Workout Guide</a> oleh Bryl Lim, berdasarkan <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> · diwarnakan ikut tema';
+  var KC_CREDIT_EN = 'Illustrations: <a href="https://github.com/bryllim/workout-guide" target="_blank" rel="noopener">Workout Guide</a> by Bryl Lim, based on <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> · recoloured to your theme';
   function kcImgHtml(name, T) {
     var k = KC_IMG[name]; if (!k) return '';
-    var one = k.slice(-1) === '*', b = KC_IMG_BASE + k.replace('*', '');
-    return '<div class="kcimg' + (one ? ' one' : '') + '">' + (one ? '<img src="' + b + '-main.webp" alt="' + esc(name) + '" loading="eager">'
-      : '<img src="' + b + '-start.webp" alt="' + esc(name) + '" loading="eager"><img class="b" src="' + b + '-peak.webp" alt="" aria-hidden="true" loading="eager">') +
-      '<span class="kcanl">' + (one ? T('Posisi yang betul', 'Correct position') : T('Mula ⇄ puncak', 'Start ⇄ peak')) + '</span></div>';
+    var b = KC_IMG_BASE + k + '/frame-';
+    return '<div class="kcimg" role="img" aria-label="' + esc(name) + '">' + [1, 2, 3].map(function (i) { return '<i class="kcf f' + i + '" style="--m:url(\'' + b + i + '.svg\')"></i>'; }).join('') +
+      '<img class="kcprobe" src="' + b + '1.svg" alt="" aria-hidden="true"><span class="kcanl">' + T('Form yang betul', 'Correct form') + '</span></div>';
   }
   function kcExFind(name) {
     var norm = function (v) { return ' ' + String(v || '').toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean).map(function (w) { return w.length >= 3 ? w.replace(/s$/, '') : w; }).join(' ') + ' '; };
@@ -3391,19 +3394,19 @@
       }
       if (e) {
         var yq = encodeURIComponent(e[1] + ' proper form');
-        var img = kcImgHtml(e[0], T), dyn1 = /^(Burpee|High knees)$/.test(e[0]);
-        html = img + '<div class="kcanw"' + (img && !dyn1 ? ' hidden' : '') + '>' + kcAnimSvg(e[0]) + '<span class="kcanl">' + (img ? T('Pergerakan · garis putus = panduan', 'Movement · dashed line = guide') : T('Form yang betul · garis putus = panduan', 'Correct form · dashed line = guide')) + '</span></div>' +
+        var img = kcImgHtml(e[0], T);
+        html = img + '<div class="kcanw"' + (img ? ' hidden' : '') + '>' + kcAnimSvg(e[0]) + '<span class="kcanl">' + T('Form yang betul · garis putus = panduan', 'Correct form · dashed line = guide') + '</span></div>' +
           '<a class="kcyt" href="https://www.youtube.com/results?search_query=' + yq + '" target="_blank" rel="noopener">' + ic('ext') + T('Tonton video sebenar (YouTube)', 'Watch a real video (YouTube)') + '</a>' + html;
         html += '<div class="kcb"><p><b>' + T('Otot', 'Muscles') + ':</b> ' + e[3][I] + '</p><div class="grp">' + T('Cara buat', 'How to') + '</div><ol>' + e[4][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>' +
           '<div class="grp">' + T('Kesilapan biasa', 'Common mistakes') + '</div><ul>' + e[5][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
           '<div class="kc2"><div><span>' + T('Lebih mudah', 'Easier') + '</span>' + e[6][I] + '</div><div><span>' + T('Lebih susah', 'Harder') + '</span>' + e[7][I] + '</div></div></div>';
       } else html += '<div class="kcb"><p>' + T('Belum ada panduan untuk latihan ni dalam pustaka. Prinsip umum: buat dengan form yang betul dan terkawal, mula dengan reps yang selesa, dan tambah sedikit setiap minggu.', 'There is no guide for this exercise in the library yet. General rule: keep good, controlled form, start with comfortable reps, and add a little each week.') + '</p></div>';
-      if (e && KC_IMG[e[0]]) html += '<p class="kccr">' + T('Ilustrasi: ', 'Illustrations: ') + 'Exercise data by <a href="https://repdb.co" target="_blank" rel="noopener">RepDB (repdb.co)</a></p>';
+      if (e && KC_IMG[e[0]]) html += '<p class="kccr">' + (en ? KC_CREDIT_EN : KC_CREDIT_BM) + '</p>';
       if (mineO) html += '<button type="button" class="kcgo2" data-pb="1">' + T('Lihat sejarah & PB', 'See history & PB') + ic('right') + '</button>';
     }
     $('dBody').innerHTML = '<div class="kl tip kc">' + html + '</div>';
     var B = $('dBody');
-    [].forEach.call(B.querySelectorAll('.kcimg img'), function (im) { im.onerror = function () { var w = im.closest('.kcimg'); if (!w || !w.parentNode) return; var an = w.parentNode.querySelector('.kcanw'); w.remove(); if (an) { an.hidden = false; kcAnimStart(B); } }; });
+    [].forEach.call(B.querySelectorAll('.kcimg img.kcprobe'), function (im) { im.onerror = function () { var w = im.closest('.kcimg'); if (!w || !w.parentNode) return; var an = w.parentNode.querySelector('.kcanw'); w.remove(); if (an) { an.hidden = false; kcAnimStart(B); } }; });
     kcAnimStart(B);
     [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
     [].forEach.call(B.querySelectorAll('[data-c]'), function (b) { b.onclick = function () { kcOpen('cat', b.dataset.c); }; });
