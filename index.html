@@ -3322,6 +3322,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Bila ada ralat (contohnya tarikh salah, nama template kosong, gagal simpan), app keluarkan bunyi "uh-oh" pendek supaya kau perasan.', 'When something goes wrong (e.g. a wrong date, an empty template name, a failed save) the app plays a short "uh-oh" so you notice.'], 'g-set'],
     ['2026-11-25', ['Setiap aktiviti ada bunyi simpan sendiri: Workout bunyi "power-up" (dan fanfare kecil bila ada PB baru), Tidur bunyi lembut menurun macam dodoi, Jalan bunyi dua tapak kaki diikuti "ping".', 'Each activity has its own save sound: Workout a rising "power-up" (a little fanfare for a new PB), Sleep a soft falling lullaby, Walk two footsteps then a "ping".'], 'g-set'],
     ['2026-11-25', ['Bunyi butang: bunyi lembut bila tekan butang, bunyi "ding" bila simpan berjaya, dan bunyi rendah kalau gagal. Matikan di Tetapan → Paparan → Bunyi butang untuk mod senyap.', 'Button sounds: a soft tap when you press buttons, a chime when a save works and a low tone if it fails. Turn off in Settings → Display → Button sounds for silent mode.'], 'g-set'],
     ['2026-11-25', ['Template yang terpadam boleh dipulihkan: tekan butang Pulihkan dalam senarai Template (template asal yang hilang pun keluar di situ).', 'Deleted templates can be restored: tap Restore in the Template list (missing built-in templates show up there too).'], 'g-tpl'],
@@ -4258,17 +4259,17 @@
     try {
       SFX = SFX || new (window.AudioContext || window.webkitAudioContext)(); if (SFX.state === 'suspended') SFX.resume();
       var t0 = SFX.currentTime, notes = {
-        tap: [[1100, 0, .035, .035]], ok: [[660, 0, .09, .07], [990, .08, .16, .07]], warn: [[520, 0, .12, .06]], bad: [[220, 0, .1, .07], [180, .11, .14, .07]],
+        tap: [[1100, 0, .035, .035]], ok: [[660, 0, .09, .07], [990, .08, .16, .07]], warn: [[520, 0, .12, .06]], bad: [[330, 0, .09, .07], [233, .1, .2, .07]],   // error: short falling "uh-oh"
         okWk: [[523, 0, .08, .08], [659, .07, .08, .08], [784, .14, .08, .08], [1047, .21, .22, .09]],                      // workout: quick rising "power-up"
         okPB: [[523, 0, .07, .08], [659, .06, .07, .08], [784, .12, .07, .08], [1047, .18, .12, .09], [784, .32, .07, .07], [1047, .39, .3, .1]],   // new PB: little fanfare
         okSleep: [[784, 0, .35, .05], [659, .22, .4, .045], [523, .46, .7, .04]],                                           // sleep: slow, soft lullaby fall
         okWalk: [[260, 0, .05, .09], [260, .16, .05, .09], [880, .3, .1, .06], [1175, .4, .22, .06]]                        // walk: two footsteps, then a bright ping
       }[kind] || [];
-      var wave = { tap: 'triangle', okWk: 'square', okPB: 'square', okWalk: 'triangle' }[kind] || 'sine';
+      var wave = { tap: 'triangle', okWk: 'square', okPB: 'square', okWalk: 'triangle', bad: 'sawtooth' }[kind] || 'sine';
       notes.forEach(function (n) {
         var o = SFX.createOscillator(), g = SFX.createGain(); o.type = (kind === 'okWalk' && n[0] < 400) ? 'sine' : wave; o.frequency.setValueAtTime(n[0], t0 + n[1]);
         if (kind === 'tap') o.frequency.exponentialRampToValueAtTime(700, t0 + n[1] + n[2]);
-        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(wave === 'square' ? n[3] * .45 : n[3], t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(wave === 'square' || wave === 'sawtooth' ? n[3] * .45 : n[3], t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
         o.connect(g); g.connect(SFX.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + .02);
       });
     } catch (e) {}
@@ -4710,7 +4711,7 @@
     });
     $('tpSave').onclick = function () {
       var nm = $('tpNewName').value.trim(), names = [].map.call(document.querySelectorAll('#rows input[data-c="name"]'), function (i) { return i.value.trim(); }).filter(Boolean);
-      if (!nm) { $('tpNewName').focus(); $('tpNewName').classList.add('bad'); return; }
+      if (!nm) { $('tpNewName').focus(); $('tpNewName').classList.add('bad'); sfx('bad'); return; }
       if (!names.length) { show('bad', en ? 'Fill in at least one workout name first.' : 'Isi sekurang-kurangnya satu nama workout dulu.'); return; }
       var L2 = tpls().filter(function (t) { return t.n.toLowerCase() !== nm.toLowerCase(); }); L2.push({ n: nm, x: names.slice(0, ROWS) });
       S.templates = L2; S.lastTpl = nm; saveSettings(); paintTplBtn(); openTp();
@@ -4729,7 +4730,7 @@
     $('tpECancel').onclick = openTp;
     $('tpESave').onclick = function () {
       var nm = $('tpEName').value.trim(), xs = [].map.call($('tpList').querySelectorAll('.tpx'), function (i) { return i.value.trim(); }).filter(Boolean);
-      if (!nm) { $('tpEName').classList.add('bad'); $('tpEName').focus(); return; }
+      if (!nm) { $('tpEName').classList.add('bad'); $('tpEName').focus(); sfx('bad'); return; }
       if (!xs.length) { show('bad', en ? 'Add at least one workout.' : 'Isi sekurang-kurangnya satu workout.'); return; }
       var L2 = tpls().slice(), dup = L2.some(function (q, j) { return j !== idx && q.n.toLowerCase() === nm.toLowerCase(); });
       if (dup) { $('tpEName').classList.add('bad'); show('bad', en ? 'Another template already has that name.' : 'Nama tu dah digunakan template lain.'); return; }
@@ -4913,7 +4914,7 @@
   // rest day uses the workout card's date (no separate date box)
   function paintRestFor() {
     var iso = dmyToIso($('date').value), en = S.lang === 'en', el = $('restFor'); if (!el) return;
-    if (!iso) { el.innerHTML = en ? 'Fill in the date at the top first.' : 'Isi tarikh dekat atas dulu.'; el.classList.add('bad'); return; }
+    if (!iso) { el.innerHTML = en ? 'Fill in the date at the top first.' : 'Isi tarikh dekat atas dulu.'; el.classList.add('bad'); sfx('bad'); return; }
     var p = iso.split('-'), wd = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay();
     var dn = (en ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] : DAYS_BM)[wd];
     el.classList.remove('bad');
