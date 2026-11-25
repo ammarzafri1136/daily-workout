@@ -1017,6 +1017,14 @@
   #days .dts, #days .dtk, #days .dtb { font-weight:700; white-space:nowrap; }
   #days .dts { color:var(--ink); } #days .dtk, #days .dtb { color:var(--walk); } #days .dtn { font-style:normal; color:var(--muted); opacity:.5; font-weight:500; }
   @media (min-width:390px) { #days .dth, #days .day.dt { grid-template-columns:48px minmax(0,1fr) 50px 54px 58px 44px; } }
+  /* compact Records panel: rows sized so 7 days fit on one screen above the bottom bar (fitRecTable sets --rrh) */
+  #days .day.dt { height:var(--rrh, 52px); padding:0 !important; box-sizing:border-box; }
+  #days .day.dt > .dtd { justify-content:center !important; }
+  #days .dth { padding-top:2px; }
+  .recent .rkp { padding:6px; margin:8px 0 6px; border-radius:14px; }
+  .recent .rkp .tps { margin-top:6px; } .recent .rkp .kps { margin-top:0; }
+  .recent .rkp .tph { padding:8px 10px; }
+  .recent > h2 { margin-bottom:6px !important; }
 
   /* period picker: one segmented row (Today · This week · 7D · 14D · 30D · 90D · Custom) */
   .flt.seg2 { display:flex !important; flex-wrap:nowrap; gap:2px; overflow-x:auto; scrollbar-width:none; background:var(--tile); border-radius:12px; padding:3px; margin:0 0 10px; }
@@ -2020,6 +2028,7 @@
           '<span class="dtb">' + (wk && isBrisk(wk) ? wk.min + 'm' : dash) + '</span>';
         box.appendChild(row);
       });
+      setTimeout(fitRecTable, 0);
   }
 
   // ---------------- Records summary: short progress / advice for the chosen period ----------------
@@ -2761,6 +2770,20 @@
     else if (card.classList.contains('tight') && innerHeight > (fitWkCard.vh || 0) + 60 && want >= 40) { card.classList.remove('tight'); setTimeout(fitWkCard, 30); }   // only when the screen got taller
   }
   window.addEventListener('resize', function () { clearTimeout(fitWkCard.t); fitWkCard.t = setTimeout(fitWkCard, 120); });
+  // Records: size the table rows so the 7 latest days fit above the bottom bar (like the workout card); longer periods just continue below
+  function fitRecTable() {
+    var box = $('days'), nav = document.querySelector('.tabs');
+    if (!box || !nav || curView() !== 'rec' || !box.offsetParent) return;
+    if (document.body.classList.contains('blurred') || document.querySelector('#ovl.on, .sheet.on, #detail.on')) return;
+    var hd = box.querySelector('.dth'), first = box.querySelector('.day.dt'); if (!hd || !first) return;
+    var navTop = nav.getBoundingClientRect().top; if (!(navTop > innerHeight * .6 && navTop < innerHeight)) return;
+    var open = 0; [].forEach.call(document.querySelectorAll('#rSum .tps.on > .tpw > div'), function (d) { open += d.scrollHeight; });   // ignore opened dropdowns: size for the folded layout
+    var top = first.getBoundingClientRect().top + window.scrollY - open, avail = navTop - 12 - top;
+    var h = Math.max(36, Math.min(58, Math.floor(avail / 7)));
+    if (fitRecTable.h !== h) { fitRecTable.h = h; box.style.setProperty('--rrh', h + 'px'); }
+  }
+  window.addEventListener('resize', function () { clearTimeout(fitRecTable.t); fitRecTable.t = setTimeout(fitRecTable, 120); });
+  $('recBtn').addEventListener('click', function () { setTimeout(fitRecTable, 60); });
   try { new ResizeObserver(function () { clearTimeout(fitWkCard.r); fitWkCard.r = setTimeout(fitWkCard, 60); }).observe($('wkCard')); } catch (e) {}
   new MutationObserver(function () { clearTimeout(fitWkCard.b); fitWkCard.b = setTimeout(fitWkCard, 250); }).observe(document.body, { attributes: true, attributeFilter: ['class'] });   // re-fit after a notice closes
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(fitWkCard, 50); });
@@ -3246,6 +3269,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Panel Rekod lebih padat: jadual 7 hari kini muat dalam satu skrin tanpa skrol. Tempoh lebih panjang (14D, 30D…) bersambung ke bawah.', 'The Records panel is more compact: the 7-day table now fits on one screen without scrolling. Longer periods (14D, 30D…) continue below.'], 'g-rec'],
     ['2026-11-25', ['Petak "Banding tempoh sebelum" di Rekod kini tertutup macam Ringkasan & cadangan — tekan untuk buka.', 'The "Vs previous period" tiles in Records are now folded like Summary & tips — tap to open.'], 'g-rec'],
     ['2026-11-25', ['Garis kotak brisk walk dalam heatmap Walk history kini guna warna kontra dengan warna Walk, jadi jelas dalam mod gelap dan semua gabungan warna.', 'The brisk-walk outline in the Walk history heatmap now uses a colour that contrasts with your Walk colour, so it is clear in dark mode and every colour combo.'], 'm-steps'],
     ['2026-11-25', ['Laporan minggu lepas: setiap Ahad dan Isnin, satu kad ringkas di Home (workout, tidur, langkah, PB + satu cadangan). Tekan × untuk tutup sampai minggu depan. Ringkasan & cadangan juga kini tunjuk kaitan tidur dengan reps kau.', 'Last-week report: every Sunday and Monday, one short card on Home (workouts, sleep, steps, PBs + one tip). Tap × to hide it until next week. Summary & tips now also shows how sleep relates to your reps.'], 'g-rec'],
