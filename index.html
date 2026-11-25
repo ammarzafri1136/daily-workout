@@ -1014,7 +1014,7 @@
   #days .dtd { flex-direction:column; align-items:flex-start !important; line-height:1.15; } #days .dtd b { font-weight:800; color:var(--ink); font-size:14px; } #days .dtd small { font-size:11px; font-weight:600; color:var(--muted); }
   #days .day.dt > .dta { flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; padding-left:6px; }
   #days .dta em { font-style:normal; font-size:11px; font-weight:800; padding:2px 7px; border-radius:999px; white-space:nowrap; background:color-mix(in srgb, currentColor 13%, transparent); }
-  #days .dta em.w { color:var(--wk); } #days .dta em.r { color:var(--rest-tx, var(--rest)); } #days .dta em.k { color:var(--walk); } #days .dta em.s { color:var(--sleepc); }
+  #days .dta em.w { color:var(--wk); } #days .dta em.r { color:var(--rest-tx, var(--rest)); font-weight:500; } #days .dta em.k { color:var(--walk); } #days .dta em.s { color:var(--sleepc); }
   #days .dta small.flag { font-size:11px; color:#d97706; font-weight:800; display:inline-flex; align-items:center; gap:3px; } #days .dta small.flag .ico, .rv .ico { width:13px; height:13px; vertical-align:-2px; }
   #days .day.dt > .dtw { flex-direction:column; line-height:1.15; } #days .dtw b { font-weight:800; color:var(--wk); } #days .dtw small { font-size:10.5px; font-weight:600; color:var(--muted); }
   #days .dts, #days .dtk, #days .dtb { font-weight:700; white-space:nowrap; }
@@ -3311,6 +3311,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Label Rehat dalam jadual Rekod kini tulisan biasa (tak bold) supaya senang dibezakan dengan Workout.', 'The Rest label in the Records table is now regular weight (not bold) so it is easier to tell apart from Workout.'], 'g-rest'],
     ['2026-11-25', ['Warna Rest Day kini warna workout yang dilembutkan (lebih putih dalam mod terang, lebih pudar dalam mod gelap) — senang dibezakan tapi tetap sepadan dengan tema.', 'Rest days now use a softened workout colour (whiter in light mode, muted in dark mode) — easy to tell apart and still matching the theme.'], 'g-rest'],
     ['2026-11-25', ['Semua ikon dalam app kini beranimasi bila ditekan (termasuk ikon workout, carta bar dan katil yang sebelum ni statik). Ikon di Apa yang baru disusun sebaris dengan butang ×.', 'Every icon in the app now animates when tapped (including the workout, bar-chart and bed icons that were static before). Icons in What’s new now line up with the × buttons.'], 'g-kc'],
     ['2026-11-25', ['Butang Buang semua dan Lihat semua di Apa yang baru kini ikon beranimasi (tong sampah dan senarai).', 'The Clear all and See all buttons in What’s new are now animated icons (bin and list).'], 'g-kc'],
