@@ -3322,6 +3322,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Bunyi butang dan bunyi simpan kini 50% lebih kuat.', 'Button and save sounds are now 50% louder.'], 'g-set'],
     ['2026-11-25', ['Bila ada ralat (contohnya tarikh salah, nama template kosong, gagal simpan), app keluarkan bunyi "uh-oh" pendek supaya kau perasan.', 'When something goes wrong (e.g. a wrong date, an empty template name, a failed save) the app plays a short "uh-oh" so you notice.'], 'g-set'],
     ['2026-11-25', ['Setiap aktiviti ada bunyi simpan sendiri: Workout bunyi "power-up" (dan fanfare kecil bila ada PB baru), Tidur bunyi lembut menurun macam dodoi, Jalan bunyi dua tapak kaki diikuti "ping".', 'Each activity has its own save sound: Workout a rising "power-up" (a little fanfare for a new PB), Sleep a soft falling lullaby, Walk two footsteps then a "ping".'], 'g-set'],
     ['2026-11-25', ['Bunyi butang: bunyi lembut bila tekan butang, bunyi "ding" bila simpan berjaya, dan bunyi rendah kalau gagal. Matikan di Tetapan → Paparan → Bunyi butang untuk mod senyap.', 'Button sounds: a soft tap when you press buttons, a chime when a save works and a low tone if it fails. Turn off in Settings → Display → Button sounds for silent mode.'], 'g-set'],
@@ -4253,7 +4254,7 @@
   $('optLarge').onchange = function () { S.large = this.checked; saveSettings(); applySettings(); };
   $('optSound').onchange = function () { S.sound = this.checked; saveSettings(); if (S.sound) sfx('ok'); };
   // ---- button sounds (made with Web Audio, no files): soft tap on buttons, a chime when a save works, a low tone when it fails; off in silent mode ----
-  var SFX = null, SFX_NEXT = null;
+  var SFX = null, SFX_NEXT = null, SFX_VOL = 1.5;   // overall loudness (1.5 = 50% louder than the first version)
   function sfx(kind) {
     if (S.sound === false) return;
     try {
@@ -4269,7 +4270,7 @@
       notes.forEach(function (n) {
         var o = SFX.createOscillator(), g = SFX.createGain(); o.type = (kind === 'okWalk' && n[0] < 400) ? 'sine' : wave; o.frequency.setValueAtTime(n[0], t0 + n[1]);
         if (kind === 'tap') o.frequency.exponentialRampToValueAtTime(700, t0 + n[1] + n[2]);
-        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(wave === 'square' || wave === 'sawtooth' ? n[3] * .45 : n[3], t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(SFX_VOL * (wave === 'square' || wave === 'sawtooth' ? n[3] * .45 : n[3]), t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
         o.connect(g); g.connect(SFX.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + .02);
       });
     } catch (e) {}
