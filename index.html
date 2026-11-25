@@ -2565,8 +2565,9 @@
     var want = Math.max(30, Math.min(56, Math.round((cur + (avail - h) / rows.length) * 10) / 10));
     if (want !== cur) document.documentElement.style.setProperty('--rowh', want + 'px');
     // still too tall at the smallest rows: tighten the date/time boxes too (short phones)
-    if (want <= 30 && !card.classList.contains('tight')) { card.classList.add('tight'); setTimeout(fitWkCard, 30); }
-    else if (want >= 38 && card.classList.contains('tight')) { card.classList.remove('tight'); setTimeout(fitWkCard, 30); }
+    // decide once per screen size (no flip-flopping: hiding the day name frees room, which must not bring it straight back)
+    if (want <= 30 && !card.classList.contains('tight')) { card.classList.add('tight'); fitWkCard.vh = innerHeight; setTimeout(fitWkCard, 30); }
+    else if (card.classList.contains('tight') && innerHeight > (fitWkCard.vh || 0) + 60 && want >= 40) { card.classList.remove('tight'); setTimeout(fitWkCard, 30); }   // only when the screen got taller
   }
   window.addEventListener('resize', function () { clearTimeout(fitWkCard.t); fitWkCard.t = setTimeout(fitWkCard, 120); });
   try { new ResizeObserver(function () { clearTimeout(fitWkCard.r); fitWkCard.r = setTimeout(fitWkCard, 60); }).observe($('wkCard')); } catch (e) {}
