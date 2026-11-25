@@ -1411,6 +1411,11 @@
   #dashView, #cardView { max-width:100%; overflow-x:clip; }
   #kKpi .hk-ring .prg { stroke:var(--walk) !important; }
   #kKpi .hk { flex-wrap:nowrap; } #kKpi .hk-it { min-width:0; } #kKpi .hk-it b { white-space:nowrap; font-size:15px; }
+
+  /* dashboard rings follow their own section colour */
+  #dKpi .hk-ring .prg { stroke:var(--wk) !important; }
+  #sKpi .hk-ring .prg { stroke:#8b5cf6 !important; }
+  .pal .pd i { width:14px; height:14px; margin-left:-4px; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1571,7 +1576,51 @@
     }
     return o;
   }
+  // server + app pop-up messages are written in Malay; show them in English when the app is in English
+  var MSG_EN = [
+    [/^(\d+) workout disimpan untuk (.+?)\.$/, function (m, n, d) { return n + ' workout' + (n === '1' ? '' : 's') + ' saved for ' + d + '.'; }],
+    [/^Perubahan disimpan untuk (.+?)\.$/, 'Changes saved for $1.'],
+    [/^(Rest day|Workout) dipadam\. Salinan disimpan dalam (.+?)\.$/, '$1 deleted. A copy is kept in $2.'],
+    [/^Rekod tidak dijumpai \(mungkin sudah dipadam\)\.$/, 'Record not found (it may already be deleted).'],
+    [/^Rest day (\S+) disimpan\.$/, 'Rest day $1 saved.'], [/^Rest day (\S+) sudah (?:ada|direkod)\.$/, 'Rest day $1 is already recorded.'],
+    [/^Rest day dikemas kini: (.+?)\.$/, 'Rest day updated: $1.'],
+    [/^Workout yang sama untuk (\S+) sudah (?:ada dalam rekod lain|direkod)\.$/, 'The same workout for $1 is already recorded.'],
+    [/^Kad kosong — isi sekurang-kurangnya satu workout\.$/, 'Empty card — fill in at least one workout.'],
+    [/^Kad kosong — kalau nak buang workout ini, guna butang Padam\.$/, 'Empty card — to remove this workout, use Delete.'],
+    [/^Rekod asal tidak dijumpai\.$/, 'Original record not found.'],
+    [/^Tidur (.+?) \(selepas tolak awake (.+?)\) disimpan untuk (\S+)\.$/, 'Sleep $1 (after $2 awake) saved for $3.'],
+    [/^Tidur (.+?) disimpan untuk (\S+)\.$/, 'Sleep $1 saved for $2.'],
+    [/^Tidur untuk (\S+) sudah direkod \((.+?)\)\. Ganti\?/, 'Sleep for $1 is already recorded ($2). Replace?'],
+    [/^Rekod tidur (\S+) dipadam\. Salinan dalam (.+?)\.$/, 'Sleep record $1 deleted. A copy is kept in $2.'],
+    [/^Rekod tidur tidak dijumpai\.$/, 'Sleep record not found.'],
+    [/^Masa awake \((.+?)\) tak boleh sama atau lebih dari masa di katil \((.+?)\)\.$/, 'Awake time ($1) can’t be equal to or more than time in bed ($2).'],
+    [/^Tempoh tidur lebih 20 jam — semak semula waktu\.$/, 'Over 20 hours of sleep — check the times.'],
+    [/^Isi waktu tidur dan waktu bangun \(contoh (.+?) dan (.+?)\)\.$/, 'Enter bedtime and wake time (e.g. $1 and $2).'],
+    [/^Isi waktu tidur dan waktu bangun\.$/, 'Enter bedtime and wake time.'],
+    [/^Brisk walk ([\d,]+) langkah \((.+?) min\) disimpan untuk (\S+)\.$/, 'Brisk walk of $1 steps ($2 min) saved for $3.'],
+    [/^Brisk walk untuk (\S+) sudah ada \((\d+) langkah, (.+?) min\)\./, 'A brisk walk for $1 already exists ($2 steps, $3 min).'],
+    [/^Rekod brisk walk (\S+) dipadam\. Salinan dalam (.+?)\.$/, 'Brisk walk record $1 deleted. A copy is kept in $2.'],
+    [/^Rekod brisk walk tidak dijumpai\.$/, 'Brisk walk record not found.'],
+    [/^Isi jumlah langkah\.$/, 'Enter your steps.'], [/^Isi masa berjalan\.$/, 'Enter the walking time.'],
+    [/^Jumlah langkah terlalu besar — semak semula\.$/, 'That step count is too high — please check.'], [/^Masa lebih 10 jam — semak semula\.$/, 'Over 10 hours — please check.'],
+    [/^Tarikh tak sah\. Guna format dd\/mm\/yyyy, contoh (.+?)\.$/, 'Invalid date. Use dd/mm/yyyy, e.g. $1.'],
+    [/^Tarikh tak sah\. Isi tarikh dekat atas \(dd\/mm\/yyyy\)\.$/, 'Invalid date. Fill in the date at the top (dd/mm/yyyy).'],
+    [/^Tarikh bangun tak sah\. Guna dd\/mm\/yyyy\.$/, 'Invalid wake-up date. Use dd/mm/yyyy.'], [/^Tarikh tak sah\.$/, 'Invalid date.'],
+    [/^Isi sekurang-kurangnya satu baris workout\.$/, 'Fill in at least one workout row.'], [/^Saat mesti 0–59\.$/, 'Seconds must be 0–59.'],
+    [/^Edit dibatalkan\.$/, 'Edit cancelled.'], [/^Menyimpan perubahan…$/, 'Saving changes…'], [/^Menyimpan…$/, 'Saving…'], [/^Memadam…$/, 'Deleting…'],
+    [/^Gagal simpan: /, 'Couldn’t save: '], [/^Gagal: /, 'Failed: '], [/^Kunci app salah atau belum diisi\.$/, 'Wrong or missing app key.']
+  ];
+  function msgEN(t) {
+    if (S.lang !== 'en' || !t) return t;
+    var pre = /^✔\s*/.test(t) ? '✔ ' : '', body = t.replace(/^✔\s*/, ''), tail = '';
+    var tails = [[' Tekan butang sekali lagi untuk ganti.', ' Tap the button again to replace it.'], [' Sila semak:', ' Please check:'], [' Nak buat apa?', '']];
+    tails.forEach(function (x) { if (body.slice(-x[0].length) === x[0]) { body = body.slice(0, -x[0].length); tail = x[1]; } });
+    for (var i = 0; i < MSG_EN.length; i++) { if (MSG_EN[i][0].test(body)) { body = body.replace(MSG_EN[i][0], MSG_EN[i][1]); break; } }
+    body = body.replace(/(\d+)j (\d+)m/g, '$1h $2m');
+    return pre + body + tail;
+  }
   function wait(text) {
+    text = msgEN(text);
     clearTimeout(OVL_T); WAITING = true; var o = ovl();
     $('ovlBox').className = 'ovlbox'; $('ovlBox').innerHTML = '<i class="spin"></i><b>' + esc(text || 'Menyimpan…') + '</b>';
     document.body.classList.add('blurred'); o.classList.add('on');
@@ -1579,7 +1628,7 @@
   }
   function hideOvl() { clearTimeout(OVL_T); WAITING = false; document.body.classList.remove('blurred'); ovl().classList.remove('on'); }
   function show(type, text, list) {
-    text = String(text || '');
+    text = msgEN(String(text || ''));
     if (/…$/.test(text)) { wait(text); return; }
     clearTimeout(OVL_T); WAITING = false; var o = ovl(), b = $('ovlBox');
     b.className = 'ovlbox ' + type;
@@ -2395,7 +2444,10 @@
     box.appendChild(el);
   }
   // ----- dashboard
-  function walkTone(x) { var g = S.stepGoal || 8000, r = x.steps / g; return r >= 1.5 ? '#0f766e' : r >= 1 ? '#14b8a6' : r >= .6 ? '#5eead4' : '#ccfbf1'; }
+  // one colour, four shades (light → deep) — the look of the Walk dashboard, used by every dashboard
+  function cssV(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
+  function toneOf(base, lvl) { return [mixC(base, '#ffffff', .74), mixC(base, '#ffffff', .42), base, mixC(base, '#000000', .32)][Math.max(0, Math.min(3, lvl))]; }
+  function walkTone(x) { var g = S.stepGoal || 8000, r = x.steps / g; return toneOf(cssV('--walk'), r >= 1.5 ? 3 : r >= 1 ? 2 : r >= .6 ? 1 : 0); }
   function renderWalkDash() {
     if (!DASH || !$('kKpi')) return;
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, all = DASH.walk || [], rg = dRange(), goal = S.stepGoal || 8000;
@@ -2414,7 +2466,7 @@
     renderStepsChart(rows, rg);
     renderHeat(all, rg, { el: 'cWalkHeat', col: walkTone, lab: function (x) { return fmtN(x.steps) + (en ? ' steps' : ' langkah'); },
       tip: function (x) { return isoToDmy(x.d) + ': ' + x.min + ' min, ' + (x.km || 0).toFixed(2) + ' km'; },
-      legend: '<div class="hml"><span style="--c:#ccfbf1">' + T('Bawah 60%', 'Under 60%') + '</span><span style="--c:#5eead4">60–99%</span><span style="--c:#14b8a6">' + T('Capai target', 'Goal hit') + '</span><span style="--c:#0f766e">150%+</span></div>' });
+      legend: (function () { var b = cssV('--walk'); return '<div class="hml"><span style="--c:' + toneOf(b, 0) + '">' + T('Bawah 60%', 'Under 60%') + '</span><span style="--c:' + toneOf(b, 1) + '">60–99%</span><span style="--c:' + toneOf(b, 2) + '">' + T('Capai target', 'Goal hit') + '</span><span style="--c:' + toneOf(b, 3) + '">150%+</span></div>'; })() });
     var top = function (f, ok) { return all.filter(ok || function () { return true; }).reduce(function (a, x) { return !a || f(x) > f(a) ? x : a; }, null); };
     var a1 = top(function (x) { return x.steps; }), a2 = top(function (x) { return x.min; }), a3 = top(function (x) { return x.cad; }, function (x) { return x.min >= 10; }), a4 = top(function (x) { return x.km; });
     var pr = [[T('Langkah terbanyak', 'Most steps'), a1, a1 && fmtN(a1.steps)], [T('Jalan paling lama', 'Longest walk'), a2, a2 && a2.min + ' min'], [T('Paling laju', 'Fastest pace'), a3, a3 && a3.cad + '/min'], [T('Paling jauh', 'Furthest'), a4, a4 && a4.km.toFixed(2) + ' km']];
@@ -2436,7 +2488,7 @@
     g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(goal) + '" y2="' + y(goal) + '" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4"/><text x="' + (L + 3) + '" y="' + (y(goal) - 4) + '" font-size="9.5" text-anchor="start" fill="#d97706" font-weight="700">target ' + fmtN(goal) + '</text>';
     var step = Math.max(1, Math.ceil(keys.length / 7)); keys.forEach(function (k2, i) { if (i % step === 0 || i === keys.length - 1) g += '<text x="' + (L + i * bw + bw / 2) + '" y="' + (H - 6) + '" font-size="9.5" text-anchor="middle" fill="currentColor" opacity=".6">' + k2.slice(8) + '/' + k2.slice(5, 7) + '</text>'; });
     el.innerHTML = '<div class="schart lchart"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg><div class="stt"></div></div>' +
-      '<div class="lg"><span style="--c:#14b8a6">' + (en ? 'Goal hit' : 'Capai target') + '</span><span style="--c:#5eead4">' + (en ? 'Below goal' : 'Bawah target') + '</span><span style="--c:#f59e0b">Target</span></div>';
+      '<div class="lg"><span style="--c:' + toneOf(cssV('--walk'), 2) + '">' + (en ? 'Goal hit' : 'Capai target') + '</span><span style="--c:' + toneOf(cssV('--walk'), 1) + '">' + (en ? 'Below goal' : 'Bawah target') + '</span><span style="--c:#f59e0b">Target</span></div>';
     var wrap = el.querySelector('.lchart'), svg = wrap.querySelector('svg'), tip = wrap.querySelector('.stt'), NS = 'http://www.w3.org/2000/svg';
     var guide = document.createElementNS(NS, 'line'); guide.setAttribute('class', 'sguide'); guide.setAttribute('y1', Tp); guide.setAttribute('y2', H - B); svg.insertBefore(guide, svg.firstChild);
     var cur = -1, on = false;
@@ -2613,10 +2665,10 @@
     renderSleepPerf();
     // workout heatmap: blue = workout (shows minutes), yellow = rest day
     renderHeat(DASH.days, dRange(), { el: 'cWHeat',
-      col: function (x) { return x.a === 'Workout' ? penC : restC; },
+      col: function (x) { return x.a === 'Workout' ? toneOf(penC, !x.min ? 2 : x.min < 10 ? 0 : x.min < 20 ? 1 : x.min < 40 ? 2 : 3) : toneOf(restC, 1); },
       lab: function (x) { return x.a === 'Workout' ? (x.min ? Math.round(x.min) + 'm' : '✓') : 'R'; },
       tip: function (x) { return isoToDmy(x.d) + ': ' + (x.a === 'Workout' ? 'Workout' + (x.min ? ' ' + Math.round(x.min) + ' min' : '') + (x.reps ? ', ' + x.reps + ' reps' : '') : 'Rehat'); },
-      legend: '<div class="hml"><span style="--c:' + penC + '">Workout</span><span style="--c:' + restC + '">Rehat</span><span style="--c:var(--tile)">Tiada rekod</span></div>' });
+      legend: '<div class="hml"><span style="--c:' + toneOf(penC, 0) + '">&lt;10m</span><span style="--c:' + toneOf(penC, 1) + '">10–19m</span><span style="--c:' + toneOf(penC, 2) + '">20–39m</span><span style="--c:' + toneOf(penC, 3) + '">40m+</span><span style="--c:' + toneOf(restC, 1) + '">Rehat</span></div>' });
 
     var wdT = wd.filter(function (x) { return x.min || x.target; });
     lineSvg($('cDur'), wdT.map(function (x) { return ddmm(x.d); }),
@@ -2626,7 +2678,7 @@
     var byEx = {}; ex.forEach(function (x) { if (x.u === 'reps') byEx[x.n] = (byEx[x.n] || 0) + x.t; });
     var names = Object.keys(byEx).sort(function (a, b) { return byEx[b] - byEx[a]; }), emax = byEx[names[0]] || 1;
     $('cEx').innerHTML = names.length ? names.map(function (n) {
-      return '<div class="r"><div class="n">' + esc(n) + '</div><div class="t"><i style="width:' + Math.round(100 * byEx[n] / emax) + '%"></i></div><div class="v">' + byEx[n] + '</div></div>';
+      return '<div class="r"><div class="n">' + esc(n) + '</div><div class="t"><i style="width:' + Math.round(100 * byEx[n] / emax) + '%;background:' + toneOf(penC, byEx[n] / emax >= .85 ? 3 : byEx[n] / emax >= .55 ? 2 : byEx[n] / emax >= .3 ? 1 : 0) + ' !important"></i></div><div class="v">' + byEx[n] + '</div></div>';
     }).join('') : '<div class="empty">Tiada data.</div>';
 
     var all = []; ex.forEach(function (x) { if (all.indexOf(x.n) < 0) all.push(x.n); });
@@ -2733,13 +2785,14 @@
     ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b', ['#ffffff', '#eaecef', '#23272e', '#14171b']]
   ];   // optional 9th item: surfaces [panel light, background light, panel dark, background dark]
   var PAL_EN = ['Classic', 'Ocean', 'Sunset', 'Neon', 'Forest', 'Graphite'];
+  var PAL_WALK = ['#14b8a6', '#8b5cf6', '#14b8a6', '#84cc16', '#0ea5e9', '#14b8a6'];   // walk colour per combo (contrasts with its workout/rest colours)
   function palNow(dark) {        // -> {wk, rest, restTx, acc}
     if (S.palette === 'custom') {
       var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), rest = S.cRest || P0[3], acc = S.cAcc || (dark ? P0[7] : P0[6]);
-      return { wk: wk, rest: rest, restTx: (!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest, acc: acc };
+      return { wk: wk, rest: rest, restTx: (!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest, acc: acc, walk: S.cWalk || PAL_WALK[0] };
     }
     var P = PALS[+S.palette] || PALS[0];
-    return { wk: dark ? P[2] : P[1], rest: dark ? P[4] : P[3], restTx: dark ? P[4] : P[5], acc: dark ? P[7] : P[6] };
+    return { wk: dark ? P[2] : P[1], rest: dark ? P[4] : P[3], restTx: dark ? P[4] : P[5], acc: dark ? P[7] : P[6], walk: PAL_WALK[+S.palette] || PAL_WALK[0] };
   }
   function shade(c, f) { var q = parseCss(c); return 'rgb(' + Math.round(q.r * f) + ',' + Math.round(q.g * f) + ',' + Math.round(q.b * f) + ')'; }
   var PENS = [ // [name, bright-mode colour, dark-mode colour]
@@ -2748,7 +2801,7 @@
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cPanel: '', cPage: '', cInk: '' };
+  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cPanel: '', cPage: '', cInk: '' };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -2785,7 +2838,7 @@
     b.setProperty('--pen', dark ? pen[2] : pen[1]);
     // data colours (fixed, all different): workout = purple, rest = amber; sleep uses red / green / blue
     var pl = palNow(dark);
-    b.setProperty('--wk', pl.wk); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
+    b.setProperty('--wk', pl.wk); b.setProperty('--walk', pl.walk); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
     applySurfaces();
     paintPal(dark);
     setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 0); setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
@@ -2824,16 +2877,16 @@
   function paintPal(dark) {
     var box = $('optPal'); if (!box) return;
     var en = S.lang === 'en', cur = S.palette === 'custom' ? 'custom' : String(+S.palette || 0);
-    var dots = function (a, b2, c) { return '<span class="pd"><i style="background:' + a + '"></i><i style="background:' + b2 + '"></i><i style="background:' + c + '"></i></span>'; };
+    var dots = function (a, b2, c, w) { return '<span class="pd"><i style="background:' + a + '"></i><i style="background:' + b2 + '"></i>' + (w ? '<i style="background:' + w + '"></i>' : '') + '<i style="background:' + c + '"></i></span>'; };
     var cp = palNow(dark), csel = S.palette === 'custom';
     box.innerHTML = PALS.map(function (P, i) {
       var sf = P[8], bgc = sf ? (dark ? sf[3] : sf[1]) : '', fg = sf ? (lum(dark ? sf[2] : sf[0]) > 0.55 ? '#111114' : '#f4f4f6') : '';
-      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6]) + '<b>' + (en ? PAL_EN[i] : P[0]) + '</b></button>';
-    }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
+      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6], PAL_WALK[i]) + '<b>' + (en ? PAL_EN[i] : P[0]) + '</b></button>';
+    }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc, cp.walk) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
     [].forEach.call(box.children, function (x) {
       x.onclick = function () {
         if (x.dataset.p === 'custom') {
-          if (S.palette !== 'custom') { var d = palNow(isDark()); S.cWk = S.cWk || d.wk; S.cRest = S.cRest || d.rest; S.cAcc = S.cAcc || d.acc; }
+          if (S.palette !== 'custom') { var d = palNow(isDark()); S.cWk = S.cWk || d.wk; S.cRest = S.cRest || d.rest; S.cAcc = S.cAcc || d.acc; S.cWalk = S.cWalk || d.walk; }
           S.palette = 'custom';
         } else S.palette = +x.dataset.p;
         saveSettings(); applySettings();
@@ -2842,7 +2895,7 @@
     var c = $('optPalC');
     if (!csel) { c.innerHTML = ''; return; }
     var cs = getComputedStyle(document.body), cv = function (v) { return cs.getPropertyValue(v).trim(); };
-    c.innerHTML = [['cWk', 'Workout', cp.wk], ['cRest', en ? 'Rest day' : 'Hari rehat', cp.rest], ['cAcc', en ? 'Buttons' : 'Butang', cp.acc],
+    c.innerHTML = [['cWk', 'Workout', cp.wk], ['cRest', en ? 'Rest day' : 'Hari rehat', cp.rest], ['cWalk', en ? 'Walk' : 'Jalan', cp.walk], ['cAcc', en ? 'Buttons' : 'Butang', cp.acc],
       ['cPanel', 'Panel', cv('--paper')], ['cPage', en ? 'Background' : 'Latar belakang', cv('--page')], ['cInk', en ? 'Text' : 'Tulisan', cv('--ink')]].map(function (r) {
       return '<button type="button" data-k="' + r[0] + '"><i style="background:' + r[2] + '"></i><span>' + r[1] +
         (/^c(Panel|Page|Ink)$/.test(r[0]) && !S[r[0]] ? '<small>' + (en ? 'auto' : 'auto') + '</small>' : '') + '</span>' + ic('pen') + '</button>';
@@ -2982,11 +3035,11 @@
   })();
   function openCP(key) {
     CP.key = key;
-    var VAR = { pen: '--pen', head: '--headbg', cWk: '--wk', cRest: '--rest', cAcc: '--accent', cPanel: '--paper', cPage: '--page', cInk: '--ink' };
+    var VAR = { pen: '--pen', head: '--headbg', cWk: '--wk', cRest: '--rest', cWalk: '--walk', cAcc: '--accent', cPanel: '--paper', cPage: '--page', cInk: '--ink' };
     var cur = typeof S[key] === 'string' && S[key] ? S[key] : getComputedStyle(document.body).getPropertyValue(VAR[key] || '--pen').trim();
     var c = parseCss(cur); CP.r = c.r; CP.g = c.g; CP.b = c.b; CP.a = c.a;
     var en = S.lang === 'en';
-    $('cpTitle').textContent = { pen: 'Warna tulisan', head: 'Warna kad', cWk: en ? 'Workout colour' : 'Warna workout', cRest: en ? 'Rest day colour' : 'Warna hari rehat', cAcc: en ? 'Button colour' : 'Warna butang', cPanel: en ? 'Panel colour' : 'Warna panel', cPage: en ? 'Background colour' : 'Warna latar belakang', cInk: en ? 'Text colour' : 'Warna tulisan' }[key] || '';
+    $('cpTitle').textContent = { pen: 'Warna tulisan', head: 'Warna kad', cWk: en ? 'Workout colour' : 'Warna workout', cRest: en ? 'Rest day colour' : 'Warna hari rehat', cAcc: en ? 'Button colour' : 'Warna butang', cWalk: en ? 'Walk colour' : 'Warna jalan', cPanel: en ? 'Panel colour' : 'Warna panel', cPage: en ? 'Background colour' : 'Warna latar belakang', cInk: en ? 'Text colour' : 'Warna tulisan' }[key] || '';
     paintCP(); $('cp').classList.add('on'); $('cpBg').classList.add('on');
   }
   function closeCP() { $('cp').classList.remove('on'); $('cpBg').classList.remove('on'); }
