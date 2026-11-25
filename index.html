@@ -2478,7 +2478,7 @@
     });
     var hs = rows.map(function (r) { return r.h; }), avg = hs.reduce(function (a, b) { return a + b; }, 0) / hs.length;
     var fmt = function (h) { var t = Math.round(h * 60); return Math.floor(t / 60) + 'j ' + (t % 60) + 'm'; };
-    el.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--muted);font-weight:700">' + esc(rg.label) + ' · jalur hijau = target ' + tgt + '–' + okMax + 'j</div>' +
+    el.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--muted);font-weight:700">' + esc(rg.label) + '</div>' +
       '<div class="schart"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg><div class="stt"></div></div>' +
       '<div class="slg"><span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#ef4444"/></svg>Bawah target</span>' +
       '<span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#22c55e"/></svg>Target ' + tgt + '–' + okMax + 'j</span>' +
