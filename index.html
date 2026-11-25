@@ -1154,7 +1154,7 @@
   #wkCard.cmp.tight thead th { padding-top:5px !important; padding-bottom:5px !important; }
 
   #wkCard.cmp #rows td input { height:var(--rowh, 40px) !important; }
-  #wkCard.cmp .actions { bottom:var(--navgap, calc(92px + env(safe-area-inset-bottom))) !important; }
+  #wkCard.cmp .actions { bottom:clamp(60px, var(--navgap, 92px), 220px) !important; }
 
   #wkCard.cmp .title { flex-wrap:wrap; gap:6px 8px; margin:0 0 10px !important; }
   #wkCard.cmp .title h1 { flex:1 1 auto; min-width:0; }
@@ -2608,8 +2608,11 @@
   function fitWkCard() {
     var card = $('wkCard'), nav = document.querySelector('.tabs');
     if (!card || !nav || curView() !== 'home' || HTAB !== 'w' || !card.offsetParent) return;
-    var gap = 14, navTop = nav.getBoundingClientRect().top;
-    document.documentElement.style.setProperty('--navgap', (innerHeight - navTop + gap) + 'px');
+    // skip while a pop-up / notice is open: the page is blurred then and the bottom bar is not where it normally sits
+    if (document.body.classList.contains('blurred') || document.querySelector('#ovl.on, .sheet.on, #wkPopBg.on, #detail.on')) return;
+    var gap = 14, navTop = nav.getBoundingClientRect().top, ng = innerHeight - navTop + gap;
+    if (!(navTop > innerHeight * .6 && navTop < innerHeight) || ng < 40 || ng > 220) return;   // the bar must be at the bottom of the screen
+    document.documentElement.style.setProperty('--navgap', ng + 'px');
     var rows = document.querySelectorAll('#rows tr'); if (!rows.length) return;
     var cur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rowh')) || 40;
     var top = card.getBoundingClientRect().top + window.scrollY, h = card.offsetHeight, avail = navTop - gap - top;   // card measured from the page top
@@ -2622,6 +2625,7 @@
   }
   window.addEventListener('resize', function () { clearTimeout(fitWkCard.t); fitWkCard.t = setTimeout(fitWkCard, 120); });
   try { new ResizeObserver(function () { clearTimeout(fitWkCard.r); fitWkCard.r = setTimeout(fitWkCard, 60); }).observe($('wkCard')); } catch (e) {}
+  new MutationObserver(function () { clearTimeout(fitWkCard.b); fitWkCard.b = setTimeout(fitWkCard, 250); }).observe(document.body, { attributes: true, attributeFilter: ['class'] });   // re-fit after a notice closes
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(fitWkCard, 50); });
   setTimeout(fitWkCard, 300); setTimeout(fitWkCard, 1200);
   ['homeBtn'].forEach(function (id) { $(id).addEventListener('click', function () { setTimeout(fitWkCard, 60); }); });
