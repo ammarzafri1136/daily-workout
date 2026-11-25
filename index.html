@@ -445,7 +445,7 @@
     display:inline-flex; align-items:center; justify-content:center; }
   .ib.txt { font-size:12px !important; font-weight:700 !important; }
   /* bottom tab bar: floating liquid-glass capsule */
-  .tabs { position:fixed; left:50%; right:auto; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:40; width:min(300px, calc(100% - 40px));
+  .tabs { position:fixed; left:50%; right:auto; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:40; width:min(340px, calc(100% - 32px));
     border-radius:999px !important; padding:5px !important; gap:0; justify-content:center; isolation:isolate; overflow:hidden;
     background:linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.38)) !important;
     backdrop-filter:blur(22px) saturate(190%) brightness(1.05); -webkit-backdrop-filter:blur(22px) saturate(190%) brightness(1.05);
@@ -454,10 +454,10 @@
   .tabs::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:2;
     background:linear-gradient(120deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 70%, rgba(255,255,255,.25) 100%); mix-blend-mode:soft-light; }
   /* sliding glass lens behind the active tab */
-  .tabs::before { content:''; position:absolute; z-index:0; top:5px; bottom:5px; left:5px; width:calc(50% - 5px); border-radius:999px;
+  .tabs::before { content:''; position:absolute; z-index:0; top:5px; bottom:5px; left:5px; width:calc((100% - 10px) / 3); border-radius:999px;
     background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.55)); border:1px solid rgba(255,255,255,.9);
     box-shadow:inset 0 1px 0 #fff, 0 3px 10px rgba(0,0,0,.12); transition:transform .45s cubic-bezier(.32,1.25,.5,1); }
-  .tabs:has(#dashBtn.on)::before { transform:translateX(100%); }
+  .tabs:has(#recBtn.on)::before { transform:translateX(100%); } .tabs:has(#dashBtn.on)::before { transform:translateX(200%); }
   .tabs button { position:relative; z-index:1; flex:1 1 0 !important; display:flex; flex-direction:column; align-items:center; gap:1px; padding:6px 0 5px !important; font-size:10.5px !important;
     font-weight:600 !important; background:none !important; color:var(--muted) !important; border-radius:999px !important; transition:color .25s, transform .2s; }
   .tabs button:active { transform:scale(.94); }
@@ -592,7 +592,7 @@
 <body>
 <div class="wrap">
   <nav class="nav">
-    <div class="tabs" role="tablist"><button type="button" id="homeBtn" class="on" role="tab">Home</button><button type="button" id="dashBtn" role="tab">Dashboard</button></div>
+    <div class="tabs" role="tablist"><button type="button" id="homeBtn" class="on" role="tab">Home</button><button type="button" id="recBtn" role="tab">Rekod</button><button type="button" id="dashBtn" role="tab">Dashboard</button></div>
     <button type="button" class="stk" id="streakChip" title="Streak workout" aria-label="Streak workout"></button><button type="button" class="ib pbbtn" id="pbBtn" title="Personal Best" aria-label="Personal Best"></button><span class="navsp" aria-hidden="true"></span>
     <button type="button" class="ib txt" id="langBtn" title="Bahasa / Language" aria-label="Bahasa / Language">BM</button>
     <button type="button" class="ib" id="themeBtn" title="Dark / Bright mode" aria-label="Dark mode"><svg class="ico ih ih-moon hi tm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mn" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg><svg class="ico ih ih-sun hi ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><g class="sr"><path d="M12 5l0 .01"/><path d="M17 7l0 .01"/><path d="M19 12l0 .01"/><path d="M17 17l0 .01"/><path d="M12 19l0 .01"/><path d="M7 17l0 .01"/><path d="M5 12l0 .01"/><path d="M7 7l0 .01"/></g></svg></button>
@@ -1666,6 +1666,7 @@
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
   ICONS.dumbbell = ["0 0 24 24", "<circle class=\"puh\" cx=\"18.6\" cy=\"11.6\" r=\"1.7\"/><path class=\"pub\" d=\"M3 20.5L16.2 13\"/><path class=\"pua\" d=\"M16.2 13L16.2 17L16.2 21\"/><path class=\"pug\" d=\"M1.5 22.5h21\"/>"];
   ICONS.lmoon = ["0 0 24 24", "<path class=\"lm\" d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>"];
+  ICONS.rec = ["0 0 24 24", "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><path d=\"M9 3h6v3H9z\"/><path class=\"rl1\" d=\"M9 11h6\"/><path class=\"rl2\" d=\"M9 15h4\"/>"];
   ICONS.walk = ["0 0 24 24", "<g class=\"wkb\"><circle cx=\"13\" cy=\"4\" r=\"1.6\"/><path class=\"wl1\" d=\"M7 21l3-4\"/><path class=\"wl2\" d=\"M16 21l-2-4l-3-3l1-6\"/><path class=\"wa\" d=\"M6 12l2-3l4-1l3 3l3 1\"/></g><path class=\"wm wm1\" d=\"M2.5 9h2\"/><path class=\"wm wm2\" d=\"M1.5 13h2.5\"/>"];
   ICONS.bars = ["0 0 24 24", "<path class=\"b1\" d=\"M5 20V12\"/><path class=\"b2\" d=\"M12 20V6\"/><path class=\"b3\" d=\"M19 20V9\"/><path d=\"M3 20h18\"/>"];
   ICONS.trophy = ["0 0 24 24", "<g class=\"tro\"><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"M7 4h10\"/><path d=\"M17 4v8a5 5 0 0 1-10 0V4\"/><path d=\"M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/><path d=\"M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/></g><path class=\"tsh\" d=\"M10 7.5v3\"/>"];
@@ -2247,7 +2248,7 @@
   }
   [].forEach.call($('hTabs').children, function (b) { b.onclick = function () { setHTab(b.dataset.t, true); }; });
   setHTab(HTAB);
-  function showCardView() { if ($('dashView').style.display !== 'none') toggleDash(); }
+  function showCardView() { if (curView() !== 'home') setView('home'); }
   function startEditWorkout(key, w) {
     closeDetail(); showCardView(); setHTab('w');
     var stash = readCard();
@@ -2431,22 +2432,33 @@
   function weekStart(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); }
   function esc(t) { var x = document.createElement('span'); x.textContent = t; return x.innerHTML; }
   // Home <-> Dashboard: header + week strip stay still; only the content below swaps with a short fade/slide
-  function setView(dash) {
-    var inV = $(dash ? 'dashView' : 'cardView'), outV = $(dash ? 'cardView' : 'dashView');
-    $('dashBtn').classList.toggle('on', dash); $('homeBtn').classList.toggle('on', !dash);
+  // three bottom tabs: Home (cards) · Records · Dashboard. setView(true/false) still means Dashboard / Home.
+  (function () {   // Records gets its own view (moved out of the bottom of Home)
+    var rv = document.createElement('div'); rv.id = 'recView'; rv.style.display = 'none';
+    $('cardView').parentNode.insertBefore(rv, $('cardView').nextSibling); rv.appendChild(document.querySelector('#cardView .recent'));
+  })();
+  var VIEWS = { home: 'cardView', rec: 'recView', dash: 'dashView' }, VORD = ['home', 'rec', 'dash'];
+  function curView() { return $('dashView').style.display !== 'none' ? 'dash' : $('recView').style.display !== 'none' ? 'rec' : 'home'; }
+  function setView(v) {
+    if (v === true) v = 'dash'; else if (v === false || !VIEWS[v]) v = 'home';
+    var prev = curView();
+    $('homeBtn').classList.toggle('on', v === 'home'); $('recBtn').classList.toggle('on', v === 'rec'); $('dashBtn').classList.toggle('on', v === 'dash');
+    $('homeBtn').parentNode.dataset.v = v;
     setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
-    if (inV.style.display !== 'none' && outV.style.display === 'none') return;
-    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prev === v) return;
+    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, inV = $(VIEWS[v]);
     var hdr = $('weekStrip').getBoundingClientRect().bottom + window.scrollY;
-    outV.style.display = 'none'; inV.style.display = 'block';
+    Object.keys(VIEWS).forEach(function (k) { $(VIEWS[k]).style.display = k === v ? 'block' : 'none'; });
     if (window.scrollY > hdr) window.scrollTo(0, 0);
-    if (dash) { if (DASH) { try { renderDash(); } catch (e) {} } loadDash(); }
-    if (!calm) { inV.classList.remove('vin-l', 'vin-r'); void inV.offsetWidth; inV.classList.add(dash ? 'vin-r' : 'vin-l'); }
+    if (v === 'dash') { if (DASH) { try { renderDash(); } catch (e) {} } loadDash(); }
+    if (v === 'rec' && REC && REC.length) { try { renderRecent(); } catch (e) {} }
+    if (!calm) { inV.classList.remove('vin-l', 'vin-r'); void inV.offsetWidth; inV.classList.add(VORD.indexOf(v) > VORD.indexOf(prev) ? 'vin-r' : 'vin-l'); }
   }
-  ['cardView', 'dashView'].forEach(function (id) { $(id).addEventListener('animationend', function (e) { if (e.target === this) this.classList.remove('vin-l', 'vin-r'); }); });
-  function toggleDash() { setView($('dashView').style.display === 'none'); }
-  $('dashBtn').onclick = function () { setView(true); };
-  $('homeBtn').onclick = function () { setView(false); };
+  ['cardView', 'recView', 'dashView'].forEach(function (id) { $(id).addEventListener('animationend', function (e) { if (e.target === this) this.classList.remove('vin-l', 'vin-r'); }); });
+  function toggleDash() { setView(curView() === 'dash' ? 'home' : 'dash'); }
+  $('dashBtn').onclick = function () { setView('dash'); };
+  $('recBtn').onclick = function () { setView('rec'); };
+  $('homeBtn').onclick = function () { setView('home'); };
 
   // ---- dashboard date filter ----
   var RANGE = '30d';
@@ -2912,6 +2924,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Rekod kini ada tab sendiri di bar bawah — tak perlu scroll ke bawah Utama lagi.', 'Records now has its own tab in the bottom bar — no more scrolling to the bottom of Home.'], 'g-rec'],
     ['2026-11-25', ['Pustaka latihan kini guna lukisan Workout Guide 3 frame yang bergerak dan ikut warna tema (19 latihan; sit up guna animasi figura).', 'The exercise library now uses 3-frame Workout Guide drawings that move and follow your theme colour (19 exercises; sit up uses the figure animation).'], 'f-credits'],
     ['2026-11-25', ['Swipe kiri/kanan di mana-mana pada Utama & Dashboard untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right anywhere on Home & the Dashboard to switch Workout, Sleep and Walk.'], 'g-swipe'],
     ['2026-11-25', ['Pustaka latihan kini ada animasi form yang betul (main sendiri) untuk 20 latihan, dan artikel ada grafik dari data kau.', 'The exercise library now has auto-playing correct-form animations for 20 exercises, and articles have graphics from your own data.'], 'k-tech'],
@@ -2930,7 +2943,7 @@
       if (what === 'w' || what === 's' || what === 'k') { home(); setHTab(what, true); setTimeout(function () { var c = $({ w: 'wkCard', s: 'sleepCard', k: 'walkCard' }[what]); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
       else if (what === 'tpl') { home(); setHTab('w'); setTimeout(function () { $('tplBtn').click(); }, 250); }
       else if (what === 'timer') { home(); setHTab('w'); setTimeout(function () { $('sw').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 250); }
-      else if (what === 'rec') { home(); setTimeout(function () { $('rSum').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
+      else if (what === 'rec') setView('rec');
       else if (what === 'dash') { if (!$('dashBtn').classList.contains('on')) $('dashBtn').click(); }
       else if (what === 'pb') openPBList();
       else if (what === 'streak') $('streakChip').click();
@@ -2982,7 +2995,7 @@
       T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik kecil = rekod baru dalam 7 hari.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. A small dot = a new record in the last 7 days.'),
       T('Cip <b>api</b> sebelahnya: streak workout semasa dan terbaik — tekan untuk detail.', 'The <b>flame</b> chip beside it: current and best workout streak — tap for details.')]), ['pb', T('Buka Personal Best', 'Open Personal Best')], 'pb trophy trofi streak');
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
-      T('<b>Records</b> (bawah halaman Utama): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (bottom of Home): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
+      T('<b>Rekod</b> (tab sendiri di bar bawah, antara Utama dan Dashboard): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (its own tab in the bottom bar, between Home and Dashboard): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
       T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Slide your finger over a chart to see each day.'),
       T('Tekan mana-mana hari untuk lihat, ubah atau padam rekod. Data yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b> dalam Google Sheet.', 'Tap any day to view, edit or delete it. Deleted data is first copied to the <b>DELETED (BACKUP)</b> tab in the Google Sheet.')]), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'records dashboard carta chart');
     add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
@@ -4381,9 +4394,10 @@
     }
     function anySheet() { return !!document.querySelector('.sheet.on, .sheet-bg.on, #ovl.on'); }
     function isDash() { return $('dashView').style.display !== 'none'; }
+    function isRec() { return $('recView').style.display !== 'none'; }
     function panel() { return $(isDash() ? DSH[DTAB] : CARD[HTAB]); }
     document.addEventListener('touchstart', function (e) {
-      if (e.touches.length !== 1 || anySheet() || skip(e.target)) { st = null; return; }
+      if (e.touches.length !== 1 || anySheet() || isRec() || skip(e.target)) { st = null; return; }
       st = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), el: panel(), dash: isDash(), dir: 0 };
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
@@ -4541,8 +4555,8 @@
     var nav = document.querySelector('.nav'), lt = document.createElement('div'); lt.className = 'lt';
     lt.innerHTML = '<small id="ltDate"></small><h1 id="ltTitle"></h1>';
     nav.insertBefore(lt, nav.firstChild);
-    var ico = { homeBtn: 'home', dashBtn: 'chart' };
-    ['homeBtn', 'dashBtn'].forEach(function (id) { var b = $(id); b.innerHTML = ic(ico[id]) + '<span>' + b.textContent.trim() + '</span>'; });
+    var ico = { homeBtn: 'home', recBtn: 'rec', dashBtn: 'chart' };
+    ['homeBtn', 'recBtn', 'dashBtn'].forEach(function (id) { var b = $(id); b.innerHTML = ic(ico[id]) + '<span>' + b.textContent.trim() + '</span>'; });
   })();
   var DAYS_LONG_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var MON_LONG_BM = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
@@ -4556,7 +4570,7 @@
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
     LANG_BUSY = false;
   }
-  ['homeBtn', 'dashBtn', 'langBtn'].forEach(function (id) { $(id).addEventListener('click', function () { setTimeout(paintTitle, 0); }); });
+  ['homeBtn', 'recBtn', 'dashBtn', 'langBtn'].forEach(function (id) { $(id).addEventListener('click', function () { setTimeout(paintTitle, 0); }); });
   paintTitle();
 
   // ---------------- Language: Bahasa Melayu / English ----------------
