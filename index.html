@@ -1520,6 +1520,22 @@
   .htabs::before, .dtabs::before { width:calc(33.333% - 2.67px) !important; }
   .htabs:has(> [data-t="s"].on)::before, .dtabs:has(> [data-t="s"].on)::before { transform:translateX(calc(100% + 2px)) !important; }
   .htabs:has(> [data-t="k"].on)::before, .dtabs:has(> [data-t="k"].on)::before { transform:translateX(calc(200% + 4px)) !important; }
+  /* Workout / Sleep / Walk tabs styled like the bottom bar: glassy track, theme-tinted sliding pill, active label in the theme colour */
+  .htabs, .dtabs, #dashView .dtabs.seg, body.csurf .htabs, body.csurf .dtabs, body.csurf #dashView .dtabs.seg { border-radius:999px !important; padding:4px !important;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 5%, rgba(255,255,255,.7)), color-mix(in srgb, var(--accent) 3%, rgba(255,255,255,.45))) !important;
+    border:1px solid color-mix(in srgb, var(--accent) 12%, rgba(255,255,255,.7)) !important; box-shadow:inset 0 1px 1px rgba(255,255,255,.7), 0 2px 8px rgba(0,0,0,.06) !important; }
+  body.dark .htabs, body.dark .dtabs, body.dark.csurf .htabs, body.dark.csurf .dtabs, body.dark #dashView .dtabs.seg, body.dark.csurf #dashView .dtabs.seg { background:color-mix(in srgb, var(--accent) 6%, rgba(255,255,255,.05)) !important;
+    border-color:color-mix(in srgb, var(--accent) 14%, rgba(255,255,255,.08)) !important; box-shadow:inset 0 1px 1px rgba(255,255,255,.05) !important; }
+  .htabs::before, .dtabs::before, body.csurf .htabs::before, body.csurf .dtabs::before { top:4px !important; bottom:4px !important; left:4px !important; width:calc((100% - 8px) / 3) !important; border-radius:999px !important;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, rgba(255,255,255,.9)), color-mix(in srgb, var(--accent) 10%, rgba(255,255,255,.6))) !important;
+    border:1px solid color-mix(in srgb, var(--accent) 30%, rgba(255,255,255,.8)); box-shadow:0 2px 8px color-mix(in srgb, var(--accent) 18%, transparent) !important; }
+  body.dark .htabs::before, body.dark .dtabs::before, body.dark.csurf .htabs::before, body.dark.csurf .dtabs::before { background:color-mix(in srgb, var(--accent) 24%, transparent) !important; border-color:color-mix(in srgb, var(--accent) 40%, transparent); box-shadow:none !important; }
+  .htabs:has(> [data-t="s"].on)::before, .dtabs:has(> [data-t="s"].on)::before { transform:translateX(100%) !important; }
+  .htabs:has(> [data-t="k"].on)::before, .dtabs:has(> [data-t="k"].on)::before { transform:translateX(200%) !important; }
+  .htabs button, .dtabs button, body.dark .htabs button, body.dark .dtabs button, .htabs button.on, .dtabs button.on, body.dark .htabs button.on, body.dark .dtabs button.on { border-radius:999px !important; background:none !important; box-shadow:none !important; }
+  .htabs button, .dtabs button { color:var(--muted) !important; }
+  .htabs button.on, .dtabs button.on, body.csurf .htabs button.on, body.csurf .dtabs button.on { color:var(--accent) !important; font-weight:800 !important; }
+  body.dark .htabs button.on, body.dark .dtabs button.on { color:color-mix(in srgb, var(--accent) 40%, #fff) !important; }
   .sleep.walk h2 .ti.ih-walk { color:var(--walk); width:27px !important; height:27px !important; overflow:visible; }
   .ch h4 .hic.hwl { color:var(--walk); }
   @keyframes wkBob { 0%, 100% { transform:translateY(0) rotate(0); } 25% { transform:translateY(-.8px) rotate(2deg); } 50% { transform:translateY(0) rotate(0); } 75% { transform:translateY(-.8px) rotate(-2deg); } }
@@ -2977,6 +2993,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Tab Workout / Tidur / Jalan kini bergaya sama dengan bar bawah dan ikut warna tema.', 'The Workout / Sleep / Walk tabs now match the bottom bar and follow your theme colour.'], 'g-swipe'],
     ['2026-11-25', ['Kad Workout lebih padat — muat satu skrin: timer sebelah tajuk, cara isi di ikon ⓘ, nota di ikon pen, butang Simpan sentiasa kelihatan.', 'A more compact Workout card that fits one screen: timer beside the title, fill-in tips under the ⓘ icon, notes under the pen icon, Save always visible.'], 'g-workout'],
     ['2026-11-25', ['Rekod kini ada tab sendiri di bar bawah (Rekod · Utama · Dashboard). App sentiasa dibuka di Utama.', 'Records now has its own tab in the bottom bar (Records · Home · Dashboard). The app always opens on Home.'], 'g-rec'],
     ['2026-11-25', ['Pustaka latihan kini guna lukisan Workout Guide 3 frame yang bergerak dan ikut warna tema (19 latihan; sit up guna animasi figura).', 'The exercise library now uses 3-frame Workout Guide drawings that move and follow your theme colour (19 exercises; sit up uses the figure animation).'], 'f-credits'],
