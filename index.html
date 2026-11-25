@@ -1112,6 +1112,13 @@
   .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
   /* compact Workout card */
+  #wkCard.cmp .title:has(#sw.has) h1 { font-size:17px !important; text-overflow:ellipsis; }
+  #wkCard.cmp .title #sw.sw.has.run .swx { display:none !important; }   /* reset only while paused: keeps the running timer on the title row */
+  @media (max-width:380px) { #wkCard.cmp .title:has(#sw.has) h1 { font-size:15.5px !important; } #wkCard.cmp .title #sw.sw.has .swt { font-size:17px !important; min-width:46px; } #wkCard.cmp .title #sw.sw.has { gap:4px; } }
+  #wkCard.cmp .title:has(#sw.has) h1 .ti { width:20px; height:20px; }
+  #wkCard.cmp .actions .save { font-size:14.5px !important; }
+  #wkCard.cmp .actions .rest .rl { margin-left:4px; }
+
   #wkCard.cmp.tight .title { margin-bottom:6px !important; }
   #wkCard.cmp.tight .top.trio .box { padding-top:6px !important; padding-bottom:6px !important; }
   #wkCard.cmp.tight .dayname { display:none !important; }
@@ -1124,7 +1131,16 @@
   #wkCard.cmp .title { flex-wrap:wrap; gap:6px 8px; margin:0 0 10px !important; }
   #wkCard.cmp .title h1 { flex:1 1 auto; min-width:0; }
   #wkCard.cmp .title #sw.sw { margin:0 0 0 auto; }
-  #wkCard.cmp .title #sw.sw.has { flex:1 0 100%; margin:2px 0 0; }
+  #wkCard.cmp .title { flex-wrap:nowrap !important; }
+  #wkCard.cmp .title h1 { white-space:nowrap; overflow:hidden; }
+  #wkCard.cmp .title #sw.sw.has { flex:none; margin:0 0 0 auto; gap:5px; }
+  #wkCard.cmp .title #sw.sw.has .swl { display:none; }
+  #wkCard.cmp .title #sw.sw.has .swgo, #wkCard.cmp .title #sw.sw.has .swx, #wkCard.cmp .title #sw.sw.has .swfill { width:34px !important; height:34px !important; padding:0 !important; border-radius:50% !important; display:inline-flex !important; align-items:center; justify-content:center; gap:0 !important; }
+  #wkCard.cmp .title #sw.sw.has .swgo .ico, #wkCard.cmp .title #sw.sw.has .swfill .ico { width:16px; height:16px; margin:0 !important; }
+  #wkCard.cmp .title #sw.sw.has .swgo .swp { margin:0 !important; }
+  #wkCard.cmp .title #sw.sw.has .swt { font-size:19px !important; margin:0 2px !important; min-width:52px; text-align:center; }
+  #wkCard.cmp .title #sw.sw .swfill .ico { width:15px; height:15px; margin-right:4px; vertical-align:-2px; }
+  @media (max-width:370px) { #wkCard.cmp .title h1 { font-size:17px !important; } #wkCard.cmp .title h1 .ti { width:20px; height:20px; } }
   #wkCard.cmp .title #sw.sw .swgo { padding:7px 12px !important; height:34px !important; }
   #wkCard.cmp .durhead { display:none !important; }
   #wkCard.cmp .top.trio { margin-bottom:8px !important; }
@@ -1721,6 +1737,7 @@
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
   ICONS.dumbbell = ["0 0 24 24", "<circle class=\"puh\" cx=\"18.6\" cy=\"11.6\" r=\"1.7\"/><path class=\"pub\" d=\"M3 20.5L16.2 13\"/><path class=\"pua\" d=\"M16.2 13L16.2 17L16.2 21\"/><path class=\"pug\" d=\"M1.5 22.5h21\"/>"];
   ICONS.lmoon = ["0 0 24 24", "<path class=\"lm\" d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>"];
+  ICONS.play = ["0 0 24 24", "<path d=\"M7 4v16l13 -8z\"/>"];
   ICONS.rec = ["0 0 24 24", "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><path d=\"M9 3h6v3H9z\"/><path class=\"rl1\" d=\"M9 11h6\"/><path class=\"rl2\" d=\"M9 15h4\"/>"];
   ICONS.walk = ["0 0 24 24", "<g class=\"wkb\"><circle cx=\"13\" cy=\"4\" r=\"1.6\"/><path class=\"wl1\" d=\"M7 21l3-4\"/><path class=\"wl2\" d=\"M16 21l-2-4l-3-3l1-6\"/><path class=\"wa\" d=\"M6 12l2-3l4-1l3 3l3 1\"/></g><path class=\"wm wm1\" d=\"M2.5 9h2\"/><path class=\"wm wm2\" d=\"M1.5 13h2.5\"/>"];
   ICONS.bars = ["0 0 24 24", "<path class=\"b1\" d=\"M5 20V12\"/><path class=\"b2\" d=\"M12 20V6\"/><path class=\"b3\" d=\"M19 20V9\"/><path d=\"M3 20h18\"/>"];
@@ -2524,6 +2541,10 @@
     ib.onclick = function (e) { e.stopPropagation(); card.classList.toggle('showhint'); };
     var nb = document.createElement('button'); nb.type = 'button'; nb.className = 'clear notebtn'; nb.title = 'Nota'; nb.setAttribute('aria-label', 'Nota / Notes'); nb.innerHTML = ic('pen');
     acts.insertBefore(nb, $('clearBtn'));
+    var rb = $('restBtn'); [].slice.call(rb.childNodes).forEach(function (n) { if (n.nodeType === 3 && n.textContent.trim()) n.remove(); });
+    var rl = document.createElement('span'); rl.className = 'rl'; rb.appendChild(rl);
+    function paintRest() { var en = !!(typeof S !== 'undefined' && S && S.lang === 'en'); rl.textContent = en ? 'Rest' : 'Rehat'; rb.title = en ? 'Rest Day' : 'Hari Rehat'; rb.setAttribute('aria-label', rb.title); }
+    paintRest(); setTimeout(paintRest, 0); $('langBtn').addEventListener('click', function () { setTimeout(paintRest, 0); });
     function paintNote() { var has = !!notes.value.trim(); nb.classList.toggle('has', has); if (has) card.classList.add('shownote'); }
     nb.onclick = function () { var on = !card.classList.contains('shownote') || !notes.value.trim(); card.classList.toggle('shownote', on); if (on) setTimeout(function () { notes.focus(); }, 30); };
     notes.addEventListener('input', paintNote); notes.addEventListener('blur', function () { if (!notes.value.trim()) card.classList.remove('shownote'); });
@@ -2536,7 +2557,7 @@
   function fitWkCard() {
     var card = $('wkCard'), nav = document.querySelector('.tabs');
     if (!card || !nav || curView() !== 'home' || HTAB !== 'w' || !card.offsetParent) return;
-    var gap = 12, navTop = nav.getBoundingClientRect().top;
+    var gap = 14, navTop = nav.getBoundingClientRect().top;
     document.documentElement.style.setProperty('--navgap', (innerHeight - navTop + gap) + 'px');
     var rows = document.querySelectorAll('#rows tr'); if (!rows.length) return;
     var cur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rowh')) || 40;
@@ -2548,6 +2569,8 @@
     else if (want >= 38 && card.classList.contains('tight')) { card.classList.remove('tight'); setTimeout(fitWkCard, 30); }
   }
   window.addEventListener('resize', function () { clearTimeout(fitWkCard.t); fitWkCard.t = setTimeout(fitWkCard, 120); });
+  try { new ResizeObserver(function () { clearTimeout(fitWkCard.r); fitWkCard.r = setTimeout(fitWkCard, 60); }).observe($('wkCard')); } catch (e) {}
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(fitWkCard, 50); });
   setTimeout(fitWkCard, 300); setTimeout(fitWkCard, 1200);
   ['homeBtn'].forEach(function (id) { $(id).addEventListener('click', function () { setTimeout(fitWkCard, 60); }); });
   document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#hTabs, #wkCard')) setTimeout(fitWkCard, 60); });
@@ -3022,6 +3045,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Timer kekal sebaris dengan tajuk Daily Workout bila berjalan, dan jarak kad ke bar bawah dilebarkan.', 'The timer stays on the Daily Workout title row while running, and the gap above the bottom bar is wider.'], 'g-timer'],
     ['2026-11-25', ['Kad Workout kini ikut saiz skrin telefon kau: jarak ke bar bawah sama dengan jarak di bawah tab Workout/Tidur/Jalan.', 'The Workout card now fits your phone’s screen: the gap to the bottom bar matches the gap under the Workout/Sleep/Walk tabs.'], 'g-workout'],
     ['2026-11-25', ['Tab Workout / Tidur / Jalan kini bergaya sama dengan bar bawah dan ikut warna tema.', 'The Workout / Sleep / Walk tabs now match the bottom bar and follow your theme colour.'], 'g-swipe'],
     ['2026-11-25', ['Kad Workout lebih padat — muat satu skrin: timer sebelah tajuk, cara isi di ikon ⓘ, nota di ikon pen, butang Simpan sentiasa kelihatan.', 'A more compact Workout card that fits one screen: timer beside the title, fill-in tips under the ⓘ icon, notes under the pen icon, Save always visible.'], 'g-workout'],
@@ -3090,7 +3114,7 @@
       T('Ikon pen dalam senarai template untuk ubah, tambah atau padam template.', 'Use the pen icon in the template list to edit, add or delete templates.'),
       T('Sebelah butang Template ada ringkasan <b>workout terakhir</b> — tekan untuk detail penuh.', 'Beside Template is a summary of your <b>last workout</b> — tap for the full detail.')]), ['tpl', T('Buka Template', 'Open Templates')], 'template');
     add('g-timer', 'guide', T('Timer workout', 'Workout timer'), ul([
-      T('Butang timer ada sebelah tajuk <b>Daily Workout</b>. Tekan untuk mula, sekali lagi untuk berhenti seketika.', 'The timer button sits beside the <b>Daily Workout</b> title. Tap to start, again to pause.'),
+      T('Butang timer ada sebelah tajuk <b>Daily Workout</b> dan kekal di baris yang sama bila berjalan: ⏸ jeda, masa, ✓ isi SEBENAR. Butang set semula ↻ keluar bila timer dijeda.', 'The timer sits beside the <b>Daily Workout</b> title and stays on that row while running: ⏸ pause, the time, ✓ fill ACTUAL. The ↻ reset button appears when the timer is paused.'),
       T('Bila berhenti, tekan butang isi untuk masukkan masa ke ruang <b>SEBENAR</b>.', 'When paused, tap the fill button to put the time into the <b>ACTUAL</b> field.'),
       T('Masa SEBENAR digunakan untuk “Masa workout” dalam Records dan Dashboard.', 'ACTUAL time feeds “Workout time” in Records and the Dashboard.')]), ['timer', T('Pergi ke timer', 'Go to timer')], 'timer masa actual sebenar');
     add('g-pb', 'guide', T('Personal Best & streak', 'Personal Best & streak'), ul([
@@ -4168,8 +4192,10 @@
     var t = swSec(), en = S.lang === 'en', has = t > 0 || SW.run;
     $('swT').textContent = swFmt(t);
     $('sw').classList.toggle('run', SW.run); $('sw').classList.toggle('has', has);
-    $('swGo').innerHTML = SW.run ? '<span class="swp"></span>' + (en ? 'Pause' : 'Jeda') : ic('clock') + (has ? (en ? 'Resume' : 'Sambung') : (en ? 'Start timer' : 'Mula timer'));
-    $('swReset').innerHTML = ic('refresh'); $('swFill').textContent = en ? 'Fill ACTUAL' : 'Isi SEBENAR';
+    var gl = SW.run ? (en ? 'Pause' : 'Jeda') : (has ? (en ? 'Resume' : 'Sambung') : (en ? 'Start timer' : 'Mula timer')), fl = en ? 'Fill ACTUAL' : 'Isi SEBENAR';
+    $('swGo').innerHTML = (SW.run ? '<span class="swp"></span>' : ic(has ? 'play' : 'clock')) + '<span class="swl">' + gl + '</span>'; $('swGo').setAttribute('aria-label', gl);
+    $('swReset').innerHTML = ic('refresh'); $('swFill').innerHTML = ic('check') + '<span class="swl">' + fl + '</span>'; $('swFill').setAttribute('aria-label', fl); $('swFill').title = fl;
+    if (typeof fitWkCard === 'function') setTimeout(fitWkCard, 30);
   }
   function swTick() { clearInterval(SW_T); if (SW.run) SW_T = setInterval(function () { $('swT').textContent = swFmt(swSec()); }, 500); swPaint(); }
   $('swGo').onclick = function () {
