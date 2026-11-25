@@ -1642,6 +1642,14 @@
   body.dark .htabs button.on, body.dark .dtabs button.on { color:color-mix(in srgb, var(--accent) 40%, #fff) !important; }
   .sleep.walk h2 .ti.ih-walk { color:var(--walk); width:27px !important; height:27px !important; overflow:visible; }
   .ch h4 .hic.hwl { color:var(--walk); }
+  /* folding dashboard sections */
+  .ch.fold { padding:0 !important; }
+  .ch.fold > h4 { margin:0 !important; padding:13px 14px; cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .ch.fold > h4 .chv { margin-left:auto; display:flex; color:var(--muted); flex:none; } .ch.fold > h4 select ~ .chv, .ch.fold > h4 small ~ .chv { margin-left:8px; }
+  .ch.fold > h4 .chv .ico { width:18px; height:18px; transition:transform .25s; } .ch.fold.on > h4 .chv .ico { transform:rotate(180deg); }
+  .ch.fold > .chw { display:grid; grid-template-rows:0fr; transition:grid-template-rows .28s ease; }
+  .ch.fold.on > .chw { grid-template-rows:1fr; }
+  .ch.fold > .chw > div { overflow:hidden; min-height:0; padding:0 14px; } .ch.fold.on > .chw > div { padding-bottom:12px; }
   @keyframes wkBob { 0%, 100% { transform:translateY(0) rotate(0); } 25% { transform:translateY(-.8px) rotate(2deg); } 50% { transform:translateY(0) rotate(0); } 75% { transform:translateY(-.8px) rotate(-2deg); } }
   @keyframes wkLine { 0%, 100% { opacity:0; transform:translateX(1px); } 40%, 60% { opacity:.8; transform:translateX(-1px); } }
   .ih-walk .wkb { transform-box:view-box; transform-origin:12px 20px; animation:wkBob 1s ease-in-out infinite; }
@@ -2771,6 +2779,21 @@
   }
   window.addEventListener('resize', function () { clearTimeout(fitWkCard.t); fitWkCard.t = setTimeout(fitWkCard, 120); });
   // Records: size the table rows so the 7 latest days fit above the bottom bar (like the workout card); longer periods just continue below
+  // Dashboard: every chart section folds like "vs Previous period" — tap the title to open; each section remembers its state
+  (function () {
+    var st = {}; try { st = JSON.parse(localStorage.getItem('dw-dch') || '{}') || {}; } catch (e) {}
+    [].forEach.call(document.querySelectorAll('#dashView .ch'), function (ch) {
+      var h = ch.querySelector('h4'); if (!h || ch.dataset.fold) return;
+      var body = [].filter.call(ch.children, function (c) { return c !== h; }), key = (body[0] && body[0].id) || h.textContent.trim();
+      var w = document.createElement('div'); w.className = 'chw'; var inner = document.createElement('div'); w.appendChild(inner);
+      body.forEach(function (c) { inner.appendChild(c); }); ch.appendChild(w);
+      ch.dataset.fold = key; ch.classList.add('fold'); if (st[key]) ch.classList.add('on');
+      var v = document.createElement('span'); v.className = 'chv'; v.innerHTML = ic('down'); h.appendChild(v);
+      h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', !!st[key]);
+      var tog = function (e) { if (e && e.target.closest('select, input, a')) return; var on = ch.classList.toggle('on'); h.setAttribute('aria-expanded', on); st[key] = on ? 1 : 0; try { localStorage.setItem('dw-dch', JSON.stringify(st)); } catch (x) {} };
+      h.addEventListener('click', tog); h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(e); } });
+    });
+  })();
   function fitRecTable() {
     var box = $('days'), nav = document.querySelector('.tabs');
     if (!box || !nav || curView() !== 'rec' || !box.offsetParent) return;
@@ -2778,7 +2801,8 @@
     var hd = box.querySelector('.dth'), first = box.querySelector('.day.dt'); if (!hd || !first) return;
     var navTop = nav.getBoundingClientRect().top; if (!(navTop > innerHeight * .6 && navTop < innerHeight)) return;
     var open = 0; [].forEach.call(document.querySelectorAll('#rSum .tps.on > .tpw > div'), function (d) { open += d.scrollHeight; });   // ignore opened dropdowns: size for the folded layout
-    var top = first.getBoundingClientRect().top + window.scrollY - open, avail = navTop - 12 - top;
+    var card = box.closest('.recent'), pb = card ? parseFloat(getComputedStyle(card).paddingBottom) || 0 : 0;
+    var top = first.getBoundingClientRect().top + window.scrollY - open, avail = navTop - 14 - pb - top;   // card ends the same 14px above the bar as the gap between cards
     var h = Math.max(36, Math.min(58, Math.floor(avail / 7)));
     if (fitRecTable.h !== h) { fitRecTable.h = h; box.style.setProperty('--rrh', h + 'px'); }
   }
@@ -3269,6 +3293,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Setiap carta di Dashboard kini tertutup — tekan tajuk untuk buka, tekan lagi untuk tutup. App ingat mana yang kau biar terbuka.', 'Every chart on the Dashboard is now folded — tap its title to open, tap again to close. The app remembers which ones you leave open.'], 'g-rec'],
     ['2026-11-25', ['Panel Rekod lebih padat: jadual 7 hari kini muat dalam satu skrin tanpa skrol. Tempoh lebih panjang (14D, 30D…) bersambung ke bawah.', 'The Records panel is more compact: the 7-day table now fits on one screen without scrolling. Longer periods (14D, 30D…) continue below.'], 'g-rec'],
     ['2026-11-25', ['Petak "Banding tempoh sebelum" di Rekod kini tertutup macam Ringkasan & cadangan — tekan untuk buka.', 'The "Vs previous period" tiles in Records are now folded like Summary & tips — tap to open.'], 'g-rec'],
     ['2026-11-25', ['Garis kotak brisk walk dalam heatmap Walk history kini guna warna kontra dengan warna Walk, jadi jelas dalam mod gelap dan semua gabungan warna.', 'The brisk-walk outline in the Walk history heatmap now uses a colour that contrasts with your Walk colour, so it is clear in dark mode and every colour combo.'], 'm-steps'],
@@ -3370,7 +3395,7 @@
       T('<b>Lihat semua</b> tunjuk senarai penuh termasuk yang dah dibuang (warna pudar). Buka yang pudar untuk bawa balik ke halaman utama.', '<b>See all</b> shows the full list, including removed ones (faded). Open a faded one to bring it back to the home page.')]), null, 'knowledge centre bantuan help berita news baru what new buang remove leret swipe');
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
       T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
-      T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Slide your finger over a chart to see each day.'),
+      T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Setiap carta tertutup — tekan tajuknya untuk buka. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Each chart is folded — tap its title to open it. Slide your finger over a chart to see each day.'),
       T('<b>Laporan minggu lepas</b>: setiap Ahad dan Isnin, satu kad kecil di Home tunjuk workout, purata tidur, langkah dan PB minggu lepas, dengan satu cadangan. Tekan × untuk tutup sampai minggu depan.', '<b>Last-week report</b>: every Sunday and Monday a small card on Home shows last week’s workouts, average sleep, steps and PBs, with one tip. Tap × to hide it until next week.'),
       T('Tekan mana-mana hari untuk lihat, ubah atau padam rekod. Data yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b> dalam Google Sheet.', 'Tap any day to view, edit or delete it. Deleted data is first copied to the <b>DELETED (BACKUP)</b> tab in the Google Sheet.')]), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'records dashboard carta chart');
     add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
