@@ -1541,6 +1541,14 @@
   .kc .kcc .kcct { display:flex; flex-direction:column; gap:1px; min-width:0; }
   .kc .kcc b { font-size:13px !important; line-height:1.25; } .kc .kcc small { font-size:11px !important; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .kc .kcgo { width:15px; height:15px; color:var(--muted); flex:none; }
+  /* articles inside a topic open in place (dropdown) */
+  .kc .kcq { border-radius:12px; background:var(--tile); }
+  .kc .kcq > .kca { background:none !important; }
+  .kc .kcq .kcgo { transition:transform .25s; } .kc .kcq.on > .kca .kcgo { transform:rotate(180deg); }
+  .kc .kcqw { display:grid; grid-template-rows:0fr; transition:grid-template-rows .28s ease; }
+  .kc .kcq.on > .kcqw { grid-template-rows:1fr; }
+  .kc .kcqw > div { overflow:hidden; min-height:0; padding:0 12px; } .kc .kcq.on > .kcqw > div { padding-bottom:12px; }
+  .kc .kcq .kcfig, .kc .kcq .kcanw { background:var(--paper); }
   .kc .kcimg { position:relative; border-radius:16px; overflow:hidden; margin:0 auto 8px; background:var(--tile); aspect-ratio:1 / 1; width:min(100%, 300px); }
   .kc .kcimg .kcf { position:absolute; inset:6% 6% 12%; background:var(--wk); -webkit-mask:var(--m) center / contain no-repeat; mask:var(--m) center / contain no-repeat; opacity:0; }
   .kc .kcimg .f1 { animation:kcF1 2.6s infinite; } .kc .kcimg .f2 { animation:kcF2 2.6s infinite; } .kc .kcimg .f3 { animation:kcF3 2.6s infinite; }
@@ -3293,6 +3301,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Dalam Knowledge Centre, artikel dalam setiap topik kini terbuka di tempat yang sama macam dropdown — tak perlu tukar halaman.', 'In the Knowledge Centre, articles inside each topic now open in place like a dropdown — no page change.'], 'g-kc'],
     ['2026-11-25', ['Setiap carta di Dashboard kini tertutup — tekan tajuk untuk buka, tekan lagi untuk tutup. App ingat mana yang kau biar terbuka.', 'Every chart on the Dashboard is now folded — tap its title to open, tap again to close. The app remembers which ones you leave open.'], 'g-rec'],
     ['2026-11-25', ['Panel Rekod lebih padat: jadual 7 hari kini muat dalam satu skrin tanpa skrol. Tempoh lebih panjang (14D, 30D…) bersambung ke bawah.', 'The Records panel is more compact: the 7-day table now fits on one screen without scrolling. Longer periods (14D, 30D…) continue below.'], 'g-rec'],
     ['2026-11-25', ['Petak "Banding tempoh sebelum" di Rekod kini tertutup macam Ringkasan & cadangan — tekan untuk buka.', 'The "Vs previous period" tiles in Records are now folded like Summary & tips — tap to open.'], 'g-rec'],
@@ -3389,7 +3398,7 @@
       T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik merah = ada rekod baru (7 hari) yang belum kau buka. Tanda BARU hilang lepas kau buka rekod tu, dan titik hilang bila semua dah dibuka.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. Red dot = a new record (last 7 days) you haven’t opened yet. The NEW tag goes once you open that record, and the dot goes once you’ve opened them all.'),
       T('Cip <b>api</b> sebelahnya: streak workout semasa dan terbaik — tekan untuk detail.', 'The <b>flame</b> chip beside it: current and best workout streak — tap for details.')]), ['pb', T('Buka Personal Best', 'Open Personal Best')], 'pb trophy trofi streak');
     add('g-kc', 'guide', T('Guna Knowledge Centre', 'Using the Knowledge Centre'), ul([
-      T('Tekan butang <b>?</b> di atas. Cari apa-apa (cth. tidur, plank) di kotak carian, atau pilih satu topik.', 'Tap the <b>?</b> button at the top. Search anything (e.g. sleep, plank) or pick a topic.'),
+      T('Tekan butang <b>?</b> di atas. Cari apa-apa (cth. tidur, plank) di kotak carian, atau pilih satu topik. Dalam topik, tekan tajuk artikel untuk buka di situ (dropdown); tekan lagi untuk tutup.', 'Tap the <b>?</b> button at the top. Search anything (e.g. sleep, plank) or pick a topic. Inside a topic, tap an article title to open it in place (dropdown); tap again to close.'),
       T('<b>Petua hari ini</b> berubah setiap hari ikut data kau.', 'The <b>tip of the day</b> changes daily based on your data.'),
       T('<b>Apa yang baru</b>: 3 kemas kini terkini. Leret ke kiri atau kanan (atau tekan ×) untuk buang, macam notifikasi. <b>Buang semua</b> kosongkan semuanya.', '<b>What’s new</b>: the 3 latest updates. Swipe left or right (or tap ×) to remove one, like a notification. <b>Clear all</b> removes them all.'),
       T('<b>Lihat semua</b> tunjuk senarai penuh termasuk yang dah dibuang (warna pudar). Buka yang pudar untuk bawa balik ke halaman utama.', '<b>See all</b> shows the full list, including removed ones (faded). Open a faded one to bring it back to the home page.')]), null, 'knowledge centre bantuan help berita news baru what new buang remove leret swipe');
@@ -3792,7 +3801,7 @@
         var mine = pbList(), seen = {};
         html = (mine.length ? '<div class="grp">' + T('Latihan kau', 'Your exercises') + '</div><div class="kcl">' + mine.map(function (o) { var e = kcExFind(o.n); if (e) seen[e[0]] = 1; return '<button type="button" class="kca" data-x="' + esc(o.n) + '"><span>' + esc(o.n) + '<small>PB ' + fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>' : '') +
           '<div class="grp">' + T('Semua latihan', 'All exercises') + '</div><div class="kcl">' + KC_EX.filter(function (e) { return !seen[e[0]]; }).map(function (e) { return '<button type="button" class="kca" data-x="' + esc(e[0]) + '"><span>' + T(e[0], e[1]) + '<small>' + T(e[3][0], e[3][1]) + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>';
-      } else html = '<div class="kcl">' + A.filter(function (a) { return a.c === arg; }).map(card).join('') + '</div>';
+      } else html = '<div class="kcl kcacc">' + A.filter(function (a) { return a.c === arg; }).map(function (a) { return '<div class="kcq" data-q="' + a.id + '"><button type="button" class="kca" aria-expanded="false"><span>' + a.t + '</span>' + ic('down', 'kcgo') + '</button><div class="kcqw"><div></div></div></div>'; }).join('') + '</div>';   // articles open in place, like a dropdown
     } else if (view === 'art') {
       var a = byId[arg]; if (!a) return kcOpen('home');
       DBACK = function () { kcOpen('cat', a.c); };
@@ -3826,6 +3835,18 @@
     [].forEach.call(B.querySelectorAll('.kcimg img.kcprobe'), function (im) { im.onerror = function () { var w = im.closest('.kcimg'); if (!w || !w.parentNode) return; var an = w.parentNode.querySelector('.kcanw'); w.remove(); if (an) { an.hidden = false; kcAnimStart(B); } }; });
     kcAnimStart(B);
     kcNewsWire(B, view);
+    [].forEach.call(B.querySelectorAll('.kcq'), function (q) {
+      var btn = q.querySelector('.kca'), inner = q.querySelector('.kcqw > div');
+      btn.onclick = function () {
+        if (!inner.dataset.done) {   // build the article the first time it is opened
+          var a = byId[q.dataset.q]; inner.dataset.done = 1;
+          inner.innerHTML = (a.id === 'k-tech' ? '<div class="kcanw">' + kcAnimSvg('walk') + '</div>' : kcFig(a.id)) + '<div class="kcb">' + (a.b.charAt(0) === '<' ? a.b : '<p>' + a.b + '</p>') + '</div>' + (a.go ? '<button type="button" class="kcgo2" data-go="' + a.go[0] + '">' + a.go[1] + ic('right') + '</button>' : '');
+          var g = inner.querySelector('[data-go]'); if (g) g.onclick = function () { kcGo(g.dataset.go); };
+        }
+        var on = q.classList.toggle('on'); btn.setAttribute('aria-expanded', on);
+        if (on) { kcAnimStart(q); setTimeout(function () { var r = q.getBoundingClientRect(), d = $('detail').getBoundingClientRect(); if (r.bottom > d.bottom) q.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 300); }
+      };
+    });
     [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
     [].forEach.call(B.querySelectorAll('[data-c]'), function (b) { b.onclick = function () { kcOpen('cat', b.dataset.c); }; });
     [].forEach.call(B.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
