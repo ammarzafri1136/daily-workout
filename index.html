@@ -1009,6 +1009,18 @@
   #days .dts, #days .dtk, #days .dtb { text-align:right; font-weight:700; white-space:nowrap; }
   #days .dts { color:var(--ink); } #days .dtk, #days .dtb { color:var(--walk); } #days .dtn { font-style:normal; color:var(--muted); opacity:.5; font-weight:500; }
   #days .day.dt > .go { margin-left:0; display:flex; justify-content:flex-end; } #days .day.dt > .go .ico { width:14px; height:14px; }
+  /* faint separators: dotted lines between rows and columns */
+  #days { --dtl:color-mix(in srgb, var(--muted) 28%, transparent); }
+  #days .day.dt { border-top:1px dotted var(--dtl) !important; align-items:stretch; column-gap:0; }
+  #days .dth { column-gap:0; border-bottom:1px solid var(--dtl); }
+  #days .day.dt > span, #days .dth > span { display:flex; align-items:center; padding:0 6px; }
+  #days .day.dt > .dtd, #days .day.dt > .dta { flex-direction:column; align-items:flex-start; justify-content:center; }
+  #days .day.dt > .dts, #days .day.dt > .dtk, #days .day.dt > .dtb, #days .dth > span:nth-child(n+3) { justify-content:flex-end; }
+  #days .day.dt > span:nth-child(n+2):nth-child(-n+5), #days .dth > span:nth-child(n+2):nth-child(-n+5) { border-left:1px dotted var(--dtl); }
+  #days .day.dt > span:first-child, #days .dth > span:first-child { padding-left:2px; }
+  #days .day.dt > .go { padding:0 0 0 4px; }
+  #days .dth, #days .day.dt { grid-template-columns:50px minmax(0,1fr) 54px 58px 44px 18px !important; }
+  @media (max-width:380px) { #days .dth, #days .day.dt { grid-template-columns:46px minmax(0,1fr) 50px 54px 40px 14px !important; } #days .day.dt > span, #days .dth > span { padding:0 4px; } #days .dta em { padding:2px 6px; font-size:11px; } }
 
   /* period picker: one segmented row (Today · This week · 7D · 14D · 30D · 90D · Custom) */
   .flt.seg2 { display:flex !important; flex-wrap:nowrap; gap:2px; overflow-x:auto; scrollbar-width:none; background:var(--tile); border-radius:12px; padding:3px; margin:0 0 10px; }
@@ -3218,6 +3230,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Jadual Rekod kini ada garis titik halus antara baris dan lajur supaya lebih senang dibaca.', 'The Records table now has faint dotted lines between rows and columns so it is easier to read.'], 'g-rec'],
     ['2026-11-25', ['Senarai Rekod kini dalam bentuk jadual: Tarikh · Aktiviti · Tidur · Langkah · Brisk. Setiap hari satu baris dan nombor tersusun dalam lajur.', 'The Records list is now a table: Date · Activity · Sleep · Steps · Brisk. One row per day with numbers lined up in columns.'], 'g-rec'],
     ['2026-11-25', ['Knowledge Centre lebih kemas. Berita di "Apa yang baru" boleh dileret ke tepi (atau tekan ×) untuk buang, macam notifikasi. Tekan "Lihat semua" untuk senarai penuh.', 'The Knowledge Centre is tidier. Swipe a "What’s new" item sideways (or tap ×) to remove it, like a notification. Tap "See all" for the full list.'], 'g-kc'],
     ['2026-11-25', ['Tanda BARU di Personal Best hilang lepas kau buka rekod tu, dan titik merah pada butang trofi hilang bila semua rekod baru dah dibuka. Rekod baru seterusnya akan muncul semula.', 'The NEW tag in Personal Best goes away once you open that record, and the red dot on the trophy button clears when you’ve opened all new records. The next new record brings it back.'], 'g-pb'],
