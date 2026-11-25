@@ -762,6 +762,8 @@
   <h4>Paparan</h4>
   <div class="row"><div>Tulisan besar<small>Nombor dan nama dalam kad lebih besar</small></div>
     <label class="switch"><input type="checkbox" id="optLarge"><span></span></label></div>
+  <div class="row"><div>Bunyi butang<small>Bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap</small></div>
+    <label class="switch"><input type="checkbox" id="optSound"><span></span></label></div>
 
   <h4>Kad baru</h4>
   <div class="row"><div>Sasaran mingguan<small>Bilangan workout seminggu (Ahad–Sabtu)</small></div>
@@ -1944,6 +1946,7 @@
   function show(type, text, list) {
     text = msgEN(String(text || ''));
     if (/…$/.test(text)) { wait(text); return; }
+    try { sfx(type === 'ok' ? 'ok' : type === 'bad' ? 'bad' : 'warn'); } catch (e) {}
     clearTimeout(OVL_T); WAITING = false; var o = ovl(), b = $('ovlBox');
     b.className = 'ovlbox ' + type;
     b.innerHTML = '<span class="ic">' + ic(type === 'ok' ? 'check' : (type === 'bad' ? 'x' : 'warning'), 'go') + '</span>';
@@ -3318,6 +3321,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Bunyi butang: bunyi lembut bila tekan butang, bunyi "ding" bila simpan berjaya, dan bunyi rendah kalau gagal. Matikan di Tetapan → Paparan → Bunyi butang untuk mod senyap.', 'Button sounds: a soft tap when you press buttons, a chime when a save works and a low tone if it fails. Turn off in Settings → Display → Button sounds for silent mode.'], 'g-set'],
     ['2026-11-25', ['Template yang terpadam boleh dipulihkan: tekan butang Pulihkan dalam senarai Template (template asal yang hilang pun keluar di situ).', 'Deleted templates can be restored: tap Restore in the Template list (missing built-in templates show up there too).'], 'g-tpl'],
     ['2026-11-25', ['Kemas kini kecil: kotak carian Knowledge Centre lebih kemas dan tak rapat dengan butang Tutup; senarai Template tiada lagi jalur bayang di tepi.', 'Small polish: the Knowledge Centre search box is cleaner and no longer crowds the Close button; the Template list no longer has the shadow-like side stripe.'], 'g-kc'],
     ['2026-11-25', ['Label Rehat dalam jadual Rekod kini tulisan biasa (tak bold) supaya senang dibezakan dengan Workout.', 'The Rest label in the Records table is now regular weight (not bold) so it is easier to tell apart from Workout.'], 'g-rest'],
@@ -3437,7 +3441,8 @@
     add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
       T('Butang bahasa di atas: tukar BM / English. Ikon gear: tulisan besar, sasaran (workout seminggu, tidur, langkah, minit brisk walk, panjang langkah).', 'The language button at the top switches BM / English. Gear icon: large text, goals (workouts a week, sleep, steps, brisk-walk minutes, stride length).'),
       T('Gabungan warna sedia ada, atau <b>Custom</b> untuk pilih warna setiap aktiviti, butang dan panel.', 'Ready-made colour combos, or <b>Custom</b> to choose colours for each activity, buttons and panels.'),
-      T('Ikon bulan/matahari: mod gelap atau terang.', 'Moon/sun icon: dark or light mode.')]), ['set', T('Buka Tetapan', 'Open Settings')], 'settings tetapan tema theme bahasa language warna colour');
+      T('Ikon bulan/matahari: mod gelap atau terang.', 'Moon/sun icon: dark or light mode.'),
+      T('<b>Bunyi butang</b> (Paparan): bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap. Bunyi juga ikut suis senyap telefon (iPhone).', '<b>Button sounds</b> (Display): soft sounds when you tap and save. Turn off for silent mode. Sounds also follow the phone’s mute switch (iPhone).')]), ['set', T('Buka Tetapan', 'Open Settings')], 'settings tetapan tema theme bahasa language warna colour');
     // 2. metrics
     add('m-streak', 'metrics', 'Streak', T('Bilangan hari <b>berturut-turut</b> kau workout, sehingga hari ini atau semalam. Kalau hari ini belum workout, streak semalam masih dikira sampai hujung hari. Satu hari tanpa workout (termasuk rehat) memulakan semula streak.', 'The number of days <b>in a row</b> you trained, up to today or yesterday. If you have not trained yet today, yesterday’s streak still counts until the day ends. One day without a workout (rest included) restarts it.'), ['streak', T('Lihat streak', 'See streak')], 'streak');
     add('m-cons', 'metrics', T('Konsistensi', 'Consistency'), T('Peratus hari dalam tempoh yang ada workout: hari workout ÷ jumlah hari. Sasaran mingguan kau <b>' + wg + ' workout</b> ≈ ' + Math.round(wg / 7 * 100) + '%. Records menanda 60%+ sebagai bagus dan bawah 30% perlu tindakan.', 'Share of days in the period with a workout: workout days ÷ days. Your weekly goal of <b>' + wg + ' workouts</b> ≈ ' + Math.round(wg / 7 * 100) + '%. Records marks 60%+ as good and under 30% as needing action.'), ['rec', T('Lihat Records', 'See Records')], 'consistency konsisten peratus');
@@ -4128,7 +4133,7 @@
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cSleep: '', cPanel: '', cPage: '', cInk: '' };
+  var DEFAULTS = { sound: true, theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cSleep: '', cPanel: '', cPage: '', cInk: '' };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -4178,7 +4183,7 @@
     [].forEach.call($('optPen').children, function (x, i) { if (!PENS[i]) { x.classList.toggle('on', typeof S.pen === 'string'); x.style.setProperty('--cc', typeof S.pen === 'string' ? S.pen : ''); return; } x.classList.toggle('on', i === S.pen); x.style.background = dark ? PENS[i][2] : PENS[i][1]; });
     [].forEach.call($('optHead').children, function (x, i) { if (!HEADS[i]) { x.classList.toggle('on', typeof S.head === 'string'); x.style.setProperty('--cc', typeof S.head === 'string' ? S.head : ''); return; } x.classList.toggle('on', i === S.head); x.style.background = dark ? HEADS[i][2] : HEADS[i][1]; });
     if (typeof applyLang === 'function' && window.__langReady) applyLang();
-    $('optLarge').checked = !!S.large; $('optNames').checked = !!S.autoNames;
+    $('optLarge').checked = !!S.large; $('optSound').checked = S.sound !== false; $('optNames').checked = !!S.autoNames;
     if (typeof renderDash === 'function' && DASH) renderDash();
   }
   // custom surfaces (Tersuai only): panel, page background, text -> the rest is mixed from them
@@ -4243,6 +4248,26 @@
   if (darkQuery && darkQuery.addEventListener) darkQuery.addEventListener('change', function () { if (S.theme === 'auto') applySettings(); });
   $('themeBtn').onclick = function () { S.theme = isDark() ? 'light' : 'dark'; saveSettings(); applySettings(); };
   $('optLarge').onchange = function () { S.large = this.checked; saveSettings(); applySettings(); };
+  $('optSound').onchange = function () { S.sound = this.checked; saveSettings(); if (S.sound) sfx('ok'); };
+  // ---- button sounds (made with Web Audio, no files): soft tap on buttons, a chime when a save works, a low tone when it fails; off in silent mode ----
+  var SFX = null;
+  function sfx(kind) {
+    if (S.sound === false) return;
+    try {
+      SFX = SFX || new (window.AudioContext || window.webkitAudioContext)(); if (SFX.state === 'suspended') SFX.resume();
+      var t0 = SFX.currentTime, notes = { tap: [[1100, 0, .035, .035]], ok: [[660, 0, .09, .07], [990, .08, .16, .07]], warn: [[520, 0, .12, .06]], bad: [[220, 0, .1, .07], [180, .11, .14, .07]] }[kind] || [];
+      notes.forEach(function (n) {
+        var o = SFX.createOscillator(), g = SFX.createGain(); o.type = kind === 'tap' ? 'triangle' : 'sine'; o.frequency.setValueAtTime(n[0], t0 + n[1]);
+        if (kind === 'tap') o.frequency.exponentialRampToValueAtTime(700, t0 + n[1] + n[2]);
+        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(n[3], t0 + n[1] + .008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        o.connect(g); g.connect(SFX.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + .02);
+      });
+    } catch (e) {}
+  }
+  document.addEventListener('pointerdown', function (e) {
+    var b = e.target.closest && e.target.closest('button, [role=button], .switch, a.kcyt'); if (!b || b.disabled) return;
+    sfx('tap');
+  }, true);
   $('optNames').onchange = function () { S.autoNames = this.checked; saveSettings(); };
   $('optSleepT').addEventListener('input', function () { var v = parseFloat(this.value.replace(',', '.')); S.sleepTarget = v > 0 && v < 16 ? v : 8; saveSettings(); if (DASH) renderDash(); calcSleep(); });
   $('optGoal').addEventListener('input', function () { var v = parseInt(this.value, 10); S.weekGoal = v >= 1 && v <= 7 ? v : 4; saveSettings(); paintHeaderExtras(); });
@@ -5203,7 +5228,7 @@
     'Streak terpanjang': 'Longest streak', 'streak semasa': 'current streak', 'streak terpanjang': 'longest streak',
     'Target default': 'Default target', 'Target tidur (jam)': 'Sleep target (hours)', 'Tarikh rehat': 'Rest date',
     'Tema': 'Theme', 'Terpanjang': 'Longest', 'Terpendek': 'Shortest', 'Tiada rekod dalam tempoh ini.': 'No records in this period.',
-    'Tidur': 'Sleep', 'Trend masa workout': 'Workout time trend', 'Tulisan besar': 'Large text', 'Tutup': 'Close',
+    'Tidur': 'Sleep', 'Trend masa workout': 'Workout time trend', 'Tulisan besar': 'Large text', 'Bunyi butang': 'Button sounds', 'Bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap': 'Soft sounds when you tap buttons and when you save. Turn off for silent mode', 'Tutup': 'Close',
     'Ulang nama workout terakhir': 'Repeat last workout names', 'Warna kad': 'Card colour', 'Warna tulisan': 'Pen colour',
     'Warna': 'Colour', 'Warna tersuai': 'Custom colour', 'Simpan warna ini': 'Save this colour',
     'hari / minggu': 'days / week', 'minit': 'minutes', 'tempoh tidur dikira automatik': 'sleep time is worked out automatically',
