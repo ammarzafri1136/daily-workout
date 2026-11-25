@@ -901,8 +901,8 @@
     display:flex; align-items:center; justify-content:center; opacity:.75; }
   .hst-g i.has { opacity:1; cursor:pointer; font-weight:700; }
   .hst-g i.o { background:none; }
-  .hst-g i.ring { border-radius:50%; box-shadow:inset 0 0 0 2px var(--ink), inset 0 0 0 3.5px var(--paper); }   /* brisk-walk day: circled */
-  .hml span.hring:before { background:transparent; border-radius:50%; box-shadow:inset 0 0 0 2px var(--ink); }
+  .hst-g i.ring { box-shadow:inset 0 0 0 2px var(--ink), inset 0 0 0 3.5px var(--paper); }   /* brisk-walk day: outlined square (cell keeps its shape) */
+  .hml span.hring:before { background:transparent; box-shadow:inset 0 0 0 2px var(--ink); }
 
   /* home cards: inner tiles a step lighter than the card */
   .box, .panel, textarea { background:var(--tile) !important; }
@@ -3108,7 +3108,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
-    ['2026-11-25', ['Heatmap Walk history kini membulatkan hari kau buat brisk walk.', 'The Walk history heatmap now circles the days you did a brisk walk.'], 'm-steps'],
+    ['2026-11-25', ['Heatmap Walk history kini bergaris keliling pada hari kau buat brisk walk.', 'The Walk history heatmap now outlines the days you did a brisk walk.'], 'm-steps'],
     ['2026-11-25', ['Nota (ikon pen), Hari Rehat dan cara isi (ikon ⓘ) kini dibuka dalam tetingkap pop-up — kad Workout tak berubah saiz.', 'Notes (pen icon), Rest Day and the fill-in tips (ⓘ icon) now open in a pop-up window — the Workout card never changes size.'], 'g-rest'],
     ['2026-11-25', ['Tarikh dan hari kini berwarna royal blue, dan hari ringkas juga ada di Tarikh bangun (Tidur) dan Tarikh (Jalan).', 'Dates and weekdays are now royal blue, and the short weekday also shows on the wake-up date (Sleep) and the Walk date.'], 'g-sleep'],
     ['2026-11-25', ['Nama hari kini ringkas di sebelah TARIKH (contoh RAB / WED), jadi kad Workout lebih padat dan tak bergerak bila timer ditekan.', 'The weekday now sits beside DATE in short form (e.g. WED), so the Workout card is tighter and no longer shifts when you use the timer.'], 'g-workout'],
