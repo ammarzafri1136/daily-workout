@@ -605,7 +605,7 @@
     <div class="card">
       <div class="seg dtabs" id="dTabs"><button type="button" data-t="w" class="on">Workout</button><button type="button" data-t="s">Sleep</button><button type="button" data-t="k">Walk</button></div>
       <div class="dh">DASHBOARD <span id="dLabel"></span></div>
-      <div class="flt seg2" id="dFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="yesterday" title="Yesterday">Yest.</button><button type="button" data-r="7d">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d" class="on">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
+      <div class="flt seg2" id="dFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="week" title="This week">This week</button><button type="button" data-r="7d">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d" class="on">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
       <div class="crange" id="dCustom"><label>Dari<input type="date" id="dFrom"></label><span>→</span><label>Hingga<input type="date" id="dTo"></label></div>
       <div id="sleepDash" style="display:none">
         <div class="kpis" id="sKpi"></div>
@@ -717,7 +717,7 @@
 
   <div class="recent">
     <h2><span>Rekod<span id="rLabel"></span></span> <a id="sheetLink" href="#" target="_blank">Buka Sheet <svg class="ico ih ih-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><g class="ea"><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></g></svg></a></h2>
-    <div class="flt seg2" id="rFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="yesterday" title="Yesterday">Yest.</button><button type="button" data-r="7d" class="on">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
+    <div class="flt seg2" id="rFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="week" title="This week">This week</button><button type="button" data-r="7d" class="on">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
     <div class="crange" id="rCustom"><label>Dari<input type="date" id="rFrom"></label><span>→</span><label>Hingga<input type="date" id="rTo"></label></div>
     <div class="streak" hidden>
       <div><b id="cur">–</b><span>streak semasa</span></div>
@@ -996,7 +996,7 @@
   .rsum span b { color:var(--ink); font-weight:700; }
   .day .s { font-weight:800; color:var(--ink); }
 
-  /* period picker: one segmented row (Today · Yesterday · 7D · 14D · 30D · 90D · Custom) */
+  /* period picker: one segmented row (Today · This week · 7D · 14D · 30D · 90D · Custom) */
   .flt.seg2 { display:flex !important; flex-wrap:nowrap; gap:2px; overflow-x:auto; scrollbar-width:none; background:var(--tile); border-radius:12px; padding:3px; margin:0 0 10px; }
   #dashView .flt.seg2 { background:#e3e3e9; } body.dark #dashView .flt.seg2 { background:#1c1c1f; }
   .flt.seg2::-webkit-scrollbar { display:none; }
@@ -1931,7 +1931,7 @@
   }
   var REC = [], REC_TODAY = '', RREC = '7d';
   try { RREC = localStorage.getItem('dw-rrange') || '7d'; } catch (e) {}
-  if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RREC) < 0 && !/^m:\d{4}-\d{2}$/.test(RREC)) RREC = '7d';
+  if (['today', 'week', '7d', '14d', '30d', '90d', 'custom'].indexOf(RREC) < 0 && !/^m:\d{4}-\d{2}$/.test(RREC)) RREC = '7d';
   function renderRecent() {
     var rg = rangeFor(RREC, 'rFrom', 'rTo', REC.map(function (x) { return x.date; }));
   [].forEach.call($('rFilter').children, function (b) { b.classList.toggle('on', b.dataset.r === RREC); });
@@ -2643,7 +2643,7 @@
   // ---- dashboard date filter ----
   var RANGE = '30d';
   try { RANGE = localStorage.getItem('dw-range') || '30d'; } catch (e) {}
-  if (['today', 'yesterday', '7d', '14d', '30d', '90d', 'custom'].indexOf(RANGE) < 0 && !/^m:\d{4}-\d{2}$/.test(RANGE)) RANGE = '30d';
+  if (['today', 'week', '7d', '14d', '30d', '90d', 'custom'].indexOf(RANGE) < 0 && !/^m:\d{4}-\d{2}$/.test(RANGE)) RANGE = '30d';
   function addDays(k, n) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + n)); return d.toISOString().slice(0, 10); }
   function dRange() { return rangeFor(RANGE, 'dFrom', 'dTo', DASH ? DASH.days.concat(DASH.sleep || []).map(function (x) { return x.d; }) : []); }
   function rangeFor(RANGE, fromId, toId, keys) {
@@ -2655,7 +2655,7 @@
     }
     switch (RANGE) {
       case 'today': return { from: t, to: t, label: 'Today · ' + isoToDmy(t) };
-      case 'yesterday': var y = addDays(t, -1); return { from: y, to: y, label: 'Yesterday · ' + isoToDmy(y) };
+      case 'week': var w0 = sundayOf(t); return { from: w0, to: t, label: (S.lang === 'en' ? 'This week · ' : 'Minggu ini · ') + ddmm(w0) + ' – ' + ddmm(t) };   // week starts Sunday
       case '7d': return { from: addDays(t, -6), to: t, label: '7 hari · ' + ddmm(addDays(t, -6)) + ' – ' + ddmm(t) };
       case '14d': return { from: addDays(t, -13), to: t, label: '14 hari · ' + ddmm(addDays(t, -13)) + ' – ' + ddmm(t) };
       case '30d': return { from: addDays(t, -29), to: t, label: '30 hari · ' + ddmm(addDays(t, -29)) + ' – ' + ddmm(t) };
@@ -3108,6 +3108,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Pilihan tempoh "Semalam" ditukar kepada "Minggu ini" (Ahad hingga hari ini) di Rekod dan Dashboard.', 'The "Yesterday" period is now "This week" (Sunday to today) in Records and the Dashboard.'], 'g-rec'],
     ['2026-11-25', ['Heatmap Walk history kini bergaris keliling pada hari kau buat brisk walk.', 'The Walk history heatmap now outlines the days you did a brisk walk.'], 'm-steps'],
     ['2026-11-25', ['Nota (ikon pen), Hari Rehat dan cara isi (ikon ⓘ) kini dibuka dalam tetingkap pop-up — kad Workout tak berubah saiz.', 'Notes (pen icon), Rest Day and the fill-in tips (ⓘ icon) now open in a pop-up window — the Workout card never changes size.'], 'g-rest'],
     ['2026-11-25', ['Tarikh dan hari kini berwarna royal blue, dan hari ringkas juga ada di Tarikh bangun (Tidur) dan Tarikh (Jalan).', 'Dates and weekdays are now royal blue, and the short weekday also shows on the wake-up date (Sleep) and the Walk date.'], 'g-sleep'],
