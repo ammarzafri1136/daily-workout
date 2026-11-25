@@ -1916,7 +1916,7 @@
       // walk steps per day; days with only a walk log still get a row
       var WD = {}; (WALK_ALL || []).forEach(function (w) { if (w.d >= rg.from && w.d <= rg.to && wTot(w) > 0) WD[w.d] = w; });
       var seen = {}; list.forEach(function (x) { seen[x.date] = 1; });
-      Object.keys(WD).forEach(function (d) { if (!seen[d]) list.push({ date: d, activity: 'Walk' }); });
+      Object.keys(WD).forEach(function (d) { if (!seen[d]) list.push({ date: d, activity: 'Walk', brisk: isBrisk(WD[d]) }); });
       list.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
       var shown = {};
       var box = $('days'); box.innerHTML = '';
@@ -1926,7 +1926,7 @@
         row.onclick = function () { openDetail(x.date); };
         var p = x.date.split('-'), left = document.createElement('span');
         left.innerHTML = '<span class="' + (x.activity === 'Workout' ? 'w' : (x.activity === 'Sleep' ? 's' : (x.activity === 'Walk' ? 'k' : 'r'))) + '"></span> <small></small>';
-        left.firstChild.textContent = p[2] + '/' + p[1] + '/' + p[0] + '  ' + (x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? '' : (x.activity === 'Walk' ? 'Walk' : 'Rest Day')));
+        left.firstChild.textContent = p[2] + '/' + p[1] + '/' + p[0] + '  ' + (x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? '' : (x.activity === 'Walk' ? (x.brisk ? 'Brisk walk' : (S.lang === 'en' ? 'Steps' : 'Langkah')) : 'Rest Day')));
         left.lastChild.textContent = x.review === 'Needs Review' ? ' ⚠ semak' : '';
         if (x.review === 'Needs Review') left.lastChild.className = 'flag';
         var right = document.createElement('small');
@@ -1936,7 +1936,7 @@
         if (wk && !shown[x.date]) {
           shown[x.date] = 1;
           var st = document.createElement('span'); st.className = 'kst';
-          st.textContent = (right.textContent ? ' · ' : '') + wTot(wk).toLocaleString() + (S.lang === 'en' ? ' steps' : ' langkah');
+          st.textContent = (right.textContent ? ' · ' : '') + wTot(wk).toLocaleString() + (S.lang === 'en' ? ' steps' : ' langkah') + (isBrisk(wk) && x.activity !== 'Walk' ? ' · Brisk walk ' + wk.min + 'm' : (isBrisk(wk) ? ' · ' + wk.min + 'm' : ''));
           right.appendChild(st);
         }
         var go = document.createElement('span'); go.className = 'go'; go.innerHTML = '<svg class="ico ih ih-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="cv" d="M9 6l6 6l-6 6"/></svg>'; right.appendChild(go);
@@ -2793,6 +2793,7 @@
   function toneOf(base, lvl) { return [mixC(base, '#ffffff', .74), mixC(base, '#ffffff', .42), base, mixC(base, '#000000', .32)][Math.max(0, Math.min(3, lvl))]; }
   function wTot(x) { return x.total != null ? x.total : Math.max(x.day || 0, x.steps || 0); }
   function walkTone(x) { var g = S.stepGoal || 8000, r = wTot(x) / g; return toneOf(cssV('--walk'), r >= 1.5 ? 3 : r >= 1 ? 2 : r >= .6 ? 1 : 0); }
+  function isBrisk(x) { return !!(x && x.steps > 0 && x.min > 0); }
   function renderWalkDash() {
     if (!DASH || !$('kKpi')) return;
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, all = DASH.walk || [], rg = dRange(), goal = S.stepGoal || 8000;
@@ -2801,11 +2802,12 @@
     var sum = function (a, f) { return a.reduce(function (q, x) { return q + f(x); }, 0); };
     var n = rows.length, steps = sum(rows, wTot), sessSteps = sum(rows, function (x) { return x.min ? x.steps : 0; }), km = sum(rows, function (x) { return wTot(x) * (S.stride || 75) / 100000; }), min = sum(rows, function (x) { return x.min; });
     var hit = rows.filter(function (x) { return wTot(x) >= goal; }).length, avg = n ? steps / n : 0, cad = min ? sessSteps / min : 0;
+    var briskN = rows.filter(isBrisk).length;   // days with a brisk-walk session (watch-only days don't count)
     var byD = {}; all.forEach(function (x) { byD[x.d] = x; });
     var cur = 0, k = byD[DASH.today] ? DASH.today : addDays(DASH.today, -1); while (byD[k] && wTot(byD[k]) >= goal) { cur++; k = addDays(k, -1); }
     var best = 0, run = 0, prev = null; all.forEach(function (x) { if (wTot(x) >= goal) { run = prev && addDays(prev, 1) === x.d && wTot(byD[prev]) >= goal ? run + 1 : 1; } else run = 0; if (run > best) best = run; prev = x.d; });
     $('kKpi').innerHTML = statRow({ v: n ? (avg >= 1000 ? (Math.round(avg / 100) / 10) + 'k' : Math.round(avg)) : '–', frac: n ? avg / goal : 0, label: T('Purata langkah', 'Avg steps'), k: 'k-avg' },
-        [[n + '/' + span, T('Hari jalan', 'Walk days'), 'k-days'], [hit, T('Capai target', 'Goal hit'), 'k-hit'], [cur, 'Streak', 'k-streak'], [best, T('Streak terbaik', 'Best streak'), 'k-streak']]) +
+        [[briskN + '/' + span, T('Hari brisk walk', 'Brisk walk days'), 'k-days'], [hit, T('Capai target', 'Goal hit'), 'k-hit'], [cur, 'Streak', 'k-streak'], [best, T('Streak terbaik', 'Best streak'), 'k-streak']]) +
       statRow(null, [[fmtN(steps), T('Jumlah langkah', 'Total steps'), 'k-avg'], [km.toFixed(1) + ' km', T('Jarak', 'Distance'), 'k-km'], [hm(min), T('Masa', 'Time'), 'k-min'], [cad ? Math.round(cad) + '/m' : '–', T('Kadar', 'Cadence'), 'k-cad']]);
     [].forEach.call($('kKpi').querySelectorAll('[data-k]'), function (b) { b.onclick = function () { openWalkKpi(b.dataset.k, rows, rg); }; });
     renderStepsChart(rows, rg);
@@ -2855,7 +2857,7 @@
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, goal = S.stepGoal || 8000;
     var txt = {
       'k-avg': T('Purata langkah untuk hari yang kau berjalan dalam tempoh ini, berbanding target ' + fmtN(goal) + ' sehari. Cincin penuh = purata capai target.', 'Average steps on the days you walked in this period, against your ' + fmtN(goal) + '-a-day goal. A full ring means your average meets the goal.'),
-      'k-days': T('Bilangan hari ada rekod brisk walk berbanding jumlah hari dalam tempoh ini.', 'Days with a brisk walk logged, out of the days in this period.'),
+      'k-days': T('Hari yang kau buat <b>brisk walk</b> (ada sesi langkah + minit) dalam tempoh yang dipilih. Hari yang cuma ada langkah dari jam tak dikira.', 'Days you did a <b>brisk walk</b> (a session with steps + minutes) in the chosen period. Days with only watch steps are not counted.'),
       'k-hit': T('Hari yang langkah kau capai atau melebihi target ' + fmtN(goal) + '.', 'Days your steps met or beat the ' + fmtN(goal) + ' goal.'),
       'k-streak': T('Hari berturut-turut capai target langkah, sehingga hari ini atau semalam.', 'Days in a row you hit your step goal, up to today or yesterday.'),
       'k-km': T('Jarak anggaran = langkah × panjang langkah (' + (S.stride || 75) + ' cm, boleh tukar dalam Settings).', 'Estimated distance = steps × stride length (' + (S.stride || 75) + ' cm, change it in Settings).'),
@@ -2864,9 +2866,10 @@
     }[k] || '';
     $('detailBack').style.display = 'none';
     $('dTitle').textContent = 'Brisk walk';
-    var list = rows.slice().sort(function (a, b) { return a.d < b.d ? 1 : -1; });
-    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + txt + '</p><div class="grp">' + T('Setiap hari', 'Each day') + '</div>' + (list.map(function (x) {
-      return '<div class="day" data-d="' + x.d + '"><span style="color:' + (wTot(x) >= goal ? 'var(--walk)' : 'inherit') + '">' + isoToDmy(x.d) + '</span><span>' + fmtN(wTot(x)) + (x.min ? ' · brisk ' + x.min + 'm' : '') + ' <b class="go">' + ic('right') + '</b></span></div>';
+    var list = rows.filter(k === 'k-days' ? isBrisk : function () { return true; }).sort(function (a, b) { return a.d < b.d ? 1 : -1; });
+    if (k === 'k-days') $('dTitle').textContent = T('Hari brisk walk', 'Brisk walk days') + ' · ' + list.length;
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + txt + '</p><div class="grp">' + (k === 'k-days' ? T('Hari brisk walk', 'Brisk walk days') : T('Setiap hari', 'Each day')) + '</div>' + (list.map(function (x) {
+      return '<div class="day" data-d="' + x.d + '"><span style="color:' + (wTot(x) >= goal ? 'var(--walk)' : 'inherit') + '">' + isoToDmy(x.d) + '</span><span>' + (k === 'k-days' ? fmtN(x.steps) + T(' langkah', ' steps') + ' · ' + x.min + 'm' + (x.cad ? ' · ' + Math.round(x.cad) + '/m' : '') : fmtN(wTot(x)) + (x.min ? ' · brisk ' + x.min + 'm' : '')) + ' <b class="go">' + ic('right') + '</b></span></div>';
     }).join('') || '<div class="empty">' + T('Tiada rekod.', 'No records.') + '</div>') + '</div>';
     [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
@@ -3046,6 +3049,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['"Hari jalan" kini "Hari brisk walk": hanya kira hari yang ada sesi brisk walk dalam julat dipilih. Rekod tandakan hari brisk walk.', '"Walk days" is now "Brisk walk days": only days with a brisk-walk session in the chosen range. Records marks brisk-walk days.'], 'k-what'],
     ['2026-11-25', ['Ikon tab Rekod kini beranimasi macam Utama dan Dashboard.', 'The Records tab icon now animates like Home and Dashboard.'], 'g-rec'],
     ['2026-11-25', ['Timer kekal sebaris dengan tajuk Daily Workout bila berjalan, dan jarak kad ke bar bawah dilebarkan.', 'The timer stays on the Daily Workout title row while running, and the gap above the bottom bar is wider.'], 'g-timer'],
     ['2026-11-25', ['Kad Workout kini ikut saiz skrin telefon kau: jarak ke bar bawah sama dengan jarak di bawah tab Workout/Tidur/Jalan.', 'The Workout card now fits your phone’s screen: the gap to the bottom bar matches the gap under the Workout/Sleep/Walk tabs.'], 'g-workout'],
