@@ -1337,6 +1337,7 @@
   .rkp .kr .ki .ico { width:15px; height:15px; overflow:visible; }
   .wsrc { grid-column:1 / -1; font-size:12px; line-height:1.45; color:var(--muted); background:color-mix(in srgb, var(--walk) 10%, transparent); border-radius:10px; padding:8px 10px; margin-top:8px; }
   .wsrc b { color:var(--ink); }
+  .rkp .kps { margin-top:0; } .rkp .kps .tpw > div { padding:0 8px; } .rkp .kps.on .tpw > div { padding:2px 8px 10px; } .rkp .kps .kg { margin:0; }
   .rkp .tps { margin-top:12px; background:color-mix(in srgb, var(--paper) 55%, transparent); border-radius:14px; overflow:hidden; }
   body.dark .rkp .tps { background:rgba(255,255,255,.04); }
   .rkp .tph { all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; gap:8px; padding:11px 12px; cursor:pointer; }
@@ -2044,6 +2045,7 @@
     b.hidden = false; b.onclick = function () { openDetail(w.date); };
   }
   var TIPS_TV = { key: '', i: -1 };
+  var KPI_OPEN = false; try { KPI_OPEN = localStorage.getItem('dw-kpi') === '1'; } catch (e) {}   // "vs previous period" tiles: closed until tapped
   var TIPS_F = 'all', TIPS_X = {}, TIPS_OPEN = true; try { TIPS_OPEN = localStorage.getItem('dw-tips') !== '0'; } catch (e) {}
   // rotating line for Summary & tips: a fact, a useful tip or a short line of encouragement (changes when you pick a period)
   function kcTrivia() {
@@ -2109,7 +2111,7 @@
     function tile(lbl, val, d, k) { return '<div class="kt" data-k="' + k + '" role="button" tabindex="0"><span>' + lbl + '</span><b>' + val + '</b>' + d + '</div>'; }
     var cur = +($('cur').textContent) || 0, best = +($('best').textContent) || 0;
     var dmy = function (k) { var q = k.split('-'); return q[2] + '/' + q[1]; };
-    var head = '<div class="kh"><small>' + T('vs tempoh sebelum', 'vs previous period') + ' (' + (span === 1 ? dmy(pFrom) : dmy(pFrom) + ' – ' + dmy(pTo)) + ')</small></div>';
+    var head = '<span class="tpt">' + T('vs Tempoh sebelum', 'vs Previous period') + '<small> · ' + (span === 1 ? dmy(pFrom) : dmy(pFrom) + ' – ' + dmy(pTo)) + '</small></span>';
     var grid = '<div class="kg">' +
       tile('Workout', c.w + '<i>/' + span + '</i>', dl(c.w, p.w, 'n'), 'k-w') +
       tile(T('Rehat', 'Rest'), c.r, dl(c.r, p.r, 'neutral'), 'k-r') +
@@ -2213,7 +2215,7 @@
       return '<li class="tpi' + (TIPS_X[KIND[i] + i] ? ' x' : '') + '" data-i="' + i + '" data-t="' + r.tone + '"><div class="tpr" role="button" tabindex="0"><i class="ki" style="--kc:' + TC[r.tone] + '">' + ic(r.icon) + '</i><span class="tpn">' + r.t + '</span><em class="tpl" style="--kc:' + TC[r.tone] + '">' + TL[r.tone] + '</em>' + ic('down', 'tpv') + '</div>' +
         '<div class="tpx"><div><p>' + r.x + '</p>' + (KIND[i] === 'trivia' ? '' : '<button type="button" class="tpm">' + (KIND[i] === 'pb' ? T('Buka rekod terbaik', 'Open personal bests') : KIND[i].indexOf('ex:') === 0 ? T('Lihat panduan latihan', 'See exercise guide') : KIND[i].indexOf('go:') === 0 ? T('Isi sekarang', 'Fill in now') : T('Lihat data penuh', 'See full data')) + ic('right') + '</button>') + '</div></div></li>';
     }).join('');
-    el.innerHTML = head + grid + '<div class="tps' + (TIPS_OPEN ? ' on' : '') + '"><button type="button" class="tph" aria-expanded="' + TIPS_OPEN + '"><span class="tpt">' + T('Ringkasan & cadangan', 'Summary & tips') + '<small> · ' + R.length + '</small></span><span class="tpb">' + badges + '</span>' + ic('down', 'tpv') + '</button>' +
+    el.innerHTML = '<div class="tps kps' + (KPI_OPEN ? ' on' : '') + '"><button type="button" class="tph" aria-expanded="' + KPI_OPEN + '">' + head + ic('down', 'tpv') + '</button><div class="tpw"><div>' + grid + '</div></div></div>' + '<div class="tps' + (TIPS_OPEN ? ' on' : '') + '"><button type="button" class="tph" aria-expanded="' + TIPS_OPEN + '"><span class="tpt">' + T('Ringkasan & cadangan', 'Summary & tips') + '<small> · ' + R.length + '</small></span><span class="tpb">' + badges + '</span>' + ic('down', 'tpv') + '</button>' +
       '<div class="tpw"><div><div class="tpf">' + chip('all', T('Semua', 'All'), R.length) + chip('need', T('Perlu tindakan', 'Needs action'), cnt.act + cnt.watch) + chip('good', T('Bagus', 'Good'), cnt.good) + chip('info', 'Info', cnt.info) + '</div><ul class="kr tpl-list">' + items + '</ul></div></div></div>';
     var ctx = { c: c, p: p, from: from, to: to, pFrom: pFrom, pTo: pTo, span: span, cons: cons, run: run, k0: k0, lo: lo, hi: hi, hasP: hasP };
     ctx.cur = cur; ctx.best = best;
@@ -2221,7 +2223,9 @@
       tl.onclick = function () { openTip(tl.dataset.k, ctx); };
       tl.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tl.onclick(); } };
     });
-    var tps = el.querySelector('.tps');
+    var kps = el.querySelector('.kps');
+    kps.querySelector('.tph').onclick = function () { KPI_OPEN = !KPI_OPEN; kps.classList.toggle('on', KPI_OPEN); this.setAttribute('aria-expanded', KPI_OPEN); try { localStorage.setItem('dw-kpi', KPI_OPEN ? '1' : '0'); } catch (e) {} };
+    var tps = el.querySelector('.tps:not(.kps)');
     function applyF() { [].forEach.call(tps.querySelectorAll('.tpi'), function (li) { var tn = li.dataset.t; li.hidden = !(TIPS_F === 'all' || (TIPS_F === 'need' ? (tn === 'act' || tn === 'watch') : tn === TIPS_F)); }); }
     applyF();
     tps.querySelector('.tph').onclick = function () { TIPS_OPEN = !TIPS_OPEN; tps.classList.toggle('on', TIPS_OPEN); this.setAttribute('aria-expanded', TIPS_OPEN); try { localStorage.setItem('dw-tips', TIPS_OPEN ? '1' : '0'); } catch (e) {} };
@@ -3242,6 +3246,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Petak "Banding tempoh sebelum" di Rekod kini tertutup macam Ringkasan & cadangan — tekan untuk buka.', 'The "Vs previous period" tiles in Records are now folded like Summary & tips — tap to open.'], 'g-rec'],
     ['2026-11-25', ['Garis kotak brisk walk dalam heatmap Walk history kini guna warna kontra dengan warna Walk, jadi jelas dalam mod gelap dan semua gabungan warna.', 'The brisk-walk outline in the Walk history heatmap now uses a colour that contrasts with your Walk colour, so it is clear in dark mode and every colour combo.'], 'm-steps'],
     ['2026-11-25', ['Laporan minggu lepas: setiap Ahad dan Isnin, satu kad ringkas di Home (workout, tidur, langkah, PB + satu cadangan). Tekan × untuk tutup sampai minggu depan. Ringkasan & cadangan juga kini tunjuk kaitan tidur dengan reps kau.', 'Last-week report: every Sunday and Monday, one short card on Home (workouts, sleep, steps, PBs + one tip). Tap × to hide it until next week. Summary & tips now also shows how sleep relates to your reps.'], 'g-rec'],
     ['2026-11-25', ['Jadual Rekod ada lajur Workout sendiri (reps dan bilangan latihan), dan ikon di kepala jadual kini di tengah lajur.', 'The Records table has its own Workout column (reps and number of exercises), and the header icons now sit centred in each column.'], 'g-rec'],

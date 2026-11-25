@@ -1,5 +1,5 @@
 // Offline shell: network first, fall back to the cached copy. Data calls (POST to Apps Script) are never cached.
-var CACHE = 'dw-bd7d7ce715';
+var CACHE = 'dw-2372b846e7';
 var SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 self.addEventListener('install', function (e) { e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); })); self.skipWaiting(); });
 self.addEventListener('activate', function (e) {
