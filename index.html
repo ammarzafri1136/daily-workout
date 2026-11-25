@@ -601,7 +601,7 @@
 
   <div id="dashView" style="display:none">
     <div class="card">
-      <div class="seg dtabs" id="dTabs"><button type="button" data-t="w" class="on">Workout</button><button type="button" data-t="s">Sleep</button></div>
+      <div class="seg dtabs" id="dTabs"><button type="button" data-t="w" class="on">Workout</button><button type="button" data-t="s">Sleep</button><button type="button" data-t="k">Walk</button></div>
       <div class="dh">DASHBOARD <span id="dLabel"></span></div>
       <div class="flt seg2" id="dFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="yesterday" title="Yesterday">Yest.</button><button type="button" data-r="7d">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d" class="on">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
       <div class="crange" id="dCustom"><label>Dari<input type="date" id="dFrom"></label><span>→</span><label>Hingga<input type="date" id="dTo"></label></div>
@@ -609,6 +609,12 @@
         <div class="kpis" id="sKpi"></div>
         <div class="ch"><h4><span class="hic" data-ic="bed"></span>Statistik tidur</h4><div id="cSleep"></div></div>
         <div class="ch"><h4><span class="hic" data-ic="moon"></span>History tidur</h4><div id="cHeat"></div></div>
+      </div>
+      <div id="walkDash" style="display:none">
+        <div class="kpis" id="kKpi"></div>
+        <div class="ch"><h4><span class="hic hwl" data-ic="walk"></span>Daily steps</h4><div id="cSteps"></div></div>
+        <div class="ch"><h4><span class="hic hwl" data-ic="cal"></span>Walk history</h4><div id="cWalkHeat"></div></div>
+        <div class="ch"><h4><span class="hic pbic" data-ic="trophy"></span>Best walks</h4><div id="cWalkPB"></div></div>
       </div>
       <div id="workDash">
       <div class="kpis" id="dKpi"></div>
@@ -623,7 +629,7 @@
   </div>
 
   <div id="cardView">
-  <div class="seg htabs" id="hTabs"><button type="button" data-t="w" class="on">Workout</button><button type="button" data-t="s">Sleep</button></div>
+  <div class="seg htabs" id="hTabs"><button type="button" data-t="w" class="on">Workout</button><button type="button" data-t="s">Sleep</button><button type="button" data-t="k">Walk</button></div>
   <div class="card" id="wkCard">
     <div class="editbar" id="editBar"><span id="editText">Mengedit</span><button type="button" class="theme" id="editCancel">Batal</button></div>
     <div class="title">
@@ -692,6 +698,20 @@
     <div class="msg" id="sleepMsg"></div>
   </div>
 
+  <div class="card walk" id="walkCard" style="display:none">
+    <h2><svg class="ico ih ih-walk ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="wkb"><circle cx="13" cy="4" r="1.6"/><path class="wl1" d="M7 21l3-4"/><path class="wl2" d="M16 21l-2-4l-3-3l1-6"/><path class="wa" d="M6 12l2-3l4-1l3 3l3 1"/></g><path class="wm wm1" d="M2.5 9h2"/><path class="wm wm2" d="M1.5 13h2.5"/></svg>Brisk Walk</h2>
+    <div class="trio wtrio">
+      <div class="box date tm"><span class="k">DATE</span>
+        <span class="dwrap"><input id="walkDate" class="dmy" inputmode="numeric" placeholder="dd/mm/yyyy" maxlength="10" autocomplete="off">
+          <span class="cal" title="Pilih tarikh"><svg class="ico ih ih-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path class="cr" d="M16 3v4"/><path class="cr" d="M8 3v4"/><path d="M4 11h16"/></svg><input type="date" id="walkPick" tabindex="-1" aria-label="Pilih tarikh"></span></span></div>
+      <div class="box tm"><label class="k" for="walkSteps">STEPS</label><span class="dv wv"><input id="walkSteps" inputmode="numeric" placeholder="0" maxlength="7" autocomplete="off"></span></div>
+      <div class="box tm"><label class="k" for="walkMin">TIME (MIN)</label><span class="dv wv"><input id="walkMin" inputmode="decimal" placeholder="0" maxlength="5" autocomplete="off"></span></div>
+    </div>
+    <div class="wsum" id="walkSum"></div>
+    <div class="actions" style="margin-top:0"><button type="button" class="save" id="walkSave">SAVE BRISK WALK</button><button type="button" class="clear" id="walkClear" title="Kosongkan" aria-label="Kosongkan"></button></div>
+    <div class="msg" id="walkMsg"></div>
+  </div>
+
   <div class="recent">
     <h2><span>Rekod<span id="rLabel"></span></span> <a id="sheetLink" href="#" target="_blank">Buka Sheet <svg class="ico ih ih-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><g class="ea"><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></g></svg></a></h2>
     <div class="flt seg2" id="rFilter"><button type="button" data-r="today">Today</button><button type="button" data-r="yesterday" title="Yesterday">Yest.</button><button type="button" data-r="7d" class="on">7D</button><button type="button" data-r="14d">14D</button><button type="button" data-r="30d">30D</button><button type="button" data-r="90d">90D</button><button type="button" data-r="custom">Custom</button></div>
@@ -753,6 +773,14 @@
   <div class="row"><div>Target tidur (julat)<small>Dalam julat = hijau · bawah = merah · lebih = biru</small></div>
     <div class="mm"><input id="optSleepLo" inputmode="decimal" maxlength="4" placeholder="7" aria-label="Target tidur minimum (jam)">–<input id="optSleepT" inputmode="decimal" maxlength="4" placeholder="8" aria-label="Target tidur maksimum (jam)">j</div></div>
 
+  <h4>Brisk walk</h4>
+  <div class="row"><div>Target langkah sehari<small>Cincin progress & warna chart ikut target ni</small></div>
+    <div class="mm"><input id="optStepT" inputmode="numeric" maxlength="6" placeholder="8000" aria-label="Target langkah sehari" style="width:78px"></div></div>
+  <div class="row"><div>Target masa jalan<small>Minit sehari</small></div>
+    <div class="mm"><input id="optWalkMin" inputmode="numeric" maxlength="3" placeholder="30" aria-label="Target minit jalan">min</div></div>
+  <div class="row"><div>Panjang langkah<small>Untuk kira jarak anggaran (biasa 70–80 cm)</small></div>
+    <div class="mm"><input id="optStride" inputmode="numeric" maxlength="3" placeholder="75" aria-label="Panjang langkah (cm)">cm</div></div>
+
   <h4>Lain-lain</h4>
   <div class="links"><a id="optSheet" href="#" target="_blank">Buka Sheet &amp; Dashboard</a></div>
   <p class="credit">Icons by <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon.com</a></p>
@@ -762,7 +790,7 @@
 <script>
   // ---------------- Data link: Apps Script page (google.script.run) or hosted app (fetch to /exec) ----------------
   var API_URL = 'https://script.google.com/macros/s/AKfycbxxCfawx8eZZt6WlNmhuAUGfv3yYw6QV6UTg2yXTeumh5iXrUNXzj4Js4Jejaz_3c4l/exec';
-  var API_NAMES = ['appSaveWorkout', 'appSaveRest', 'appGetRecent', 'appGetDashboard', 'appGetDay', 'appDeleteEntry', 'appUpdateWorkout', 'appUpdateRest', 'appSaveSleep', 'appDeleteSleep'];
+  var API_NAMES = ['appSaveWorkout', 'appSaveRest', 'appGetRecent', 'appGetDashboard', 'appGetDay', 'appDeleteEntry', 'appUpdateWorkout', 'appUpdateRest', 'appSaveSleep', 'appDeleteSleep', 'appSaveWalk', 'appDeleteWalk'];
   function apiKey() { try { return localStorage.getItem('dw-key') || ''; } catch (e) { return ''; } }
   function inAppsScript() { return typeof google !== 'undefined' && google.script && google.script.run; }
   function RUN() {
@@ -1351,6 +1379,33 @@
   .ch h4 .hic .ih-bars .b2 { animation-delay:.2s; } .ch h4 .hic .ih-bars .b3 { animation-delay:.4s; }
   .ch h4 .hic .ih-chart .cl { stroke-dasharray:1; animation:krDraw 2.6s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .ch h4 .hic * { animation:none !important; } }
+
+  /* ---- Brisk walk ---- */
+  body { --walk:#14b8a6; }
+  .htabs::before, .dtabs::before { width:calc(33.333% - 2.67px) !important; }
+  .htabs:has(> [data-t="s"].on)::before, .dtabs:has(> [data-t="s"].on)::before { transform:translateX(calc(100% + 2px)) !important; }
+  .htabs:has(> [data-t="k"].on)::before, .dtabs:has(> [data-t="k"].on)::before { transform:translateX(calc(200% + 4px)) !important; }
+  .walk h2 .ti.ih-walk { color:var(--walk); width:27px !important; height:27px !important; overflow:visible; }
+  .ch h4 .hic.hwl { color:var(--walk); }
+  @keyframes wkBob { 0%, 100% { transform:translateY(0) rotate(0); } 25% { transform:translateY(-.8px) rotate(2deg); } 50% { transform:translateY(0) rotate(0); } 75% { transform:translateY(-.8px) rotate(-2deg); } }
+  @keyframes wkLine { 0%, 100% { opacity:0; transform:translateX(1px); } 40%, 60% { opacity:.8; transform:translateX(-1px); } }
+  .ih-walk .wkb { transform-box:view-box; transform-origin:12px 20px; animation:wkBob 1s ease-in-out infinite; }
+  .ih-walk .wm { opacity:0; animation:wkLine 1s ease-in-out infinite; } .ih-walk .wm2 { animation-delay:.3s; }
+  .wtrio .wv input { width:100%; min-width:0; border:0; background:none; font:inherit; font-size:17px; font-weight:700; color:var(--accent); padding:0; outline:none; }
+  .wsum { display:grid; grid-template-columns:auto 1fr; gap:10px 12px; align-items:center; margin:12px 0 10px; }
+  .wring { position:relative; width:92px; height:92px; }
+  .wring svg { width:92px; height:92px; transform:rotate(-90deg); }
+  .wring .trk { fill:none; stroke:var(--tile); stroke-width:4; } .wring .prg { fill:none; stroke:var(--walk); stroke-width:4; stroke-linecap:round; transition:stroke-dasharray .4s; }
+  .wring > div { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .wring b { font-size:19px; font-weight:800; } .wring small { font-size:9.5px; color:var(--muted); }
+  .wst { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .wst div { background:var(--tile); border-radius:10px; padding:6px 8px; min-width:0; } .wst span { display:block; font-size:10.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .wst b { font-size:15px; font-weight:800; }
+  .wtip { grid-column:1 / -1; border-radius:12px; padding:9px 11px; font-size:13px; line-height:1.4; background:var(--tile); }
+  .wtip.g { background:color-mix(in srgb, #22c55e 14%, transparent); } .wtip.o { background:color-mix(in srgb, #f97316 14%, transparent); } .wtip.b { background:color-mix(in srgb, #3b82f6 12%, transparent); }
+  .wchoice { display:flex; gap:8px; margin-top:8px; } .wchoice button { flex:1; padding:9px !important; border-radius:10px !important; font-weight:700 !important; background:var(--tile) !important; color:var(--ink) !important; width:auto !important; height:auto !important; }
+  .wchoice button[data-m="replace"] { background:var(--accent) !important; color:#fff !important; }
+  .wks button.kw::after, #weekStrip button.kw::after { content:''; position:absolute; bottom:-3px; left:50%; width:6px; height:6px; margin-left:-3px; border-radius:50%; background:var(--walk); box-shadow:0 0 0 1.5px var(--paper); }
+  #weekStrip button.kw { position:relative; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1481,6 +1536,7 @@
   var ICON_ALIAS = {"barbell":"flame","chart-line-up":"chart","moon-stars":"moon","sun-dim":"sun","gear-six":"gear","calendar-blank":"cal","timer":"clock","clock":"clock","sun-horizon":"sun","couch":"coffee","arrow-counter-clockwise":"refresh","x":"x","check":"check","caret-right":"right","caret-down":"down","arrow-square-out":"ext","pencil-simple":"pen","pencil-simple-line":"pen","trash-simple":"trash","keyboard":"dialpad","eyedropper":"paint","x-circle":"xc","warning":"alert","battery-low":"battery","lightbulb":"bulb","info":"info","house":"home"};
   ICONS.dumbbell = ["0 0 24 24", "<circle class=\"puh\" cx=\"18.6\" cy=\"11.6\" r=\"1.7\"/><path class=\"pub\" d=\"M3 20.5L16.2 13\"/><path class=\"pua\" d=\"M16.2 13L16.2 17L16.2 21\"/><path class=\"pug\" d=\"M1.5 22.5h21\"/>"];
   ICONS.lmoon = ["0 0 24 24", "<path class=\"lm\" d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>"];
+  ICONS.walk = ["0 0 24 24", "<g class=\"wkb\"><circle cx=\"13\" cy=\"4\" r=\"1.6\"/><path class=\"wl1\" d=\"M7 21l3-4\"/><path class=\"wl2\" d=\"M16 21l-2-4l-3-3l1-6\"/><path class=\"wa\" d=\"M6 12l2-3l4-1l3 3l3 1\"/></g><path class=\"wm wm1\" d=\"M2.5 9h2\"/><path class=\"wm wm2\" d=\"M1.5 13h2.5\"/>"];
   ICONS.bars = ["0 0 24 24", "<path class=\"b1\" d=\"M5 20V12\"/><path class=\"b2\" d=\"M12 20V6\"/><path class=\"b3\" d=\"M19 20V9\"/><path d=\"M3 20h18\"/>"];
   ICONS.trophy = ["0 0 24 24", "<g class=\"tro\"><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"M7 4h10\"/><path d=\"M17 4v8a5 5 0 0 1-10 0V4\"/><path d=\"M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/><path d=\"M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/></g><path class=\"tsh\" d=\"M10 7.5v3\"/>"];
   ICONS.bed = ["0 0 24 24", "<path d=\"M7 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\"/><path d=\"M22 19v-3h-20\"/><path d=\"M2 10v9\"/><path d=\"M12 16h10v-2a3 3 0 0 0 -3 -3h-7v5z\"/><path class=\"zz z1\" d=\"M11 6.5h2l-2 2h2\"/><path class=\"zz z2\" d=\"M14.5 3.5h2.5l-2.5 2.5h2.5\"/><path class=\"zz z3\" d=\"M18.5 .5h3l-3 3h3\"/>"];
@@ -1863,7 +1919,8 @@
   }
   function renderDetail(d) {
     var box = $('dBody'); box.innerHTML = '';
-    if (!d.workouts.length && !d.rests.length && !d.sleep) { box.innerHTML = '<div class="empty">Tiada rekod pada tarikh ini.</div>'; return; }
+    if (d.walk) renderWalkDetail(d, box);
+    if (!d.workouts.length && !d.rests.length && !d.sleep && !d.walk) { box.innerHTML = '<div class="empty">Tiada rekod pada tarikh ini.</div>'; return; }
     if (d.sleep) {
       var sl = document.createElement('div'); sl.className = 'sess';
       sl.innerHTML = '<div class="meta">Tidur <span>' + esc(d.sleep.start) + ' → ' + esc(d.sleep.end) + '</span> <span>' + esc(d.sleep.text) + '</span>' + (d.sleep.awake ? ' <span>terjaga ' + hmTxt(d.sleep.awake) + '</span>' : '') + '</div>' +
@@ -1911,7 +1968,7 @@
     var run = RUN().withSuccessHandler(function (res) {
       closeDetail(); show(res.ok ? 'ok' : 'bad', (res.ok ? '✔ ' : '') + res.message); loadRecent(); if (DASH) loadDash();
     }).withFailureHandler(function (e) { btn.disabled = false; btn.textContent = 'Padam'; alertBad(e); });
-    if (kind === 'sleep') run.appDeleteSleep(id); else run.appDeleteEntry(kind, id);
+    if (kind === 'sleep') run.appDeleteSleep(id); else if (kind === 'walk') run.appDeleteWalk(id); else run.appDeleteEntry(kind, id);
   }
   function alertBad(e) { show('bad', 'Gagal: ' + (e && e.message ? e.message : e)); }
   // slide/fade a panel in (used by Home/Dashboard and the Workout/Sleep tabs)
@@ -1924,10 +1981,12 @@
   var HTAB = 'w';
   try { HTAB = localStorage.getItem('dw-htab') || 'w'; } catch (e) {}
   function setHTab(t, anim) {
-    var prev = HTAB; HTAB = t === 's' ? 's' : 'w'; try { localStorage.setItem('dw-htab', HTAB); } catch (e) {}
+    var prev = HTAB, ORD = 'wsk'; HTAB = ORD.indexOf(t) >= 0 ? t : 'w'; try { localStorage.setItem('dw-htab', HTAB); } catch (e) {}
     [].forEach.call($('hTabs').children, function (b) { b.classList.toggle('on', b.dataset.t === HTAB); });
-    $('wkCard').style.display = HTAB === 'w' ? '' : 'none'; $('sleepCard').style.display = HTAB === 's' ? '' : 'none';
-    if (anim && prev !== HTAB) slideIn($(HTAB === 's' ? 'sleepCard' : 'wkCard'), HTAB === 's');
+    $('hTabs').dataset.on = HTAB;
+    var CARD = { w: 'wkCard', s: 'sleepCard', k: 'walkCard' };
+    Object.keys(CARD).forEach(function (k) { $(CARD[k]).style.display = HTAB === k ? '' : 'none'; });
+    if (anim && prev !== HTAB) slideIn($(CARD[HTAB]), ORD.indexOf(HTAB) > ORD.indexOf(prev));
     if (DTAB !== HTAB) { DTAB = HTAB; try { paintDTab(false); } catch (e) {} }   // Home and Dashboard share one Workout/Sleep choice
   }
   [].forEach.call($('hTabs').children, function (b) { b.onclick = function () { setHTab(b.dataset.t, true); }; });
@@ -2119,6 +2178,7 @@
   function setView(dash) {
     var inV = $(dash ? 'dashView' : 'cardView'), outV = $(dash ? 'cardView' : 'dashView');
     $('dashBtn').classList.toggle('on', dash); $('homeBtn').classList.toggle('on', !dash);
+    setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
     if (inV.style.display !== 'none' && outV.style.display === 'none') return;
     var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     var hdr = $('weekStrip').getBoundingClientRect().bottom + window.scrollY;
@@ -2267,6 +2327,160 @@
 
 
 
+
+  // ---------------- Brisk walk: card (Home), detail, dashboard ----------------
+  var WALK_MODE = '';           // '' new · 'replace' editing a saved day
+  function walkNums() {
+    var steps = parseInt(String($('walkSteps').value).replace(/[^\d]/g, ''), 10) || 0, min = parseFloat(String($('walkMin').value).replace(',', '.')) || 0;
+    var km = steps * (S.stride || 75) / 100000;
+    return { steps: steps, min: min, km: km, cad: min ? steps / min : 0, kmh: min ? km / (min / 60) : 0, kcal: Math.round(min * 5) };
+  }
+  function fmtN(n) { return Math.round(n).toLocaleString('en-US'); }
+  function calcWalk() {
+    var box = $('walkSum'); if (!box) return;
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, n = walkNums(), goal = S.stepGoal || 8000, gMin = S.walkMin || 30;
+    var f = Math.min(1, n.steps / goal), C = 2 * Math.PI * 16;
+    var tip = '', tone = 'g';
+    if (!n.steps && !n.min) { tip = T('Isi jumlah langkah dan masa. Target hari ini: ' + fmtN(goal) + ' langkah · ' + gMin + ' min.', 'Enter your steps and time. Today’s goal: ' + fmtN(goal) + ' steps · ' + gMin + ' min.'); tone = 'b'; }
+    else if (n.steps && !n.min) { tip = T('Isi masa berjalan untuk kira kelajuan.', 'Add the walking time to work out your pace.'); tone = 'b'; }
+    else {
+      var brisk = n.cad >= 100, left = goal - n.steps;
+      tip = (brisk ? T('Laju bagus — ' + Math.round(n.cad) + ' langkah/min (100+ dikira brisk walk). ', 'Good pace — ' + Math.round(n.cad) + ' steps/min (100+ counts as brisk). ')
+                   : T('Agak perlahan — ' + Math.round(n.cad) + ' langkah/min. Sasarkan 100+ untuk brisk walk. ', 'A bit slow — ' + Math.round(n.cad) + ' steps/min. Aim for 100+ to make it brisk. ')) +
+        (left > 0 ? T(fmtN(left) + ' langkah lagi untuk capai target.', fmtN(left) + ' more steps to hit your goal.') : T('Target langkah hari ini capai ✓', 'Step goal reached today ✓'));
+      tone = brisk && left <= 0 ? 'g' : (brisk ? 'g' : 'o');
+    }
+    box.innerHTML = '<div class="wring" style="--wc:var(--walk)"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" class="trk"/><circle cx="20" cy="20" r="16" class="prg" stroke-dasharray="' + (C * f).toFixed(1) + ' ' + C.toFixed(1) + '"/></svg>' +
+      '<div><b>' + Math.round(100 * n.steps / goal) + '%</b><small>' + fmtN(n.steps) + ' / ' + fmtN(goal) + '</small></div></div>' +
+      '<div class="wst">' + [[T('Jarak (anggaran)', 'Distance (est.)'), n.steps ? n.km.toFixed(2) + ' km' : '–'], [T('Kadar langkah', 'Cadence'), n.cad ? Math.round(n.cad) + '/min' : '–'],
+        [T('Kelajuan', 'Speed'), n.kmh ? n.kmh.toFixed(1) + (en ? ' km/h' : ' km/j') : '–'], [T('Kalori (anggaran)', 'Calories (est.)'), n.min ? '~' + n.kcal : '–']]
+        .map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
+      '<div class="wtip ' + tone + '">' + tip + '</div>';
+  }
+  function resetWalkCard() { $('walkDate').value = isoToDmy(todayKey()); $('walkSteps').value = ''; $('walkMin').value = ''; WALK_MODE = ''; $('walkMsg').innerHTML = ''; calcWalk(); }
+  function saveWalk(mode) {
+    var en = S.lang === 'en', iso = dmyToIso($('walkDate').value), n = walkNums();
+    if (!iso) { $('walkDate').classList.add('bad'); show('bad', en ? 'Invalid date. Use dd/mm/yyyy.' : 'Tarikh tak sah. Guna dd/mm/yyyy.', null, 'walkMsg'); return; }
+    if (!n.steps) { show('bad', en ? 'Enter your steps.' : 'Isi jumlah langkah.', null, 'walkMsg'); $('walkSteps').focus(); return; }
+    if (!n.min) { show('bad', en ? 'Enter the walking time (minutes).' : 'Isi masa berjalan (minit).', null, 'walkMsg'); $('walkMin').focus(); return; }
+    var btn = $('walkSave'); btn.disabled = true; btn.textContent = en ? 'Saving…' : 'Menyimpan…'; wait(en ? 'Saving…' : 'Menyimpan…');
+    RUN().withSuccessHandler(function (res) {
+      btn.disabled = false; btn.textContent = en ? 'SAVE BRISK WALK' : 'SIMPAN BRISK WALK';
+      if (res.exists) {
+        show('warn', res.message + (en ? ' What should happen?' : ' Nak buat apa?'));
+        clearTimeout(OVL_T);
+        var ch = document.createElement('div'); ch.className = 'wchoice';
+        ch.innerHTML = '<button type="button" data-m="add">' + (en ? 'Add as another session' : 'Tambah sebagai sesi lain') + '</button><button type="button" data-m="replace">' + (en ? 'Replace' : 'Ganti') + '</button>';
+        $('ovlBox').appendChild(ch);
+        [].forEach.call(ch.querySelectorAll('[data-m]'), function (b) { b.onclick = function (e) { e.stopPropagation(); hideOvl(); saveWalk(b.dataset.m); }; });
+        return;
+      }
+      show(res.ok ? 'ok' : 'bad', (res.ok ? '✔ ' : '') + res.message, null, 'walkMsg');
+      if (res.ok) { resetWalkCard(); loadSleepAll(); loadRecent(); if (DASH) loadDash(); }
+    }).withFailureHandler(function (e) { btn.disabled = false; btn.textContent = en ? 'SAVE BRISK WALK' : 'SIMPAN BRISK WALK'; show('bad', 'Gagal: ' + (e && e.message ? e.message : e), null, 'walkMsg'); })
+      .appSaveWalk({ date: iso, steps: n.steps, minutes: n.min, km: Math.round(n.km * 100) / 100, mode: mode || WALK_MODE });
+  }
+  function renderWalkDetail(d, box) {
+    var en = S.lang === 'en', w = d.walk, el = document.createElement('div'); el.className = 'sess';
+    el.innerHTML = '<div class="meta">Brisk walk <span>' + fmtN(w.steps) + (en ? ' steps' : ' langkah') + '</span> <span>' + w.min + ' min</span> <span>' + (w.km || 0).toFixed(2) + ' km</span> <span>' + w.cad + '/min</span>' + (w.sess > 1 ? ' <span>' + w.sess + (en ? ' sessions' : ' sesi') + '</span>' : '') + '</div>' +
+      '<div class="acts"><button type="button" class="rest">' + ic('pen') + ' Edit</button><button type="button" class="del">' + ic('trash') + ' Padam</button></div>';
+    var b = el.querySelectorAll('.acts button');
+    b[0].onclick = function () { closeDetail(); showCardView(); setHTab('k'); $('walkDate').value = isoToDmy(d.date); $('walkSteps').value = w.steps; $('walkMin').value = w.min; WALK_MODE = 'replace'; calcWalk(); $('walkCard').scrollIntoView({ behavior: 'smooth' }); };
+    b[1].onclick = function () { confirmDelete(b[1], 'walk', d.date); };
+    box.appendChild(el);
+  }
+  // ----- dashboard
+  function walkTone(x) { var g = S.stepGoal || 8000, r = x.steps / g; return r >= 1.5 ? '#0f766e' : r >= 1 ? '#14b8a6' : r >= .6 ? '#5eead4' : '#ccfbf1'; }
+  function renderWalkDash() {
+    if (!DASH || !$('kKpi')) return;
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, all = DASH.walk || [], rg = dRange(), goal = S.stepGoal || 8000;
+    var rows = all.filter(function (x) { return x.d >= rg.from && x.d <= rg.to; });
+    var span = Math.max(1, Math.round((Date.parse(rg.to > DASH.today ? DASH.today : rg.to) - Date.parse(rg.from)) / 864e5) + 1);
+    var sum = function (a, f) { return a.reduce(function (q, x) { return q + f(x); }, 0); };
+    var n = rows.length, steps = sum(rows, function (x) { return x.steps; }), km = sum(rows, function (x) { return x.km; }), min = sum(rows, function (x) { return x.min; });
+    var hit = rows.filter(function (x) { return x.steps >= goal; }).length, avg = n ? steps / n : 0, cad = min ? steps / min : 0;
+    var byD = {}; all.forEach(function (x) { byD[x.d] = x; });
+    var cur = 0, k = byD[DASH.today] ? DASH.today : addDays(DASH.today, -1); while (byD[k] && byD[k].steps >= goal) { cur++; k = addDays(k, -1); }
+    var best = 0, run = 0, prev = null; all.forEach(function (x) { if (x.steps >= goal) { run = prev && addDays(prev, 1) === x.d && byD[prev].steps >= goal ? run + 1 : 1; } else run = 0; if (run > best) best = run; prev = x.d; });
+    $('kKpi').innerHTML = statRow({ v: n ? (avg >= 1000 ? (Math.round(avg / 100) / 10) + 'k' : Math.round(avg)) : '–', frac: n ? avg / goal : 0, label: T('Purata langkah', 'Avg steps'), k: 'k-avg' },
+        [[n + '/' + span, T('Hari jalan', 'Walk days'), 'k-days'], [hit, T('Capai target', 'Goal hit'), 'k-hit'], [cur, 'Streak', 'k-streak'], [best, T('Streak terbaik', 'Best streak'), 'k-streak']]) +
+      statRow(null, [[fmtN(steps), T('Jumlah langkah', 'Total steps'), 'k-avg'], [km.toFixed(1) + ' km', T('Jarak', 'Distance'), 'k-km'], [hm(min), T('Masa', 'Time'), 'k-min'], [cad ? Math.round(cad) + '/m' : '–', T('Kadar', 'Cadence'), 'k-cad']]);
+    [].forEach.call($('kKpi').querySelectorAll('[data-k]'), function (b) { b.onclick = function () { openWalkKpi(b.dataset.k, rows, rg); }; });
+    renderStepsChart(rows, rg);
+    renderHeat(all, rg, { el: 'cWalkHeat', col: walkTone, lab: function (x) { return fmtN(x.steps) + (en ? ' steps' : ' langkah'); },
+      tip: function (x) { return isoToDmy(x.d) + ': ' + x.min + ' min, ' + (x.km || 0).toFixed(2) + ' km'; },
+      legend: '<div class="hml"><span style="--c:#ccfbf1">' + T('Bawah 60%', 'Under 60%') + '</span><span style="--c:#5eead4">60–99%</span><span style="--c:#14b8a6">' + T('Capai target', 'Goal hit') + '</span><span style="--c:#0f766e">150%+</span></div>' });
+    var top = function (f, ok) { return all.filter(ok || function () { return true; }).reduce(function (a, x) { return !a || f(x) > f(a) ? x : a; }, null); };
+    var a1 = top(function (x) { return x.steps; }), a2 = top(function (x) { return x.min; }), a3 = top(function (x) { return x.cad; }, function (x) { return x.min >= 10; }), a4 = top(function (x) { return x.km; });
+    var pr = [[T('Langkah terbanyak', 'Most steps'), a1, a1 && fmtN(a1.steps)], [T('Jalan paling lama', 'Longest walk'), a2, a2 && a2.min + ' min'], [T('Paling laju', 'Fastest pace'), a3, a3 && a3.cad + '/min'], [T('Paling jauh', 'Furthest'), a4, a4 && a4.km.toFixed(2) + ' km']];
+    $('cWalkPB').innerHTML = all.length ? '<div class="pbl">' + pr.map(function (r) { return r[1] ? '<button type="button" class="pbr" data-d="' + r[1].d + '"><span class="pbn">' + r[0] + '</span><span class="pbv"><b>' + r[2] + '</b><small> · ' + r[1].d.slice(8) + '/' + r[1].d.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>' : ''; }).join('') + '</div>'
+      : '<div class="empty">' + T('Simpan brisk walk pertama untuk mula rekod.', 'Save your first brisk walk to start your records.') + '</div>';
+    [].forEach.call($('cWalkPB').querySelectorAll('[data-d]'), function (b) { b.onclick = function () { openDetail(b.dataset.d); }; });
+  }
+  function renderStepsChart(rows, rg) {
+    var el = $('cSteps'), en = S.lang === 'en', goal = S.stepGoal || 8000;
+    var to = rg.to > DASH.today ? DASH.today : rg.to, from = rg.from, keys = [];
+    if ((Date.parse(to) - Date.parse(from)) / 864e5 > 90) from = addDays(to, -90);
+    for (var k = from; k <= to; k = addDays(k, 1)) keys.push(k);
+    var byD = {}; rows.forEach(function (x) { byD[x.d] = x; });
+    if (!rows.length) { el.innerHTML = '<div class="empty">' + (en ? 'No walks in this period yet.' : 'Belum ada brisk walk dalam tempoh ni.') + '</div>'; return; }
+    var W = 320, H = 150, L = 34, R = 8, Tp = 12, B = 22, max = Math.max(goal * 1.15, Math.max.apply(null, rows.map(function (x) { return x.steps; })) * 1.08);
+    var bw = (W - L - R) / keys.length, y = function (v) { return Tp + (H - Tp - B) * (1 - v / max); }, g = '';
+    [0, max / 2, max].forEach(function (v) { g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="currentColor" opacity=".12" stroke-dasharray="3 4"/><text x="' + (L - 4) + '" y="' + (y(v) + 4) + '" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">' + (v >= 1000 ? Math.round(v / 1000) + 'k' : Math.round(v)) + '</text>'; });
+    keys.forEach(function (k2, i) { var x = byD[k2]; if (x) g += '<rect x="' + (L + i * bw + bw * .15).toFixed(1) + '" y="' + y(x.steps).toFixed(1) + '" width="' + Math.max(1.5, bw * .7).toFixed(1) + '" height="' + (H - B - y(x.steps)).toFixed(1) + '" rx="' + Math.min(4, bw * .25).toFixed(1) + '" fill="' + walkTone(x) + '"/>'; });
+    g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(goal) + '" y2="' + y(goal) + '" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4"/><text x="' + (W - R) + '" y="' + (y(goal) - 4) + '" font-size="9.5" text-anchor="end" fill="#d97706" font-weight="700">target ' + fmtN(goal) + '</text>';
+    var step = Math.max(1, Math.ceil(keys.length / 7)); keys.forEach(function (k2, i) { if (i % step === 0 || i === keys.length - 1) g += '<text x="' + (L + i * bw + bw / 2) + '" y="' + (H - 6) + '" font-size="9.5" text-anchor="middle" fill="currentColor" opacity=".6">' + k2.slice(8) + '/' + k2.slice(5, 7) + '</text>'; });
+    el.innerHTML = '<div class="schart lchart"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg><div class="stt"></div></div>' +
+      '<div class="lg"><span style="--c:#14b8a6">' + (en ? 'Goal hit' : 'Capai target') + '</span><span style="--c:#5eead4">' + (en ? 'Below goal' : 'Bawah target') + '</span><span style="--c:#f59e0b">Target</span></div>';
+    var wrap = el.querySelector('.lchart'), svg = wrap.querySelector('svg'), tip = wrap.querySelector('.stt'), NS = 'http://www.w3.org/2000/svg';
+    var guide = document.createElementNS(NS, 'line'); guide.setAttribute('class', 'sguide'); guide.setAttribute('y1', Tp); guide.setAttribute('y2', H - B); svg.insertBefore(guide, svg.firstChild);
+    var cur = -1, on = false;
+    var show2 = function (i) {
+      if (i === cur) return; cur = i; var k2 = keys[i], x = byD[k2], gx = L + i * bw + bw / 2;
+      guide.setAttribute('x1', gx); guide.setAttribute('x2', gx); guide.classList.add('on');
+      tip.innerHTML = '<b>' + isoToDmy(k2) + '</b>' + (x ? '<span><i style="background:' + walkTone(x) + '"></i>' + fmtN(x.steps) + (en ? ' steps' : ' langkah') + ' (' + Math.round(100 * x.steps / goal) + '%)</span><span>' + x.min + ' min · ' + (x.km || 0).toFixed(2) + ' km · ' + x.cad + '/min</span>' : '<span>' + (en ? 'No walk' : 'Tiada rekod') + '</span>');
+      tip.classList.add('on');
+      var sr = svg.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), px = sr.left - wr.left + gx / W * sr.width, tw = tip.offsetWidth;
+      var lx = px + 12 + tw <= wr.width ? px + 12 : px - 12 - tw; tip.style.left = Math.max(4, lx) + 'px'; tip.style.top = '4px';
+    };
+    var near = function (cx) { var sr = svg.getBoundingClientRect(), vx = (cx - sr.left) / sr.width * W; show2(Math.max(0, Math.min(keys.length - 1, Math.floor((vx - L) / bw)))); };
+    svg.addEventListener('pointerdown', function (e) { on = true; cur = -1; near(e.clientX); });
+    svg.addEventListener('pointermove', function (e) { if (on || e.pointerType === 'mouse') near(e.clientX); });
+    ['pointerup', 'pointercancel'].forEach(function (ev) { svg.addEventListener(ev, function () { on = false; }); });
+  }
+  function openWalkKpi(k, rows, rg) {
+    DBACK = function () { openWalkKpi(k, rows, rg); };
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, goal = S.stepGoal || 8000;
+    var txt = {
+      'k-avg': T('Purata langkah untuk hari yang kau berjalan dalam tempoh ini, berbanding target ' + fmtN(goal) + ' sehari. Cincin penuh = purata capai target.', 'Average steps on the days you walked in this period, against your ' + fmtN(goal) + '-a-day goal. A full ring means your average meets the goal.'),
+      'k-days': T('Bilangan hari ada rekod brisk walk berbanding jumlah hari dalam tempoh ini.', 'Days with a brisk walk logged, out of the days in this period.'),
+      'k-hit': T('Hari yang langkah kau capai atau melebihi target ' + fmtN(goal) + '.', 'Days your steps met or beat the ' + fmtN(goal) + ' goal.'),
+      'k-streak': T('Hari berturut-turut capai target langkah, sehingga hari ini atau semalam.', 'Days in a row you hit your step goal, up to today or yesterday.'),
+      'k-km': T('Jarak anggaran = langkah × panjang langkah (' + (S.stride || 75) + ' cm, boleh tukar dalam Settings).', 'Estimated distance = steps × stride length (' + (S.stride || 75) + ' cm, change it in Settings).'),
+      'k-min': T('Jumlah masa berjalan dalam tempoh ini. Target kau ' + (S.walkMin || 30) + ' min sehari.', 'Total walking time in this period. Your goal is ' + (S.walkMin || 30) + ' min a day.'),
+      'k-cad': T('Kadar langkah = langkah ÷ minit. 100+ langkah/min biasanya dikira brisk walk (jalan laju).', 'Cadence = steps ÷ minutes. 100+ steps/min usually counts as a brisk walk.')
+    }[k] || '';
+    $('detailBack').style.display = 'none';
+    $('dTitle').textContent = 'Brisk walk';
+    var list = rows.slice().sort(function (a, b) { return a.d < b.d ? 1 : -1; });
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + txt + '</p><div class="grp">' + T('Setiap hari', 'Each day') + '</div>' + (list.map(function (x) {
+      return '<div class="day" data-d="' + x.d + '"><span style="color:' + (x.steps >= goal ? '#0d9488' : 'inherit') + '">' + isoToDmy(x.d) + '</span><span>' + fmtN(x.steps) + ' · ' + x.min + 'm · ' + (x.km || 0).toFixed(1) + 'km <b class="go">' + ic('right') + '</b></span></div>';
+    }).join('') || '<div class="empty">' + T('Tiada rekod.', 'No records.') + '</div>') + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
+  }
+  wireDate('walkDate', 'walkPick');
+  ['walkSteps', 'walkMin', 'walkDate'].forEach(function (id) { $(id).addEventListener('input', calcWalk); });
+  $('walkSteps').addEventListener('blur', function () { var v = parseInt(String(this.value).replace(/[^\d]/g, ''), 10); this.value = v ? v : ''; });
+  $('walkSave').onclick = function () { saveWalk(''); };
+  $('walkClear').innerHTML = RF_ICON;
+  $('walkClear').onclick = function () {
+    var b = $('walkClear');
+    if (b.dataset.arm) { delete b.dataset.arm; b.innerHTML = RF_ICON; resetWalkCard(); return; }
+    b.dataset.arm = '1'; b.textContent = 'Pasti?'; setTimeout(function () { if (b.dataset.arm) { delete b.dataset.arm; b.innerHTML = RF_ICON; } }, 2500);
+  };
+  setTimeout(resetWalkCard, 0);   // settings (S) are read further down
+
   // ---------------- Lordicon (free CDN icons) for the everyday UI icons ----------------
   // Our own SVGs stay as the fallback: they are swapped only once the Lordicon player has loaded (offline = old icons).
   var LORD = [
@@ -2377,7 +2591,7 @@
     var kpis = [[wd.length, 'Hari workout'], [rd.length, 'Hari rehat'], [sessions, 'Sesi'], [reps, 'Reps'],
       [Math.floor(mins / 60) + 'j ' + (mins % 60) + 'm', 'Masa'], [DASH.streaks.current, 'Streak'],
       [DASH.streaks.longest, 'Streak terbaik'], [review, 'Perlu semak', review > 0]];
-    renderSleepChart(); renderSleepDash();
+    renderSleepChart(); renderSleepDash(); try { renderWalkDash(); } catch (e) { console.error(e); }
     var kid = ['wd', 'rd', 'sess', 'reps', 'mins', 'cur', 'long', 'rev'];
     var rgK = dRange(), lastK = rgK.to < DASH.today ? rgK.to : DASH.today;
     var spanK = Math.max(1, Math.round((Date.parse(lastK) - Date.parse(rgK.from)) / 864e5) + 1);
@@ -2513,6 +2727,7 @@
     ['Hutan', '#15803d', '#4ade80', '#eab308', '#facc15', '#a16207', '#0f766e', '#14b8a6', ['#fbfdf8', '#ecf2e7', '#17231b', '#0b140e']],
     ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b', ['#ffffff', '#eaecef', '#23272e', '#14171b']]
   ];   // optional 9th item: surfaces [panel light, background light, panel dark, background dark]
+  var PAL_EN = ['Classic', 'Ocean', 'Sunset', 'Neon', 'Forest', 'Graphite'];
   function palNow(dark) {        // -> {wk, rest, restTx, acc}
     if (S.palette === 'custom') {
       var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), rest = S.cRest || P0[3], acc = S.cAcc || (dark ? P0[7] : P0[6]);
@@ -2528,7 +2743,7 @@
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, palette: 0, cWk: '', cRest: '', cAcc: '', cPanel: '', cPage: '', cInk: '' };
+  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cPanel: '', cPage: '', cInk: '' };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -2568,7 +2783,7 @@
     b.setProperty('--wk', pl.wk); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
     applySurfaces();
     paintPal(dark);
-    setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 0);
+    setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 0); setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
     b.setProperty('--headbg', dark ? head[2] : head[1]);
     b.setProperty('--headfg', typeof S.head === 'string' ? (lum(S.head) > 0.6 ? '#111' : '#fff') : (dark ? '#111' : '#fff'));
     $('themeBtn').classList.toggle('isdark', dark); $('themeBtn').title = dark ? 'Bright mode' : 'Dark mode';
@@ -2608,7 +2823,7 @@
     var cp = palNow(dark), csel = S.palette === 'custom';
     box.innerHTML = PALS.map(function (P, i) {
       var sf = P[8], bgc = sf ? (dark ? sf[3] : sf[1]) : '', fg = sf ? (lum(dark ? sf[2] : sf[0]) > 0.55 ? '#111114' : '#f4f4f6') : '';
-      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6]) + '<b>' + P[0] + '</b></button>';
+      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6]) + '<b>' + (en ? PAL_EN[i] : P[0]) + '</b></button>';
     }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
     [].forEach.call(box.children, function (x) {
       x.onclick = function () {
@@ -2645,13 +2860,16 @@
   $('optNames').onchange = function () { S.autoNames = this.checked; saveSettings(); };
   $('optSleepT').addEventListener('input', function () { var v = parseFloat(this.value.replace(',', '.')); S.sleepTarget = v > 0 && v < 16 ? v : 8; saveSettings(); if (DASH) renderDash(); calcSleep(); });
   $('optGoal').addEventListener('input', function () { var v = parseInt(this.value, 10); S.weekGoal = v >= 1 && v <= 7 ? v : 4; saveSettings(); paintHeaderExtras(); });
+  $('optStepT').addEventListener('input', function () { var v = parseInt(this.value, 10); S.stepGoal = v >= 500 && v <= 100000 ? v : 8000; saveSettings(); calcWalk(); if (DASH) renderDash(); paintHeaderExtras(); });
+  $('optWalkMin').addEventListener('input', function () { var v = parseInt(this.value, 10); S.walkMin = v >= 5 && v <= 300 ? v : 30; saveSettings(); calcWalk(); if (DASH) renderDash(); });
+  $('optStride').addEventListener('input', function () { var v = parseInt(this.value, 10); S.stride = v >= 40 && v <= 120 ? v : 75; saveSettings(); calcWalk(); });
   $('optSleepLo').addEventListener('input', function () { var v = parseFloat(this.value.replace(',', '.')); S.sleepMin = v > 0 && v < 16 ? v : 7; saveSettings(); if (DASH) renderDash(); calcSleep(); });
   function readDefTarget() { S.defTarget = durBad($('defT').value) ? S.defTarget : durText($('defT').value); saveSettings(); }
   wireDur('defT');
   $('defT').addEventListener('input', readDefTarget);
   function openSettings() {
     $('defT').value = durShow(S.defTarget);
-    $('optSleepT').value = S.sleepTarget || 8; $('optSleepLo').value = S.sleepMin || 7; $('optGoal').value = S.weekGoal || 4;
+    $('optSleepT').value = S.sleepTarget || 8; $('optSleepLo').value = S.sleepMin || 7; $('optGoal').value = S.weekGoal || 4; $('optStepT').value = S.stepGoal || 8000; $('optWalkMin').value = S.walkMin || 30; $('optStride').value = S.stride || 75;
     $('sheet').classList.add('on'); $('sheetBg').classList.add('on');
   }
   function closeSettings() { $('sheet').classList.remove('on'); $('sheetBg').classList.remove('on'); }
@@ -3116,6 +3334,7 @@
     var w = $('weekStrip'), t = REC_TODAY || todayKey(), by = {}, slp = {};
     (REC || []).forEach(function (x) { (by[x.date] = by[x.date] || []).push(x.activity); if (x.sleep) slp[x.date] = x.sleep; else if (x.activity === 'Sleep' && !slp[x.date]) slp[x.date] = ''; });
     var sun = function (k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - d.getUTCDay()); return d.toISOString().slice(0, 10); };
+    var WALKD = {}; (WALK_ALL || []).forEach(function (x) { WALKD[x.d] = x; });
     var first = t; Object.keys(by).forEach(function (k) { if (k < first) first = k; });
     var cur = sun(t), start = sun(first); if (Date.parse(cur) - Date.parse(start) > 52 * 7 * 864e5) start = addDays(cur, -52 * 7);
     var en = S.lang === 'en', L = en ? ['S', 'M', 'T', 'W', 'T', 'F', 'S'] : ['A', 'I', 'S', 'R', 'K', 'J', 'S'];
@@ -3131,7 +3350,8 @@
       for (var i = 0; i < 7; i++) {
         var k = addDays(wk, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
         if (k > t) cls += ' f'; if (k === t) cls += ' t';
-        var sh = sleepH(k, slp[k]);
+        var sh = sleepH(k, slp[k]), wk2 = WALKD[k];
+        if (wk2 && wk2.steps >= (S.stepGoal || 8000)) cls += ' kw';
         h += '<button type="button" data-d="' + k + '" class="' + cls + (sh !== null ? ' s' : '') + '"' + (sh !== null ? ' style="--sc:' + sleepColor(sh) + '"' : '') + '><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b></button>';
       }
       h += '</div></div>';
@@ -3281,8 +3501,10 @@
   DTAB = HTAB;   // same tab as Home
   function paintDTab(anim) {
     [].forEach.call($('dTabs').children, function (b) { b.classList.toggle('on', b.dataset.t === DTAB); });
-    $('workDash').style.display = DTAB === 'w' ? '' : 'none'; $('sleepDash').style.display = DTAB === 's' ? '' : 'none';
-    if (anim) slideIn($(DTAB === 's' ? 'sleepDash' : 'workDash'), DTAB === 's');
+    $('dTabs').dataset.on = DTAB;
+    var DSH = { w: 'workDash', s: 'sleepDash', k: 'walkDash' };
+    Object.keys(DSH).forEach(function (k) { $(DSH[k]).style.display = DTAB === k ? '' : 'none'; });
+    if (anim) slideIn($(DSH[DTAB] || 'workDash'), DTAB !== 'w');
   }
   [].forEach.call($('dTabs').children, function (b) {
     b.onclick = function () { var ch = DTAB !== b.dataset.t; DTAB = b.dataset.t; paintDTab(ch); setHTab(DTAB); };
@@ -3367,9 +3589,9 @@
   }
 
   // ---------------- Sleep insight (short tip that follows your sleep data) ----------------
-  var SLEEP_ALL = null;
+  var SLEEP_ALL = null, WALK_ALL = null;
   function loadSleepAll() {
-    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; EXH = (d && d.ex) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); try { paintPBBtn(); } catch (e) {} updateHints(); if (REC && REC.length) renderRecent(); })
+    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; WALK_ALL = (d && d.walk) || []; EXH = (d && d.ex) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); try { paintPBBtn(); } catch (e) {} updateHints(); if (REC && REC.length) renderRecent(); })
       .withFailureHandler(function () {}).appGetDashboard();
   }
   function hm(min) { min = Math.round(min); return Math.floor(min / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (min % 60) + 'm'; }
@@ -3441,6 +3663,8 @@
 
   // ---------------- Language: Bahasa Melayu / English ----------------
   var EN = {
+    'SIMPAN BRISK WALK': 'SAVE BRISK WALK', 'Hutan': 'Forest',
+    'Target langkah sehari': 'Daily step goal', 'Cincin progress & warna chart ikut target ni': 'The progress ring and chart colours follow this goal', 'Target masa jalan': 'Walking time goal', 'Minit sehari': 'Minutes a day', 'Panjang langkah': 'Stride length', 'Untuk kira jarak anggaran (biasa 70–80 cm)': 'Used to estimate distance (usually 70–80 cm)',
     'Isi macam kad:': 'Fill it like the card:', '· dengan berat': '· with weight', 'atau': 'or', '· masa': '· time',
     '. Kotak kosong dibiarkan saja.': '. Leave empty boxes blank.', 'Rekod': 'Records', '7 hari terakhir': 'Last 7 days',
     'BANGUN PADA :': 'WOKE UP ON :', 'Batal': 'Cancel', 'Buka Sheet ›': 'Open Sheet ›',
@@ -3528,6 +3752,7 @@
     'Today': 'Hari ini', 'Yest.': 'Semalam', 'Yesterday': 'Semalam', 'Custom': 'Pilih', 'Range': 'Julat', 'This week': 'Minggu ini',
     'ACTUAL': 'SEBENAR', 'TARGET': 'SASARAN', 'AWAKE': 'TERJAGA', 'DATE': 'TARIKH', 'DURATION (MIN)': 'TEMPOH (MIN)', 'WAKE-UP DATE': 'TARIKH BANGUN',
     'WORKOUT': 'WORKOUT', 'Actual': 'Sebenar', 'Target': 'Sasaran', 'Dark': 'Gelap', 'Bright': 'Cerah', 'Dark mode': 'Mod gelap', 'Bright mode': 'Mod cerah',
+    'Walk': 'Jalan', 'STEPS': 'LANGKAH', 'TIME (MIN)': 'MASA (MIN)', 'SAVE BRISK WALK': 'SIMPAN BRISK WALK', 'Daily steps': 'Langkah harian', 'Walk history': 'Sejarah jalan', 'Best walks': 'Rekod terbaik jalan',
     'Settings': 'Tetapan', 'Edit': 'Ubah', 'Sleep': 'Tidur', 'Sleep Tracker': 'Rekod Tidur', 'Daily Workout': 'Workout Harian',
     'Rest Day': 'Hari Rehat', 'Workout vs Rest Day': 'Workout vs Hari Rehat', 'History workout': 'Sejarah workout', 'History tidur': 'Sejarah tidur',
     'Progress latihan': 'Kemajuan latihan', 'Home': 'Utama', 'Target default': 'Target asal', 'Streak workout': 'Streak workout',
@@ -3600,7 +3825,7 @@
     try { if (REC && REC.length) renderRecent(); } catch (e) {}
     try { if (DASH) renderDash(); } catch (e) {}
     try { paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC); } catch (e) {}
-    try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {} try { paintLastWk(); } catch (e) {}
+    try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {} try { paintLastWk(); } catch (e) {} try { calcWalk(); } catch (e) {} try { paintPal(isDark()); } catch (e) {}
     applyLang(); renderSleepTip(sleepMins());
   }
   $('langBtn').onclick = function () { setLang(S.lang === 'en' ? 'bm' : 'en'); };
