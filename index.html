@@ -2870,6 +2870,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Hari rehat kini berwarna kelabu lembut ikut tema (Graphite: kelabu), jadi lebih jelas beza dengan hari workout.', 'Rest days now use a soft grey that matches each colour combo (Graphite: grey), so they stand apart from workout days.'], 'g-rest'],
     ['2026-11-25', ['Knowledge Centre (butang ?) dengan panduan, pustaka latihan, kamus istilah dan petua harian.', 'Knowledge Centre (the ? button) with guides, an exercise library, a glossary and a daily tip.'], 'g-workout'],
     ['2026-11-25', ['Personal Best kini ada rekod brisk walk & langkah (langkah terbanyak, sesi paling lama, paling laju, paling jauh, minggu terbaik, streak target).', 'Personal Best now includes brisk walk & step records (most steps, longest session, fastest, furthest, best week, goal streak).'], 'g-pb'],
     ['2026-11-25', ['Records: Ringkasan & cadangan jadi senarai boleh buka/tutup dengan penapis, dan cadangan brisk walk.', 'Records: Summary & tips is now a collapsible list with filters, plus brisk-walk tips.'], 'g-rec'],
@@ -2907,7 +2908,8 @@
     add('g-rest', 'guide', T('Hari rehat', 'Rest days'), ul([
       T('Tekan <b>Rest day</b> dalam kad Workout — tarikh diambil terus dari kad Workout.', 'Tap <b>Rest day</b> in the Workout card — it uses the Workout card’s date.'),
       T('Hari lepas yang langsung tiada rekod diisi <b>automatik</b> sebagai rehat, supaya kalendar dan streak tetap tepat.', 'Past days with no record at all are filled in <b>automatically</b> as rest, so the calendar and streak stay accurate.'),
-      T('Rehat tak memutuskan rekod lain, tapi streak workout hanya dikira untuk hari workout.', 'Rest does not erase anything, but the workout streak only counts workout days.')]), ['w', T('Buka Workout', 'Open Workout')], 'rest rehat auto');
+      T('Rehat tak memutuskan rekod lain, tapi streak workout hanya dikira untuk hari workout.', 'Rest does not erase anything, but the workout streak only counts workout days.'),
+      T('Dalam kalendar, heatmap dan Records, hari rehat ditunjuk dengan warna <b>kelabu lembut</b> ikut tema warna kau.', 'In the calendar, heatmap and Records, rest days show in a <b>soft grey</b> that follows your colour combo.')]), ['w', T('Buka Workout', 'Open Workout')], 'rest rehat auto');
     add('g-sleep', 'guide', T('Rekod tidur', 'Log sleep'), ol([
       T('Utama → tab <b>Sleep</b>.', 'Home → the <b>Sleep</b> tab.'),
       T('Isi waktu <b>tidur</b> dan <b>bangun</b>. Tempoh dikira automatik, termasuk melepasi tengah malam.', 'Enter <b>bedtime</b> and <b>wake-up</b> time. Duration is worked out for you, including past midnight.'),
@@ -3158,10 +3160,10 @@
     renderSleepPerf();
     // workout heatmap: blue = workout (shows minutes), yellow = rest day
     renderHeat(DASH.days, dRange(), { el: 'cWHeat',
-      col: function (x) { return x.a === 'Workout' ? toneOf(penC, !x.min ? 2 : x.min < 10 ? 0 : x.min < 20 ? 1 : x.min < 40 ? 2 : 3) : toneOf(restC, 1); },
+      col: function (x) { return x.a === 'Workout' ? toneOf(penC, !x.min ? 2 : x.min < 10 ? 0 : x.min < 20 ? 1 : x.min < 40 ? 2 : 3) : restC; },
       lab: function (x) { return x.a === 'Workout' ? (x.min ? Math.round(x.min) + 'm' : '✓') : 'R'; },
       tip: function (x) { return isoToDmy(x.d) + ': ' + (x.a === 'Workout' ? 'Workout' + (x.min ? ' ' + Math.round(x.min) + ' min' : '') + (x.reps ? ', ' + x.reps + ' reps' : '') : 'Rehat'); },
-      legend: '<div class="hml"><span style="--c:' + toneOf(penC, 0) + '">&lt;10m</span><span style="--c:' + toneOf(penC, 1) + '">10–19m</span><span style="--c:' + toneOf(penC, 2) + '">20–39m</span><span style="--c:' + toneOf(penC, 3) + '">40m+</span><span style="--c:' + toneOf(restC, 1) + '">Rehat</span></div>' });
+      legend: '<div class="hml"><span style="--c:' + toneOf(penC, 0) + '">&lt;10m</span><span style="--c:' + toneOf(penC, 1) + '">10–19m</span><span style="--c:' + toneOf(penC, 2) + '">20–39m</span><span style="--c:' + toneOf(penC, 3) + '">40m+</span><span style="--c:' + restC + '">Rehat</span></div>' });
 
     var wdT = wd.filter(function (x) { return x.min || x.target; });
     lineSvg($('cDur'), wdT.map(function (x) { return ddmm(x.d); }),
@@ -3270,12 +3272,12 @@
   // ---------------- Settings (saved on this phone) ----------------
   // colour combos for the data: [name, workout light, workout dark, rest light, rest dark, rest text (light), accent light, accent dark]
   var PALS = [
-    ['Klasik', '#7c3aed', '#a78bfa', '#facc15', '#facc15', '#a16207', '#2f6fed', '#3b82f6'],
-    ['Lautan', '#0284c7', '#38bdf8', '#f97316', '#fb923c', '#c2410c', '#0d9488', '#14b8a6', ['#ffffff', '#e9f3f9', '#132330', '#08131b']],
-    ['Senja', '#ea580c', '#fb923c', '#6366f1', '#818cf8', '#4f46e5', '#e11d48', '#f43f5e', ['#fffaf4', '#f6ece2', '#2a1d19', '#160f0d']],
-    ['Neon', '#db2777', '#f472b6', '#06b6d4', '#22d3ee', '#0e7490', '#7c3aed', '#8b5cf6', ['#ffffff', '#f2eefb', '#1c1531', '#0c0919']],
-    ['Hutan', '#15803d', '#4ade80', '#eab308', '#facc15', '#a16207', '#0f766e', '#14b8a6', ['#fbfdf8', '#ecf2e7', '#17231b', '#0b140e']],
-    ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b', ['#ffffff', '#eaecef', '#23272e', '#14171b']]
+    ['Klasik', '#7c3aed', '#a78bfa', '#b4b1cc', '#8f8bb0', '#625e85', '#2f6fed', '#3b82f6'],
+    ['Lautan', '#0284c7', '#38bdf8', '#a9bccb', '#8399ab', '#55697a', '#0d9488', '#14b8a6', ['#ffffff', '#e9f3f9', '#132330', '#08131b']],
+    ['Senja', '#ea580c', '#fb923c', '#c8b6aa', '#a08a7c', '#7a6254', '#e11d48', '#f43f5e', ['#fffaf4', '#f6ece2', '#2a1d19', '#160f0d']],
+    ['Neon', '#db2777', '#f472b6', '#bcaed0', '#968ab0', '#6c5f86', '#7c3aed', '#8b5cf6', ['#ffffff', '#f2eefb', '#1c1531', '#0c0919']],
+    ['Hutan', '#15803d', '#4ade80', '#b2c1ae', '#8a9d86', '#5c6f58', '#0f766e', '#14b8a6', ['#fbfdf8', '#ecf2e7', '#17231b', '#0b140e']],
+    ['Grafit', '#334155', '#cbd5e1', '#a3abb7', '#858d99', '#5b6370', '#475569', '#64748b', ['#ffffff', '#eaecef', '#23272e', '#14171b']]
   ];   // optional 9th item: surfaces [panel light, background light, panel dark, background dark]
   var PAL_EN = ['Classic', 'Ocean', 'Sunset', 'Neon', 'Forest', 'Graphite'];
   var PAL_WALK = ['#14b8a6', '#8b5cf6', '#14b8a6', '#84cc16', '#0ea5e9', '#14b8a6'];
