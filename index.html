@@ -2967,7 +2967,7 @@
       T('Kalau sesi untuk tarikh tu dah ada, app tanya sama ada nak <b>tambah</b> (2 sesi) atau <b>ganti</b>.', 'If a session already exists for that date, the app asks whether to <b>add</b> it (2 sessions) or <b>replace</b> it.')]), ['k', T('Buka Walk', 'Open Walk')], 'steps langkah jam watch brisk');
     add('g-swipe', 'guide', T('Tukar tab dengan swipe', 'Switch tabs by swiping'), ul([
       T('Di mana-mana pada <b>Utama</b> atau <b>Dashboard</b>, swipe <b>ke kiri</b> untuk tab seterusnya (Workout → Tidur → Jalan) dan <b>ke kanan</b> untuk tab sebelumnya.', 'Anywhere on <b>Home</b> or the <b>Dashboard</b>, swipe <b>left</b> for the next tab (Workout → Sleep → Walk) and <b>right</b> for the previous one.'),
-      T('Swipe yang bermula atas kotak isian, carta, kalendar minggu, jadual yang boleh ditolak ke tepi atau bar bawah tak tukar tab — supaya semua tu masih berfungsi biasa.', 'A swipe that starts on an input box, a chart, the week strip, a sideways-scrolling table or the bottom bar does not change tabs — so those still work as usual.'),
+      T('Swipe juga jalan atas jadual workout dan kotak isian. Ia tak tukar tab bila kau sedang menaip dalam kotak, atau bila swipe bermula atas carta, kalendar minggu, jadual yang boleh ditolak ke tepi atau bar bawah — supaya semua tu masih berfungsi biasa.', 'Swiping also works over the workout table and input boxes. It does not change tabs while you are typing in a box, or when the swipe starts on a chart, the week strip, a sideways-scrolling table or the bottom bar — so those still work as usual.'),
       T('Tab Home dan Dashboard sentiasa sama.', 'Home and Dashboard always stay on the same tab.')]), ['w', T('Cuba di Utama', 'Try it on Home')], 'swipe slide tab tukar');
     add('g-tpl', 'guide', T('Template latihan', 'Workout templates'), ul([
       T('Tekan butang <b>Template</b> untuk pilih set latihan yang selalu kau buat — nama latihan diisi terus.', 'Tap <b>Template</b> to pick a routine you do often — the exercise names are filled in.'),
@@ -4368,7 +4368,9 @@
     function skip(t) {   // leave inputs, charts, sideways-scrolling things, sheets and the bottom bar alone
       for (var e = t; e && e !== document.body; e = e.parentNode) {
         if (e.nodeType !== 1) continue;
-        if (/^(INPUT|TEXTAREA|SELECT|CANVAS)$/.test(e.tagName) || e.tagName.toLowerCase() === 'svg' || e.isContentEditable) return true;
+        // a field only blocks the swipe while you are typing in it (or it is a slider); a sideways swipe over an idle field changes tab
+        if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.tagName) && (e === document.activeElement || e.type === 'range')) return true;
+        if (e.tagName === 'CANVAS' || e.tagName.toLowerCase() === 'svg' || e.isContentEditable) return true;
         if (e.classList.contains('sheet') || e.classList.contains('sheet-bg') || e.classList.contains('tabs') || e.id === 'ovl' || e.id === 'ovlBox') return true;
         if (e.scrollWidth > e.clientWidth + 2) { var ox = getComputedStyle(e).overflowX; if (ox === 'auto' || ox === 'scroll') return true; }
       }
