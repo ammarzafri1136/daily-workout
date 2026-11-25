@@ -1071,9 +1071,12 @@
   .tplsub { font-size:12px; color:var(--muted); }
   .tp .tpi { display:flex; gap:6px; align-items:stretch; margin-bottom:6px; }
   .tp .tpi .opt { flex:1; margin:0 !important; text-align:left; background:var(--tile) !important; color:var(--ink) !important; border:0 !important; border-radius:14px !important;
-    padding:12px 14px !important; box-shadow:inset 3px 0 0 var(--wk); transition:transform .12s, background .15s; }
+    padding:12px 14px !important; box-shadow:none !important; transition:transform .12s, background .15s; }
   .tp .tpi .opt:active { transform:scale(.98); background:color-mix(in srgb, var(--wk) 14%, var(--tile)) !important; }
   .tp .tpi .opt b, .tp .tpi .opt span > :first-child { color:var(--ink); }
+  .tp .tprs { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:4px 0 10px; } .tp .tprs small { font-size:12px; font-weight:700; color:var(--muted); margin-right:2px; }
+  .tp .tprb { all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:5px; padding:6px 11px; border-radius:999px; font-size:13px; font-weight:700; color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
+  .tp .tprb .ico { width:14px; height:14px; }
   .tp .tped, .tp .tpdel { border-radius:14px !important; }
   .tp .tped { background:color-mix(in srgb, var(--accent) 14%, var(--tile)) !important; }
   .tp .tpi .opt span { display:flex; flex-direction:column; gap:2px; } .tp .tpi .opt small { color:var(--muted); font-weight:500; font-size:12px; }
@@ -1506,7 +1509,11 @@
   @keyframes kcWob { 0%, 62%, 100% { transform:rotate(0); } 70% { transform:rotate(-14deg); } 78% { transform:rotate(11deg); } 86% { transform:rotate(-6deg); } 93% { transform:rotate(2deg); } }
   @keyframes kcDot { 0%, 60%, 100% { opacity:1; } 66% { opacity:.2; } 72% { opacity:1; } }
   @media (prefers-reduced-motion: reduce) { .ih-help .hq, .ih-help .hd { animation:none; } }
-  .kc .kcs input { width:100%; box-sizing:border-box; border-radius:12px; padding:11px 13px; font-size:15px; margin-bottom:10px; }
+  .kc .kcs { padding-top:8px; }   /* breathing room under the title and Close */
+  .kc .kcs input, .tp .tpnew input { width:100%; box-sizing:border-box; border-radius:12px; padding:11px 13px; font-size:15px; margin-bottom:10px;
+    border:1px solid transparent !important; outline:none !important; box-shadow:none !important; background:var(--tile) !important; color:var(--ink); -webkit-appearance:none; appearance:none; transition:border-color .15s, background .15s; }
+  .kc .kcs input:focus, .tp .tpnew input:focus { border-color:var(--accent) !important; background:var(--paper) !important; }
+  .tp .tpnew input { margin-bottom:0; }
   .kc .kctip { all:unset; box-sizing:border-box; width:100%; display:flex; gap:10px; align-items:flex-start; cursor:pointer; padding:12px !important; border-radius:14px !important; margin-bottom:4px;
     background:color-mix(in srgb, var(--accent) 12%, transparent) !important; font-size:14px; line-height:1.45; color:var(--ink); height:auto !important; text-align:left; }
   .kc .kctip small { display:block; font-size:11px; font-weight:800; letter-spacing:.5px; color:var(--accent); margin-bottom:2px; }
@@ -3311,6 +3318,8 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Template yang terpadam boleh dipulihkan: tekan butang Pulihkan dalam senarai Template (template asal yang hilang pun keluar di situ).', 'Deleted templates can be restored: tap Restore in the Template list (missing built-in templates show up there too).'], 'g-tpl'],
+    ['2026-11-25', ['Kemas kini kecil: kotak carian Knowledge Centre lebih kemas dan tak rapat dengan butang Tutup; senarai Template tiada lagi jalur bayang di tepi.', 'Small polish: the Knowledge Centre search box is cleaner and no longer crowds the Close button; the Template list no longer has the shadow-like side stripe.'], 'g-kc'],
     ['2026-11-25', ['Label Rehat dalam jadual Rekod kini tulisan biasa (tak bold) supaya senang dibezakan dengan Workout.', 'The Rest label in the Records table is now regular weight (not bold) so it is easier to tell apart from Workout.'], 'g-rest'],
     ['2026-11-25', ['Warna Rest Day kini warna workout yang dilembutkan (lebih putih dalam mod terang, lebih pudar dalam mod gelap) — senang dibezakan tapi tetap sepadan dengan tema.', 'Rest days now use a softened workout colour (whiter in light mode, muted in dark mode) — easy to tell apart and still matching the theme.'], 'g-rest'],
     ['2026-11-25', ['Semua ikon dalam app kini beranimasi bila ditekan (termasuk ikon workout, carta bar dan katil yang sebelum ni statik). Ikon di Apa yang baru disusun sebaris dengan butang ×.', 'Every icon in the app now animates when tapped (including the workout, bar-chart and bed icons that were static before). Icons in What’s new now line up with the × buttons.'], 'g-kc'],
@@ -3406,6 +3415,7 @@
     add('g-tpl', 'guide', T('Template latihan', 'Workout templates'), ul([
       T('Tekan butang <b>Template</b> untuk pilih set latihan yang selalu kau buat — nama latihan diisi terus.', 'Tap <b>Template</b> to pick a routine you do often — the exercise names are filled in.'),
       T('Ikon pen dalam senarai template untuk ubah, tambah atau padam template.', 'Use the pen icon in the template list to edit, add or delete templates.'),
+      T('Tersilap padam? Tekan <b>Pulihkan</b> di bawah senarai template untuk bawa balik (5 terakhir yang dipadam, dan template asal yang hilang).', 'Deleted one by mistake? Tap <b>Restore</b> under the template list to bring it back (the last 5 deleted, plus any missing built-in template).'),
       T('Sebelah butang Template ada ringkasan <b>workout terakhir</b> — tekan untuk detail penuh.', 'Beside Template is a summary of your <b>last workout</b> — tap for the full detail.')]), ['tpl', T('Buka Template', 'Open Templates')], 'template');
     add('g-timer', 'guide', T('Timer workout', 'Workout timer'), ul([
       T('Butang timer ada sebelah tajuk <b>Daily Workout</b> dan kekal di baris yang sama bila berjalan: ⏸ jeda, masa, ✓ isi SEBENAR. Butang set semula ↻ keluar bila timer dijeda.', 'The timer sits beside the <b>Daily Workout</b> title and stays on that row while running: ⏸ pause, the time, ✓ fill ACTUAL. The ↻ reset button appears when the timer is paused.'),
@@ -4638,6 +4648,13 @@
           '<button type="button" class="tpdel tped" data-e="' + i + '" aria-label="Ubah template">' + ic('pen') + '</button>' +
           '<button type="button" class="tpdel" data-d="' + i + '" aria-label="Padam template">' + ic('trash') + '</button></div>';
       }).join('') +
+      (function () {   // restore: recently deleted templates, plus any built-in template that is missing
+        var have = {}; L.forEach(function (t) { have[t.n.toLowerCase()] = 1; });
+        var R2 = (S.tplBin || []).filter(function (q) { return !have[q.t.n.toLowerCase()]; });
+        TPL_DEF.forEach(function (t, i) { if (!have[t.n.toLowerCase()] && !R2.some(function (q) { return q.t.n.toLowerCase() === t.n.toLowerCase(); })) R2.push({ t: t, i: i }); });
+        openTp.R = R2;
+        return R2.length ? '<div class="tprs"><small>' + (en ? 'Restore' : 'Pulihkan') + '</small>' + R2.map(function (q, k) { return '<button type="button" class="tprb" data-r="' + k + '">' + ic('refresh') + esc(q.t.n) + '</button>'; }).join('') + '</div>' : '';
+      })() +
       '<div class="tpnew"><input id="tpNewName" maxlength="24" placeholder="' + (en ? 'Name, e.g. Push Day' : 'Nama, contoh Push Day') + '"><button type="button" id="tpSave">' + (en ? 'Save this card' : 'Simpan kad ini') + '</button></div>' +
       '<small class="tpnote">' + (en ? 'Saves the workout names on the card (up to 5) as a new template.' : 'Simpan nama workout dalam kad (sehingga 5) sebagai template baru.') + '</small>';
     [].forEach.call($('tpList').querySelectorAll('[data-i]'), function (b) { b.onclick = function () { closeTp(); applyTpl(tpls()[+b.dataset.i]); }; });
@@ -4645,7 +4662,16 @@
     [].forEach.call($('tpList').querySelectorAll('[data-d]'), function (b) {
       b.onclick = function () {
         if (!b.dataset.arm) { b.dataset.arm = '1'; b.classList.add('arm'); setTimeout(function () { delete b.dataset.arm; b.classList.remove('arm'); }, 2500); return; }
-        var L2 = tpls().slice(); L2.splice(+b.dataset.d, 1); S.templates = L2; saveSettings(); paintTplBtn(); openTp();
+        var L2 = tpls().slice(), gone = L2.splice(+b.dataset.d, 1)[0]; S.templates = L2;
+        S.tplBin = [{ t: gone, i: +b.dataset.d }].concat((S.tplBin || []).filter(function (q) { return q.t.n.toLowerCase() !== gone.n.toLowerCase(); })).slice(0, 5);   // kept so it can be restored
+        saveSettings(); paintTplBtn(); openTp();
+      };
+    });
+    [].forEach.call($('tpList').querySelectorAll('[data-r]'), function (b) {
+      b.onclick = function () {
+        var q = openTp.R[+b.dataset.r], L2 = tpls().slice(); L2.splice(Math.min(q.i, L2.length), 0, q.t); S.templates = L2;
+        S.tplBin = (S.tplBin || []).filter(function (z) { return z.t.n.toLowerCase() !== q.t.n.toLowerCase(); });
+        saveSettings(); paintTplBtn(); openTp();
       };
     });
     $('tpSave').onclick = function () {
