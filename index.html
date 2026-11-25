@@ -1032,7 +1032,12 @@
   .tplbtn .ico { width:16px; height:16px; color:var(--accent); }
   .tplsub { font-size:12px; color:var(--muted); }
   .tp .tpi { display:flex; gap:6px; align-items:stretch; margin-bottom:6px; }
-  .tp .tpi .opt { flex:1; margin:0 !important; text-align:left; }
+  .tp .tpi .opt { flex:1; margin:0 !important; text-align:left; background:var(--tile) !important; color:var(--ink) !important; border:0 !important; border-radius:14px !important;
+    padding:12px 14px !important; box-shadow:inset 3px 0 0 var(--wk); transition:transform .12s, background .15s; }
+  .tp .tpi .opt:active { transform:scale(.98); background:color-mix(in srgb, var(--wk) 14%, var(--tile)) !important; }
+  .tp .tpi .opt b, .tp .tpi .opt span > :first-child { color:var(--ink); }
+  .tp .tped, .tp .tpdel { border-radius:14px !important; }
+  .tp .tped { background:color-mix(in srgb, var(--accent) 14%, var(--tile)) !important; }
   .tp .tpi .opt span { display:flex; flex-direction:column; gap:2px; } .tp .tpi .opt small { color:var(--muted); font-weight:500; font-size:12px; }
   .tp .tpdel { width:44px; flex:none; padding:0 !important; display:flex; align-items:center; justify-content:center; background:var(--tile) !important; color:var(--muted) !important; border-radius:12px !important; }
   .tp .tpdel.arm { background:#ef4444 !important; color:#fff !important; }
@@ -1401,6 +1406,32 @@
   .kc .kca > span { flex:1; min-width:0; } .kc .kca small { display:block; font-size:12px; font-weight:500; color:var(--muted); margin-top:2px; }
   .kc .kcn .kca { font-weight:600; font-size:13.5px; line-height:1.4; }
   .kc .kcgo { width:15px; height:15px; color:var(--muted); flex:none; }
+  .kc .kcanw { position:relative; background:var(--tile); border-radius:16px; padding:6px 6px 26px; margin-bottom:8px; }
+  .kc svg.kcan { display:block; width:100%; height:auto; max-height:240px; margin:0 auto; }
+  .kc .kcanl { position:absolute; left:12px; bottom:8px; font-size:11.5px; font-weight:700; color:var(--muted); }
+  svg.kcan .kb { fill:none; stroke:var(--wk); stroke-width:5.5; stroke-linecap:round; stroke-linejoin:round; }
+  svg.kcan .kfar { opacity:.42; } svg.kcan.front .kfar { opacity:1; }
+  svg.kcan .khd { fill:var(--wk); }
+  svg.kcan .kg0 { stroke:var(--rule); stroke-width:2; stroke-linecap:round; }
+  svg.kcan .kpr { stroke:var(--muted); stroke-width:3; stroke-linecap:round; } svg.kcan .kprf { fill:var(--muted); opacity:.45; }
+  svg.kcan .kdb { fill:var(--ink); opacity:.8; }
+  svg.kcan .kgl { stroke:var(--accent); stroke-width:1.6; stroke-dasharray:4 4; opacity:.9; }
+  .kc .kcyt { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:800; color:var(--accent); text-decoration:none; margin:0 2px 10px; }
+  .kc .kcyt .ico { width:15px; height:15px; }
+  .kc .kcfig { margin:0 0 12px; background:var(--tile); border-radius:16px; padding:10px 10px 8px; }
+  .kc .kcfig svg { display:block; width:100%; height:auto; overflow:visible; }
+  .kc .kcfig figcaption { font-size:12px; color:var(--muted); margin-top:4px; line-height:1.4; }
+  .kcfig .kft { fill:var(--ink); font-size:12px; } .kcfig .kfs { fill:var(--muted); font-size:10.5px; font-weight:600; } .kcfig .kfb { fill:var(--ink); font-size:12px; font-weight:800; }
+  .kcfig .kfbig { fill:var(--ink); font-size:20px; font-weight:900; } .kcfig .kfin { fill:#fff; font-size:11px; font-weight:800; }
+  .kcfig .kfok { fill:#16a34a; font-size:13px; font-weight:800; } .kcfig .kfno { fill:#ef4444; font-size:12px; font-weight:700; text-decoration:line-through; } .kcfig .kfdn { fill:#ef4444; font-size:13px; font-weight:800; }
+  body.dark .kcfig .kfok { fill:#4ade80; }
+  .kcfig .kfa { fill:var(--ink); } .kcfig .kfw { fill:var(--walk); } .kcfig .kfw2 { fill:var(--wk); } .kcfig .kfr { fill:var(--rest); } .kcfig .kfe { fill:none; stroke:var(--rule); stroke-width:1.5; }
+  .kcfig .kfe2 { fill:var(--muted); opacity:.45; } .kcfig .kftrk { fill:var(--rule); } .kcfig .kfband { fill:#22c55e; opacity:.16; }
+  .kcfig .kfarc0 { fill:none; stroke:var(--rule); stroke-width:14; } .kcfig .kfarc1 { fill:none; stroke:var(--walk); stroke-width:14; }
+  .kcfig .kfnd { stroke:var(--ink); stroke-width:3; stroke-linecap:round; }
+  .kcfig .kftrkc { fill:none; stroke:var(--rule); stroke-width:12; } .kcfig .kfwc { fill:none; stroke:var(--wk); stroke-width:12; stroke-linecap:round; }
+  .kcfig .kfgl { stroke:var(--rule); stroke-dasharray:4 4; } .kcfig .kfln { fill:none; stroke:var(--sleepc); stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; } .kcfig .kfsore { stroke:#f97316; }
+
   .kc .kcb { font-size:14.5px; line-height:1.6; color:var(--ink); } .kc .kcb p { margin:2px 0 10px; } .kc .kcb ol, .kc .kcb ul { margin:4px 0 10px; padding-left:20px; } .kc .kcb li { margin-bottom:6px; }
   .kc .kc2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px; } .kc .kc2 div { background:var(--tile); border-radius:12px; padding:9px 10px; font-size:13px; line-height:1.4; } .kc .kc2 span { display:block; font-size:11.5px; font-weight:800; color:var(--muted); margin-bottom:2px; }
   .kc .kcgo2, .kl.tip .kcmore { all:unset; box-sizing:border-box; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin:6px 0 4px; padding:10px 14px; border-radius:999px; background:var(--accent); color:#fff; font-weight:800; font-size:14px; }
@@ -2870,6 +2901,9 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Swipe kiri/kanan dalam panel aktiviti (Utama & Dashboard) untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right inside an activity panel (Home & Dashboard) to switch Workout, Sleep and Walk.'], 'g-swipe'],
+    ['2026-11-25', ['Pustaka latihan kini ada animasi form yang betul (main sendiri) untuk 20 latihan, dan artikel ada grafik dari data kau.', 'The exercise library now has auto-playing correct-form animations for 20 exercises, and articles have graphics from your own data.'], 'k-tech'],
+    ['2026-11-25', ['Senarai Template ikut warna tema.', 'The template list follows your colour theme.'], 'g-tpl'],
     ['2026-11-25', ['Hari rehat kini berwarna kelabu lembut ikut tema (Graphite: kelabu), jadi lebih jelas beza dengan hari workout.', 'Rest days now use a soft grey that matches each colour combo (Graphite: grey), so they stand apart from workout days.'], 'g-rest'],
     ['2026-11-25', ['Knowledge Centre (butang ?) dengan panduan, pustaka latihan, kamus istilah dan petua harian.', 'Knowledge Centre (the ? button) with guides, an exercise library, a glossary and a daily tip.'], 'g-workout'],
     ['2026-11-25', ['Personal Best kini ada rekod brisk walk & langkah (langkah terbanyak, sesi paling lama, paling laju, paling jauh, minggu terbaik, streak target).', 'Personal Best now includes brisk walk & step records (most steps, longest session, fastest, furthest, best week, goal streak).'], 'g-pb'],
@@ -2920,6 +2954,10 @@
       T('<b>Langkah brisk + masa</b>: untuk sesi jalan laju — app kira rentak, kelajuan, jarak dan kalori.', '<b>Brisk steps + time</b>: for a brisk-walk session — the app works out pace, speed, distance and calories.'),
       T('Jumlah hari = nilai jam, atau langkah brisk jika lebih tinggi. Ia <b>tak dicampur</b> sebab jam dah kira langkah brisk walk.', 'The day’s total = the watch value, or brisk steps if higher. They are <b>not added</b> because the watch already counts the brisk-walk steps.'),
       T('Kalau sesi untuk tarikh tu dah ada, app tanya sama ada nak <b>tambah</b> (2 sesi) atau <b>ganti</b>.', 'If a session already exists for that date, the app asks whether to <b>add</b> it (2 sessions) or <b>replace</b> it.')]), ['k', T('Buka Walk', 'Open Walk')], 'steps langkah jam watch brisk');
+    add('g-swipe', 'guide', T('Tukar tab dengan swipe', 'Switch tabs by swiping'), ul([
+      T('Dalam panel aktiviti di <b>Utama</b> atau <b>Dashboard</b>, swipe <b>ke kiri</b> untuk tab seterusnya (Workout → Tidur → Jalan) dan <b>ke kanan</b> untuk tab sebelumnya.', 'Inside an activity panel on <b>Home</b> or the <b>Dashboard</b>, swipe <b>left</b> for the next tab (Workout → Sleep → Walk) and <b>right</b> for the previous one.'),
+      T('Swipe yang bermula atas kotak isian, carta atau jadual yang boleh ditolak ke tepi tak tukar tab — supaya kau masih boleh menaip dan lihat carta.', 'A swipe that starts on an input box, a chart or a sideways-scrolling table does not change tabs — so typing and reading charts still work.'),
+      T('Tab Home dan Dashboard sentiasa sama.', 'Home and Dashboard always stay on the same tab.')]), ['w', T('Cuba di Utama', 'Try it on Home')], 'swipe slide tab tukar');
     add('g-tpl', 'guide', T('Template latihan', 'Workout templates'), ul([
       T('Tekan butang <b>Template</b> untuk pilih set latihan yang selalu kau buat — nama latihan diisi terus.', 'Tap <b>Template</b> to pick a routine you do often — the exercise names are filled in.'),
       T('Ikon pen dalam senarai template untuk ubah, tambah atau padam template.', 'Use the pen icon in the template list to edit, add or delete templates.'),
@@ -3036,6 +3074,234 @@
     ['High knees', 'High knees', ['high knee', 'high knees'], ['Jantung, kaki, teras', 'Cardio, legs, core'], [['Angkat lutut ke paras pinggang', 'Mendarat atas hujung kaki', 'Hayun tangan'], ['Drive knees to hip height', 'Land on the balls of your feet', 'Pump your arms']], [['Badan condong ke belakang', 'Mendarat berat'], ['Leaning back', 'Landing heavily']], ['Berjalan di tempat dengan lutut tinggi', 'March in place with high knees'], ['Lebih laju atau lebih lama', 'Faster or longer']],
     ['Superman', 'Superman', ['superman', 'back extension'], ['Belakang bawah, punggung', 'Lower back, glutes'], [['Meniarap, tangan ke depan', 'Angkat tangan dan kaki sedikit, tahan 2 saat', 'Pandang lantai'], ['Lie face down, arms forward', 'Lift arms and legs slightly, hold 2 seconds', 'Look at the floor']], [['Angkat kepala terlalu tinggi', 'Pergerakan menghentak'], ['Lifting the head too high', 'Jerky movement']], ['Angkat tangan sahaja atau kaki sahaja', 'Lift arms only or legs only'], ['Tahan lebih lama', 'Longer holds']]
   ];
+  // ---------------- Exercise form previews: a small stick-figure rig (2-bone IK) animated between key poses ----------------
+  // Pose: H hip [x,y], T torso angle (deg, hip -> shoulder), h hand targets [near, far], f foot targets [near, far],
+  //       pe / pk elbow / knee bend preference vectors [near, far]. A target is [x,y] or {f: along torso 0..1, n: offset to the side}.
+  // Ground is y = 110. Facing right. front:true = front view (shoulders / hips spread left and right).
+  var KC_ANIM = (function () {
+    var EB = [[-1, 0], [-1, 0]], KF = [[1, 0], [1, 0]];
+    var stand = { H: [100, 69], T: -90, h: [[102, 70], [99, 70]], f: [[101, 110], [98, 110]], pe: EB, pk: KF };
+    var pushUp = { H: [103, 92.3], T: -26.2, h: [[130, 110], [128, 110]], f: [[67, 110], [65, 110]], pe: [[-0.3, -1], [-0.3, -1]], pk: [[0, -1], [0, -1]] };
+    var pushDown = { H: [106.7, 105.4], T: -6.5, h: [[130, 110], [128, 110]], f: [[67, 110], [65, 110]], pe: [[-0.3, -1], [-0.3, -1]], pk: [[0, -1], [0, -1]] };
+    var plank = { H: [100.9, 100.9], T: -13.3, h: [[145, 110], [143, 110]], f: [[62, 110], [60, 110]], pe: [[0, 1], [0, 1]], pk: [[0, -1], [0, -1]] };
+    var hi = function (o, d) { var r = JSON.parse(JSON.stringify(o)); for (var k in d) r[k] = d[k]; return r; };
+    var squatDn = { H: [78, 92], T: -55, h: [[127, 70], [125, 70]], f: [[101, 110], [98, 110]], pe: EB, pk: [[1, -0.2], [1, -0.2]] };
+    var bSquat = { H: [88, 94], T: -35, h: [[122, 110], [120, 110]], f: [[101, 110], [98, 110]], pe: EB, pk: [[1, -0.2], [1, -0.2]] };
+    var bPlank = hi(pushUp, { H: [95, 92.3], h: [[122, 110], [120, 110]], f: [[59, 110], [57, 110]] });
+    var lieUp = { pk: [[0, -1], [0, -1]], pe: [[0, -1], [0, -1]] };
+    return {
+      'Push up': { fr: [pushUp, pushDown], ms: [900, 900], g: [['F', 'S']] },
+      'Squat': { fr: [stand, squatDn], ms: [1000, 1000], g: [['F', 'K', 'v']] },
+      'Lunge': { fr: [{ H: [97, 76], T: -90, h: [{ f: 0.05, n: -6 }, { f: 0.05, n: -6 }], f: [[117, 110], [77, 110]], pe: [[-1, 0.3], [-1, 0.3]], pk: [[1, 0], [0.2, 1]] },
+                     { H: [96, 92], T: -90, h: [{ f: 0.05, n: -6 }, { f: 0.05, n: -6 }], f: [[117, 110], [77, 110]], pe: [[-1, 0.3], [-1, 0.3]], pk: [[1, 0], [0.2, 1]] }], ms: [1000, 1000], g: [['F', 'K', 'v']] },
+      'Plank': { fr: [plank, hi(plank, { H: [100.9, 99.9] })], ms: [1400, 1400], g: [['F', 'S']] },
+      'Side plank': { fr: [hi(plank, { h: [[145, 110], { f: 1, n: -30 }], pe: [[0, 1], [0, -1]] }), hi(plank, { H: [102, 105.5], T: -8, h: [[145, 110], { f: 1, n: -30 }], pe: [[0, 1], [0, -1]] })], ms: [1100, 1100], g: [['F', 'S']] },
+      'Burpee': { fr: [stand, bSquat, bPlank, bSquat, { H: [100, 58], T: -90, h: [[104, 0], [101, 0]], f: [[101, 99], [98, 99]], pe: [[1, 0], [1, 0]], pk: KF }, stand], ms: [450, 400, 450, 400, 380, 500] },
+      'Sit up': { fr: [{ H: [90, 104], T: 180, h: [{ f: 0.75, n: 3 }, { f: 0.75, n: 3 }], f: [[120, 110], [118, 110]], pe: lieUp.pe, pk: lieUp.pk },
+                       { H: [90, 104], T: 290, h: [{ f: 0.75, n: 3 }, { f: 0.75, n: 3 }], f: [[120, 110], [118, 110]], pe: [[1, -0.3], [1, -0.3]], pk: lieUp.pk }], ms: [1000, 1000] },
+      'Crunch': { fr: [{ H: [90, 104], T: 180, h: [{ f: 1.25, n: 4 }, { f: 1.25, n: 4 }], f: [[120, 110], [118, 110]], pe: lieUp.pe, pk: lieUp.pk },
+                       { H: [90, 104], T: 212, h: [{ f: 1.25, n: 4 }, { f: 1.25, n: 4 }], f: [[120, 110], [118, 110]], pe: lieUp.pe, pk: lieUp.pk }], ms: [800, 800] },
+      'Jumping jack': { front: true, fr: [{ H: [100, 69], T: -90, h: [[109, 72], [91, 72]], f: [[104, 110], [96, 110]], pe: [[1, 0], [-1, 0]], pk: [[1, 0], [-1, 0]] },
+                                          { H: [100, 64], T: -90, h: [[119, 6], [81, 6]], f: [[120, 106], [80, 106]], pe: [[1, 0], [-1, 0]], pk: [[1, 0], [-1, 0]] }], ms: [380, 380] },
+      'Mountain climber': { fr: [hi(pushUp, { H: [104, 90], T: -24, f: [[114, 104], [67, 110]], pk: [[1, 0.3], [0, -1]] }), hi(pushUp, { H: [104, 90], T: -24, f: [[67, 110], [114, 104]], pk: [[0, -1], [1, 0.3]] })], ms: [330, 330], g: [['H', 'S']] },
+      'Pull up': { bar: 4, fr: [{ H: [100, 65], T: -90, h: [[101, 4], [99, 4]], f: [[100, 103], [97, 102]], pe: [[1, 0.6], [1, 0.6]], pk: [[-1, 0], [-1, 0]] },
+                                { H: [100, 47], T: -90, h: [[101, 4], [99, 4]], f: [[99, 85], [96, 84]], pe: [[1, 0.6], [1, 0.6]], pk: [[-1, 0], [-1, 0]] }], ms: [1100, 1000] },
+      'Dips': { bench: [50, 82, 44], fr: [{ H: [100, 81], T: -90, h: [[93, 82], [91, 82]], f: [[124, 110], [122, 110]], pe: [[-1, 0], [-1, 0]], pk: [[0.3, -1], [0.3, -1]] },
+                                          { H: [100, 99], T: -92, h: [[93, 82], [91, 82]], f: [[124, 110], [122, 110]], pe: [[-1, 0], [-1, 0]], pk: [[0.3, -1], [0.3, -1]] }], ms: [900, 900] },
+      'Glute bridge': { fr: [{ H: [95, 104], T: 180, h: [[88, 108], [86, 108]], f: [[112, 110], [110, 110]], pe: [[0, -1], [0, -1]], pk: [[0, -1], [0, -1]] },
+                             { H: [87.4, 84], T: 138.2, h: [[88, 108], [86, 108]], f: [[112, 110], [110, 110]], pe: [[0, -1], [0, -1]], pk: [[0, -1], [0, -1]] }], ms: [1000, 1000], g: [['K', 'S']] },
+      'Bicep curl': { db: 1, fr: [hi(stand, { h: [[102, 71], [99, 71]], pe: [[0, 1], [0, 1]] }), hi(stand, { h: [[111, 47], [108, 47]], pe: [[-0.2, 1], [-0.2, 1]] })], ms: [900, 1100] },
+      'Shoulder press': { front: true, db: 2, fr: [{ H: [100, 69], T: -90, h: [[115, 37], [85, 37]], f: [[105, 110], [95, 110]], pe: [[1, 1], [-1, 1]], pk: [[1, 0], [-1, 0]] },
+                                                  { H: [100, 69], T: -90, h: [[106, 4], [94, 4]], f: [[105, 110], [95, 110]], pe: [[1, 1], [-1, 1]], pk: [[1, 0], [-1, 0]] }], ms: [1000, 1000] },
+      'Deadlift (dumbbell)': { db: 1, fr: [hi(stand, { H: [98, 70], h: [[101, 72], [99, 72]] }), { H: [84, 74], T: -20, h: [[112, 95], [110, 95]], f: [[101, 110], [98, 110]], pe: EB, pk: [[1, 0], [1, 0]] }], ms: [1100, 1100], g: [['H', 'S']] },
+      'Russian twist': { front: true, fr: [{ H: [100, 98], T: -80, h: [[120, 90], [118, 91]], f: [[121, 108], [79, 108]], pe: [[1, 1], [1, 1]], pk: [[0.4, -1], [-0.4, -1]] },
+                                           { H: [100, 98], T: -100, h: [[82, 91], [80, 90]], f: [[121, 108], [79, 108]], pe: [[-1, 1], [-1, 1]], pk: [[0.4, -1], [-0.4, -1]] }], ms: [700, 700] },
+      'Wall sit': { wall: 60, fr: [{ H: [68, 88], T: -90, h: [{ f: 0.7, n: 5 }, { f: 0.7, n: 5 }], f: [[89, 110], [87, 110]], pe: [[1, 0.5], [1, 0.5]], pk: [[1, -1], [1, -1]] },
+                                   { H: [68, 88.6], T: -90, h: [{ f: 0.7, n: 5 }, { f: 0.7, n: 5 }], f: [[89, 110], [87, 110]], pe: [[1, 0.5], [1, 0.5]], pk: [[1, -1], [1, -1]] }], ms: [1300, 1300], g: [['H', 'K']] },
+      'High knees': { fr: [{ H: [100, 68], T: -88, h: [[88, 64], [114, 56]], f: [[117, 88], [99, 110]], pe: [[-1, 0.5], [0, 1]], pk: [[1, 0], [1, 0]] },
+                           { H: [100, 68], T: -88, h: [[114, 56], [88, 64]], f: [[99, 110], [117, 88]], pe: [[0, 1], [-1, 0.5]], pk: [[1, 0], [1, 0]] }], ms: [300, 300] },
+      'Superman': { fr: [{ H: [95, 104], T: 180, h: [[36, 107], [38, 107]], f: [[135, 107], [133, 107]], pe: [[0, -1], [0, -1]], pk: [[0, 1], [0, 1]] },
+                         { H: [95, 104], T: 191, h: [[38, 90], [40, 91]], f: [[133, 97], [131, 98]], pe: [[0, -1], [0, -1]], pk: [[0, 1], [0, 1]] }], ms: [1000, 1000] },
+      'walk': { fr: [{ H: [100, 70], T: -86, h: [[92, 66], [111, 58]], f: [[114, 110], [86, 108]], pe: [[0, 1], [-1, 0.5]], pk: [[1, 0], [1, 0]] },
+                     { H: [100, 69], T: -86, h: [[111, 58], [92, 66]], f: [[86, 108], [114, 110]], pe: [[-1, 0.5], [0, 1]], pk: [[1, 0], [1, 0]] }], ms: [520, 520], g: [['H', 'S']] }
+    };
+  })();
+  var KC_RUN = [], KC_RAF = 0;
+  function kcRig(p, front) {
+    var D = Math.PI / 180, TOR = 30, UA = 16, FA = 15, TH = 20, SH = 20;
+    var dir = function (a) { return [Math.cos(a * D), Math.sin(a * D)]; }, t = dir(p.T), nm = dir(p.T + 90);
+    var S = [p.H[0] + TOR * t[0], p.H[1] + TOR * t[1]], Hd = [S[0] + 9 * t[0], S[1] + 9 * t[1]];
+    var res = function (q) { return Array.isArray(q) ? q : [p.H[0] + q.f * TOR * t[0] + q.n * nm[0], p.H[1] + q.f * TOR * t[1] + q.n * nm[1]]; };
+    function ik(A, T, a, b, pref) {
+      var dx = T[0] - A[0], dy = T[1] - A[1], d = Math.max(Math.hypot(dx, dy), 1e-3), dd = Math.min(Math.max(d, Math.abs(a - b) + .01), a + b - .01);
+      var th = Math.atan2(dy, dx), k = Math.acos(Math.max(-1, Math.min(1, (a * a + dd * dd - b * b) / (2 * a * dd))));
+      var E1 = [A[0] + a * Math.cos(th + k), A[1] + a * Math.sin(th + k)], E2 = [A[0] + a * Math.cos(th - k), A[1] + a * Math.sin(th - k)];
+      var E = ((E1[0] - E2[0]) * pref[0] + (E1[1] - E2[1]) * pref[1]) >= 0 ? E1 : E2, ea = Math.atan2(T[1] - E[1], T[0] - E[0]);
+      return [A, E, [E[0] + b * Math.cos(ea), E[1] + b * Math.sin(ea)]];
+    }
+    var w = front ? 8 : 0, hw = front ? 5 : 0;
+    return { S: S, H: p.H, Hd: Hd,
+      an: ik([S[0] + w, S[1]], res(p.h[0]), UA, FA, p.pe[0]), af: ik([S[0] - w, S[1]], res(p.h[1]), UA, FA, p.pe[1]),
+      ln: ik([p.H[0] + hw, p.H[1]], res(p.f[0]), TH, SH, p.pk[0]), lf: ik([p.H[0] - hw, p.H[1]], res(p.f[1]), TH, SH, p.pk[1]), w: w };
+  }
+  function kcLerp(a, b, k) {
+    if (typeof a === 'number') return a + (b - a) * k;
+    if (Array.isArray(a)) return a.map(function (v, i) { return kcLerp(v, b[i], k); });
+    if (a && typeof a === 'object') { if (Array.isArray(b)) return b; var o = {}; for (var x in a) o[x] = kcLerp(a[x], b[x], k); return o; }
+    return a;
+  }
+  function kcAnimSvg(name) {
+    var A = KC_ANIM[name]; if (!A) return '';
+    var props = '<line x1="8" y1="110.5" x2="192" y2="110.5" class="kg0"/>' +
+      (A.bar != null ? '<line x1="70" y1="' + A.bar + '" x2="130" y2="' + A.bar + '" class="kpr" stroke-width="4"/>' : '') +
+      (A.bench ? '<rect x="' + A.bench[0] + '" y="' + A.bench[1] + '" width="' + A.bench[2] + '" height="5" rx="2" class="kprf"/><line x1="' + (A.bench[0] + 5) + '" y1="' + A.bench[1] + '" x2="' + (A.bench[0] + 5) + '" y2="110" class="kpr"/><line x1="' + (A.bench[0] + A.bench[2] - 5) + '" y1="' + A.bench[1] + '" x2="' + (A.bench[0] + A.bench[2] - 5) + '" y2="110" class="kpr"/>' : '') +
+      (A.wall != null ? '<rect x="' + (A.wall - 8) + '" y="10" width="8" height="100" class="kprf"/>' : '');
+    var lim = function (c) { return '<polyline class="' + c + '" points=""/>'; };
+    return '<svg class="kcan" viewBox="0 -14 200 130" data-anim="' + esc(name) + '" role="img" aria-label="' + esc(name) + '">' + props +
+      '<g class="kgd"></g>' + lim('kb kfar kaf') + lim('kb kfar klf') + '<line class="kb ktor"/>' + (A.front ? '<line class="kb ksh"/><line class="kb khp"/>' : '') + lim('kb kln') + lim('kb kan') + '<circle class="khd" r="6.5"/>' +
+      (A.db ? '<rect class="kdb kdb1" width="10" height="5" rx="1.5"/>' + (A.db === 2 || !A.front ? '<rect class="kdb kdb2" width="10" height="5" rx="1.5"/>' : '') : '') + '</svg>';
+  }
+  function kcLerpAt(A, t) {
+    var n = A.fr.length, tot = A.ms.reduce(function (a, b) { return a + b; }, 0), x = t % tot, i = 0;
+    while (x > A.ms[i]) { x -= A.ms[i]; i++; }
+    var k = x / A.ms[i]; k = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    return kcLerp(A.fr[i], A.fr[(i + 1) % n], k);
+  }
+  function kcDraw(svg, A, t) {
+    var p = kcLerpAt(A, t), R = kcRig(p, A.front);
+    var pts = function (L) { return L.map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' '); };
+    var q = function (c) { return svg.querySelector(c); };
+    q('.kan').setAttribute('points', pts(R.an)); q('.kaf').setAttribute('points', pts(R.af));
+    q('.kln').setAttribute('points', pts(R.ln)); q('.klf').setAttribute('points', pts(R.lf));
+    var tor = q('.ktor'); tor.setAttribute('x1', R.H[0]); tor.setAttribute('y1', R.H[1]); tor.setAttribute('x2', R.S[0]); tor.setAttribute('y2', R.S[1]);
+    if (A.front) { var sb = q('.ksh'), hb = q('.khp');
+      sb.setAttribute('x1', R.S[0] - R.w); sb.setAttribute('x2', R.S[0] + R.w); sb.setAttribute('y1', R.S[1]); sb.setAttribute('y2', R.S[1]);
+      hb.setAttribute('x1', R.H[0] - 5); hb.setAttribute('x2', R.H[0] + 5); hb.setAttribute('y1', R.H[1]); hb.setAttribute('y2', R.H[1]); }
+    var hd = q('.khd'); hd.setAttribute('cx', R.Hd[0]); hd.setAttribute('cy', R.Hd[1]);
+    [['.kdb1', R.an[2]], ['.kdb2', R.af[2]]].forEach(function (d) { var e = q(d[0]); if (e) { e.setAttribute('x', d[1][0] - 5); e.setAttribute('y', d[1][1] - 2.5); } });
+    var J = { S: R.S, H: R.H, F: R.ln[2], K: R.ln[1] };
+    q('.kgd').innerHTML = (A.g || []).map(function (g) {
+      var a = J[g[0]], b = J[g[1]];
+      if (g[2] === 'v') return '<line class="kgl" x1="' + a[0].toFixed(1) + '" y1="' + (a[1] + 2).toFixed(1) + '" x2="' + a[0].toFixed(1) + '" y2="' + (b[1] - 8).toFixed(1) + '"/>';
+      var dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, ex = 8 * dx / L, ey = 8 * dy / L;
+      return '<line class="kgl" x1="' + (a[0] - ex).toFixed(1) + '" y1="' + (a[1] - ey).toFixed(1) + '" x2="' + (b[0] + ex).toFixed(1) + '" y2="' + (b[1] + ey).toFixed(1) + '"/>';
+    }).join('');
+  }
+  function kcAnimStart(root) {
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    [].forEach.call(root.querySelectorAll('svg.kcan'), function (svg) {
+      var A = KC_ANIM[svg.dataset.anim]; if (!A) return;
+      if (A.front) svg.classList.add('front');
+      if (!svg.__vb) {   // crop to the figure's real height over the whole loop (floor moves get a short frame)
+        var tot = A.ms.reduce(function (a, b) { return a + b; }, 0), top = A.bar != null ? A.bar - 4 : 999;
+        for (var q = 0; q < 40; q++) { kcDraw(svg, A, tot * q / 40 + .001); var r = kcRig(kcLerpAt(A, tot * q / 40 + .001), A.front);
+          [r.Hd[1] - 7, r.an[2][1], r.af[2][1], r.ln[1][1], r.lf[1][1], r.S[1]].forEach(function (v) { if (v < top) top = v; }); }
+        if (A.wall != null) top = Math.min(top, 10); if (A.bench) top = Math.min(top, A.bench[1]);
+        top = Math.max(-14, Math.floor(top - 10)); svg.setAttribute('viewBox', '0 ' + top + ' 200 ' + (118 - top)); svg.__vb = 1;
+      }
+      kcDraw(svg, A, still ? A.ms[0] : 0);
+      if (!still) KC_RUN.push({ svg: svg, A: A, t0: performance.now() });
+    });
+    if (!KC_RAF && KC_RUN.length) KC_RAF = requestAnimationFrame(function tick(now) {
+      KC_RUN = KC_RUN.filter(function (r) { return r.svg.isConnected; });
+      if (!KC_RUN.length || !$('detail').classList.contains('on')) { KC_RUN = []; KC_RAF = 0; return; }
+      KC_RUN.forEach(function (r) { kcDraw(r.svg, r.A, now - r.t0); });
+      KC_RAF = requestAnimationFrame(tick);
+    });
+  }
+  // ---------------- Knowledge Centre article graphics (drawn from the person's own data where there is some) ----------------
+  function kcFig(id) {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, t = REC_TODAY || todayKey(), lo = slLo(), hi = slHi(), g = S.stepGoal || 8000;
+    var svg = function (h, body, cap) { return '<figure class="kcfig"><svg viewBox="0 0 320 ' + h + '" role="img">' + body + '</svg>' + (cap ? '<figcaption>' + cap + '</figcaption>' : '') + '</figure>'; };
+    var tx = function (x, y, s, cls, anc) { return '<text x="' + x + '" y="' + y + '" class="' + (cls || 'kft') + '"' + (anc ? ' text-anchor="' + anc + '"' : '') + '>' + s + '</text>'; };
+    var nights = (SLEEP_ALL || []).slice().sort(function (a, b) { return a.d < b.d ? -1 : 1; }).slice(-7);
+    var walks = (WALK_ALL || []).slice().sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+    var mon = function (k) { var dw = (new Date(k + 'T00:00:00').getDay() + 6) % 7; return addDays(k, -dw); };
+    if (id === 'm-sleep') {          // target band with the person's recent average
+      var x = function (h) { return 20 + (Math.max(4, Math.min(11, h)) - 4) / 7 * 280; };
+      var avg = nights.length ? nights.reduce(function (a, n) { return a + n.h; }, 0) / nights.length : null;
+      var b = '<rect x="20" y="34" width="' + (x(lo) - 20) + '" height="16" rx="4" fill="' + sleepColor(lo - 1) + '" opacity=".85"/>' +
+        '<rect x="' + x(lo) + '" y="34" width="' + (x(hi) - x(lo)) + '" height="16" fill="' + sleepColor((lo + hi) / 2) + '"/>' +
+        '<rect x="' + x(hi) + '" y="34" width="' + (300 - x(hi)) + '" height="16" rx="4" fill="' + sleepColor(hi + 1) + '" opacity=".85"/>';
+      [4, 5, 6, 7, 8, 9, 10, 11].forEach(function (h) { b += tx(x(h), 66, h + T('j', 'h'), 'kfs', 'middle'); });
+      b += tx(x(lo) / 2 + 10, 28, T('Kurang', 'Short'), 'kfs', 'middle') + tx((x(lo) + x(hi)) / 2, 28, T('Target', 'Target'), 'kfb', 'middle') + tx((x(hi) + 300) / 2, 28, T('Terlebih', 'Long'), 'kfs', 'middle');
+      if (avg !== null) b += '<path d="M' + x(avg) + ' 54 l-6 10 h12z" class="kfa"/>' + tx(x(avg), 80, T('Purata 7 malam: ', '7-night avg: ') + hm(avg * 60), 'kfb', 'middle');
+      return svg(avg !== null ? 86 : 72, b);
+    }
+    if (id === 'r-sleep') {          // last 7 nights against the target band
+      if (!nights.length) return kcFig('m-sleep');
+      var y = function (h) { return 100 - Math.min(11, h) / 11 * 84; }, bw = 260 / 7, b2 = '<rect x="36" y="' + y(hi) + '" width="274" height="' + (y(lo) - y(hi)) + '" class="kfband"/>' + tx(26, (y(hi) + y(lo)) / 2 + 4, lo + '–' + hi + T('j', 'h'), 'kfs', 'end');
+      nights.forEach(function (n, i) { var X = 36 + i * bw; b2 += '<rect x="' + X + '" y="' + y(n.h) + '" width="' + (bw - 10) + '" height="' + (100 - y(n.h)) + '" rx="4" fill="' + sleepColor(n.h) + '"/>' + tx(X + (bw - 10) / 2, 114, n.d.slice(8), 'kfs', 'middle'); });
+      return svg(120, b2, T('Tidur 7 malam terakhir kau. Jalur = target ', 'Your last 7 nights. Band = your ') + lo + '–' + hi + T(' jam.', 'h target.'));
+    }
+    if (id === 'm-steps' || id === 'g-walk') {      // watch total already contains the brisk steps
+      var ex = walks.filter(function (w) { return w.day && w.steps; }).pop(), wd = ex ? ex.day : 9840, ws = ex ? ex.steps : 3388, mx = Math.max(wd, ws), sc = function (v) { return v / mx * 250; };
+      var b3 = tx(20, 18, T('Jam', 'Watch') + ' · ' + fmtN(wd), 'kfb') + '<rect x="20" y="24" width="' + sc(wd) + '" height="18" rx="5" class="kfw" opacity=".35"/>' +
+        '<rect x="20" y="24" width="' + sc(Math.min(ws, wd)) + '" height="18" rx="5" class="kfw"/>' + tx(26, 37, 'brisk ' + fmtN(ws), 'kfin') +
+        tx(20, 66, '✓ ' + T('Jumlah', 'Total') + ' = ' + fmtN(Math.max(wd, ws)), 'kfok') + tx(20, 86, '✗ ' + fmtN(wd) + ' + ' + fmtN(ws) + ' = ' + fmtN(wd + ws), 'kfno');
+      return svg(96, b3, ex ? T('Contoh dari rekod kau pada ', 'Example from your record on ') + isoToDmy(ex.d) + '.' : T('Contoh: langkah brisk sudah ada dalam jumlah jam.', 'Example: the brisk steps are already inside the watch total.'));
+    }
+    if (id === 'm-pace' || id === 'k-what') {        // cadence gauge
+      var cs = walks.filter(function (w) { return w.cad > 0 && w.min >= 10; }).slice(-10), cad = cs.length ? Math.round(cs.reduce(function (a, w) { return a + w.cad; }, 0) / cs.length) : null;
+      var ang = function (v) { return Math.PI * (1 - (Math.max(60, Math.min(140, v)) - 60) / 80); }, P = function (v, r) { return [160 + r * Math.cos(ang(v)), 100 - r * Math.sin(ang(v))]; };
+      var arc = function (a, b2, cls) { var p1 = P(a, 74), p2 = P(b2, 74); return '<path d="M' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + ' A74 74 0 0 1 ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1) + '" class="' + cls + '"/>'; };
+      var b4 = arc(60, 100, 'kfarc0') + arc(100, 140, 'kfarc1');
+      [60, 80, 100, 120, 140].forEach(function (v) { var p = P(v, 92); b4 += tx(p[0].toFixed(0), (p[1] + 4).toFixed(0), v, 'kfs', 'middle'); });
+      b4 += '<rect x="8" y="6" width="10" height="10" rx="2" class="kfw"/>' + tx(22, 15, 'brisk 100+', 'kfb');
+      if (cad) { var n1 = P(cad, 62); b4 += '<line x1="160" y1="100" x2="' + n1[0].toFixed(1) + '" y2="' + n1[1].toFixed(1) + '" class="kfnd"/><circle cx="160" cy="100" r="5" class="kfa"/>' + tx(160, 122, T('Rentak purata kau: ', 'Your average pace: ') + cad + T(' langkah/min', ' steps/min'), 'kfb', 'middle'); }
+      return svg(cad ? 128 : 108, b4, T('Langkah seminit. 100+ biasanya dikira brisk walk.', 'Steps per minute. 100+ usually counts as brisk walking.'));
+    }
+    if (id === 'k-150') {            // this week's brisk minutes toward 150
+      var m0 = mon(t), per = [0, 0, 0, 0, 0, 0, 0], tot = 0;
+      walks.forEach(function (w) { if (w.d >= m0 && w.d <= addDays(m0, 6) && w.steps) { var i = Math.round((Date.parse(w.d) - Date.parse(m0)) / 864e5); per[i] += w.min || 0; tot += w.min || 0; } });
+      var sx = function (v) { return v / 150 * 280; }, b5 = '<rect x="20" y="30" width="280" height="20" rx="6" class="kftrk"/>', acc = 0;
+      per.forEach(function (m) { if (!m) return; var w = Math.min(sx(m), 300 - 20 - sx(acc)); if (w > 0) b5 += '<rect x="' + (20 + sx(acc)) + '" y="30" width="' + w + '" height="20" class="kfw" stroke="var(--panel)" stroke-width="1.5"/>'; acc += m; });
+      b5 += tx(20, 22, T('Minggu ini: ', 'This week: ') + tot + ' / 150 min', 'kfb') + tx(300, 66, tot >= 150 ? T('Capai ✓', 'Reached ✓') : (150 - tot) + T(' min lagi', ' min to go'), 'kfs', 'end');
+      return svg(72, b5, T('Setiap blok ialah satu hari brisk walk minggu ni (Isnin–Ahad).', 'Each block is one brisk-walk day this week (Mon–Sun).'));
+    }
+    if (id === 'm-streak' || id === 'g-pb') {        // last 14 days
+      var wset = {}, rset = {}; (REC || []).forEach(function (r) { if (r.activity === 'Workout') wset[r.date] = 1; else if (r.activity === 'Rest Day') rset[r.date] = 1; });
+      var b6 = '', cur = +($('cur') && $('cur').textContent) || 0;
+      for (var i = 0; i < 14; i++) { var k = addDays(t, i - 13), X = 14 + i * 21.6; b6 += '<rect x="' + X + '" y="20" width="17" height="17" rx="5" class="' + (wset[k] ? 'kfw2' : rset[k] ? 'kfr' : 'kfe') + '"/>' + (i % 2 === 1 || i === 13 ? tx(X + 8.5, 52, k.slice(8), 'kfs', 'middle') : ''); }
+      b6 += tx(14, 12, T('Streak semasa: ', 'Current streak: ') + cur + T(' hari', cur === 1 ? ' day' : ' days'), 'kfb');
+      return svg(60, b6, T('14 hari terakhir: warna = workout, kelabu = rehat, kosong = tiada rekod.', 'Last 14 days: colour = workout, grey = rest, empty = not logged.'));
+    }
+    if (id === 'r-rest') {           // recovery over 72h
+      var pts = [[0, 30], [8, 78], [24, 62], [48, 34], [72, 24]].map(function (q) { return [30 + q[0] / 72 * 270, q[1]]; });
+      var d = 'M' + pts.map(function (q) { return q[0].toFixed(0) + ' ' + q[1]; }).join(' L');
+      var b7 = '<line x1="30" y1="30" x2="300" y2="30" class="kfgl"/>' + '<path d="' + d + '" class="kfln"/>' + [0, 24, 48, 72].map(function (h) { return tx(30 + h / 72 * 270, 112, h + T('j', 'h'), 'kfs', 'middle'); }).join('') +
+        tx(30, 22, T('Sedia', 'Ready'), 'kfs') + tx(66, 96, T('Penat selepas workout', 'Tired after training'), 'kfs') + tx(214, 22, T('Pulih ~48j', 'Recovered ~48h'), 'kfb');
+      return svg(118, b7, T('Gambaran umum: otot yang sama biasanya pulih dalam ~48 jam.', 'General picture: the same muscles usually recover in about 48 hours.'));
+    }
+    if (id === 'r-doms') {
+      var q2 = [[0, 90], [12, 70], [36, 28], [60, 48], [96, 88]].map(function (q) { return [30 + q[0] / 96 * 270, q[1]]; });
+      var b8 = '<path d="M' + q2.map(function (q) { return q[0].toFixed(0) + ' ' + q[1]; }).join(' L') + '" class="kfln kfsore"/>' + [0, 24, 48, 72, 96].map(function (h) { return tx(30 + h / 96 * 270, 106, h + T('j', 'h'), 'kfs', 'middle'); }).join('') + tx(130, 20, T('Paling sakit 24–72j', 'Most sore at 24–72h'), 'kfb', 'middle');
+      return svg(112, b8, T('Sakit otot (DOMS) biasanya memuncak 1–3 hari selepas latihan, kemudian hilang.', 'Muscle soreness (DOMS) usually peaks 1–3 days after training, then fades.'));
+    }
+    if (id === 'm-cons') {           // last 30 days
+      var w30 = {}; (REC || []).forEach(function (r) { if (r.activity === 'Workout' && r.date > addDays(t, -30) && r.date <= t) w30[r.date] = 1; });
+      var n30 = Object.keys(w30).length, pc = Math.round(100 * n30 / 30), goal = Math.round((S.weekGoal || 4) / 7 * 100), C = 2 * Math.PI * 38;
+      var b9 = '<circle cx="70" cy="58" r="38" class="kftrkc"/><circle cx="70" cy="58" r="38" class="kfwc" stroke-dasharray="' + (C * pc / 100).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 70 58)"/>' +
+        tx(70, 64, pc + '%', 'kfbig', 'middle') + tx(130, 46, n30 + T(' hari workout dalam 30 hari', ' workout days in 30 days'), 'kfb') + tx(130, 66, T('Sasaran ', 'Goal ') + (S.weekGoal || 4) + T(' seminggu ≈ ', '/week ≈ ') + goal + '%', 'kfs');
+      return svg(112, b9);
+    }
+    if (id === 'm-cmp') {
+      var cnt = function (a, b) { return (REC || []).filter(function (r) { return r.activity === 'Workout' && r.date >= a && r.date <= b; }).length; };
+      var nw = cnt(addDays(t, -6), t), pv = cnt(addDays(t, -13), addDays(t, -7)), mx2 = Math.max(nw, pv, 1);
+      var b10 = '<rect x="90" y="18" width="' + (nw / mx2 * 190) + '" height="20" rx="5" class="kfw2"/><rect x="90" y="50" width="' + (pv / mx2 * 190) + '" height="20" rx="5" class="kfe2"/>' +
+        tx(84, 33, T('7 hari ini', 'Last 7 days'), 'kfs', 'end') + tx(84, 65, T('7 sebelum', 'Previous 7'), 'kfs', 'end') + tx(96 + nw / mx2 * 190, 33, nw, 'kfb') + tx(96 + pv / mx2 * 190, 65, pv, 'kfb') +
+        tx(90, 92, nw === pv ? '= ' + T('sama', 'same') : (nw > pv ? '▲ ' : '▼ ') + Math.abs(nw - pv) + ' workout', nw >= pv ? 'kfok' : 'kfdn');
+      return svg(100, b10, T('Workout kau: 7 hari ini berbanding 7 hari sebelumnya.', 'Your workouts: the last 7 days vs the 7 before.'));
+    }
+    if (id === 'm-dist') {
+      var st = S.stride || 75, b11 = '';
+      for (var j = 0; j < 4; j++) { var X2 = 30 + j * 70; b11 += '<ellipse cx="' + X2 + '" cy="' + (j % 2 ? 30 : 50) + '" rx="13" ry="7" class="kfw"/>'; }
+      b11 += '<line x1="30" y1="72" x2="100" y2="72" class="kfnd"/><line x1="30" y1="66" x2="30" y2="78" class="kfnd"/><line x1="100" y1="66" x2="100" y2="78" class="kfnd"/>' + tx(65, 92, st + ' cm', 'kfb', 'middle') +
+        tx(300, 92, fmtN(g) + T(' langkah ≈ ', ' steps ≈ ') + (g * st / 100000).toFixed(1) + ' km', 'kfs', 'end');
+      return svg(100, b11, T('Satu langkah = panjang langkah kau dalam Tetapan.', 'One step = your stride length from Settings.'));
+    }
+    return '';
+  }
   function kcExFind(name) {
     var norm = function (v) { return ' ' + String(v || '').toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean).map(function (w) { return w.length >= 3 ? w.replace(/s$/, '') : w; }).join(' ') + ' '; };
     var n = norm(name), best = null, bl = 0;   // "Squats" / "Push Ups" match "squat" / "push up"
@@ -3087,7 +3353,7 @@
       DBACK = function () { kcOpen('cat', a.c); };
       $('dTitle').textContent = a.t;
       var rel = A.filter(function (b) { return b.c === a.c && b.id !== a.id; }).slice(0, 3);
-      html = '<div class="kcb">' + (a.b.charAt(0) === '<' ? a.b : '<p>' + a.b + '</p>') + '</div>' + (a.go ? '<button type="button" class="kcgo2" data-go="' + a.go[0] + '">' + a.go[1] + ic('right') + '</button>' : '') +
+      html = (a.id === 'k-tech' ? '<div class="kcanw">' + kcAnimSvg('walk') + '</div>' : kcFig(a.id)) + '<div class="kcb">' + (a.b.charAt(0) === '<' ? a.b : '<p>' + a.b + '</p>') + '</div>' + (a.go ? '<button type="button" class="kcgo2" data-go="' + a.go[0] + '">' + a.go[1] + ic('right') + '</button>' : '') +
         (rel.length ? '<div class="grp">' + T('Berkaitan', 'Related') + '</div><div class="kcl">' + rel.map(card).join('') + '</div>' : '');
     } else if (view === 'ex') {
       var e = kcExFind(arg), mineO = pbList().filter(function (o) { return o.n.toLowerCase() === String(arg).toLowerCase(); })[0];
@@ -3099,6 +3365,9 @@
         html += '<div class="tkv"><div><span>' + T('PB kau', 'Your PB') + '</span><b>' + fmtV(mineO.best, mineO.sec) + (mineO.sec ? '' : ' reps') + '</b></div><div><span>' + T('Terakhir', 'Last done') + '</span><b>' + isoToDmy(last).slice(0, 5) + '</b></div><div><span>' + T('Sesi', 'Sessions') + '</span><b>' + mineO.list.length + '</b></div><div><span>' + T('Berat tertinggi', 'Heaviest') + '</span><b>' + (mineO.kg ? mineO.kg + 'kg' : '–') + '</b></div></div>';
       }
       if (e) {
+        var yq = encodeURIComponent(e[1] + ' proper form');
+        html = '<div class="kcanw">' + kcAnimSvg(e[0]) + '<span class="kcanl">' + T('Form yang betul · garis putus = panduan', 'Correct form · dashed line = guide') + '</span></div>' +
+          '<a class="kcyt" href="https://www.youtube.com/results?search_query=' + yq + '" target="_blank" rel="noopener">' + ic('ext') + T('Tonton video sebenar (YouTube)', 'Watch a real video (YouTube)') + '</a>' + html;
         html += '<div class="kcb"><p><b>' + T('Otot', 'Muscles') + ':</b> ' + e[3][I] + '</p><div class="grp">' + T('Cara buat', 'How to') + '</div><ol>' + e[4][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>' +
           '<div class="grp">' + T('Kesilapan biasa', 'Common mistakes') + '</div><ul>' + e[5][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
           '<div class="kc2"><div><span>' + T('Lebih mudah', 'Easier') + '</span>' + e[6][I] + '</div><div><span>' + T('Lebih susah', 'Harder') + '</span>' + e[7][I] + '</div></div></div>';
@@ -3107,6 +3376,7 @@
     }
     $('dBody').innerHTML = '<div class="kl tip kc">' + html + '</div>';
     var B = $('dBody');
+    kcAnimStart(B);
     [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
     [].forEach.call(B.querySelectorAll('[data-c]'), function (b) { b.onclick = function () { kcOpen('cat', b.dataset.c); }; });
     [].forEach.call(B.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
@@ -4064,6 +4334,49 @@
     b.onclick = function () { var ch = DTAB !== b.dataset.t; DTAB = b.dataset.t; paintDTab(ch); setHTab(DTAB); };
   });
   paintDTab();
+  // swipe left / right inside an activity panel (Home cards and Dashboard panels) to change Workout / Sleep / Walk
+  (function () {
+    var ORD = 'wsk', st = null;
+    function skip(t, root) {   // leave inputs, charts and anything that scrolls sideways alone
+      for (var e = t; e && e !== root; e = e.parentNode) {
+        if (e.nodeType !== 1) continue;
+        if (/^(INPUT|TEXTAREA|SELECT|CANVAS)$/.test(e.tagName) || e.tagName.toLowerCase() === 'svg' || e.isContentEditable) return true;
+        if (e.scrollWidth > e.clientWidth + 2) { var ox = getComputedStyle(e).overflowX; if (ox === 'auto' || ox === 'scroll') return true; }
+      }
+      return false;
+    }
+    function bind(el, dash) {
+      el.addEventListener('touchstart', function (e) {
+        if (e.touches.length !== 1 || skip(e.target, el)) { st = null; return; }
+        st = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), el: el, dir: 0 };
+      }, { passive: true });
+      el.addEventListener('touchmove', function (e) {
+        if (!st || st.el !== el) return;
+        var dx = e.touches[0].clientX - st.x, dy = e.touches[0].clientY - st.y;
+        if (!st.dir && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) st.dir = Math.abs(dx) > Math.abs(dy) * 1.4 ? 1 : -1;
+        if (st.dir === 1) { var cur = dash ? DTAB : HTAB, i = ORD.indexOf(cur), edge = (dx > 0 && i === 0) || (dx < 0 && i === ORD.length - 1);
+          el.style.transition = 'none'; el.style.transform = 'translateX(' + (dx * (edge ? .12 : .3)).toFixed(1) + 'px)'; }
+      }, { passive: true });
+      function end(e) {
+        if (!st || st.el !== el) return;
+        var p = (e.changedTouches && e.changedTouches[0]) || { clientX: st.x, clientY: st.y }, dx = p.clientX - st.x, dy = p.clientY - st.y, fast = Date.now() - st.t < 700, horiz = st.dir === 1;
+        el.style.transition = 'transform .2s ease'; el.style.transform = '';
+        setTimeout(function () { el.style.transition = ''; }, 220);
+        st = null;
+        if (!horiz || Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4 || (!fast && Math.abs(dx) < 110)) return;
+        var cur = dash ? DTAB : HTAB, i = ORD.indexOf(cur) + (dx < 0 ? 1 : -1);
+        if (i < 0 || i >= ORD.length) return;
+        el.style.transform = '';
+        if (dash) { DTAB = ORD[i]; paintDTabDir(dx < 0); setHTab(DTAB); } else setHTab(ORD[i], true);
+        try { if (navigator.vibrate) navigator.vibrate(8); } catch (e2) {}
+      }
+      el.addEventListener('touchend', end, { passive: true });
+      el.addEventListener('touchcancel', function () { if (st && st.el === el) { el.style.transform = ''; st = null; } }, { passive: true });
+    }
+    ['wkCard', 'sleepCard', 'walkCard'].forEach(function (id) { bind($(id), false); });
+    ['workDash', 'sleepDash', 'walkDash'].forEach(function (id) { bind($(id), true); });
+  })();
+  function paintDTabDir(fromRight) { paintDTab(false); var D = { w: 'workDash', s: 'sleepDash', k: 'walkDash' }; slideIn($(D[DTAB]), fromRight); }
 
   // ---------------- Sleep dashboard: KPIs + heatmap ----------------
   // sleep target is a RANGE (default 7–8h): inside = green, under = red, over = amber
