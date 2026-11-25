@@ -3124,8 +3124,9 @@
       var end = addDays(wk, 6), lab = wk === cur ? (en ? 'This week' : 'Minggu ini') :
         (+wk.slice(8)) + ' ' + MS[+wk.slice(5, 7) - 1].slice(0, 3) + ' – ' + (+end.slice(8)) + ' ' + MS[+end.slice(5, 7) - 1].slice(0, 3);
       var gl = '';
-      if (wk === cur) { var goal = S.weekGoal || 4, done = 0; for (var gi = 0; gi < 7; gi++) if ((by[addDays(wk, gi)] || []).indexOf('Workout') >= 0) done++;
-        gl = '<div class="wgoal' + (done >= goal ? ' done' : '') + '"><em class="gn">' + done + '/' + goal + ' workout</em><em class="gb"><em style="width:' + Math.min(100, 100 * done / goal) + '%"></em></em><em class="gt">' + (done >= goal ? (en ? 'goal hit ✓' : 'sasaran capai ✓') : (goal - done) + (en ? ' to go' : ' lagi')) + '</em></div>'; }
+      // every week gets its goal bar (past weeks say how it ended)
+      { var goal = S.weekGoal || 4, done = 0; for (var gi = 0; gi < 7; gi++) if ((by[addDays(wk, gi)] || []).indexOf('Workout') >= 0) done++;
+        gl = '<div class="wgoal' + (done >= goal ? ' done' : '') + '"><em class="gn">' + done + '/' + goal + ' workout</em><em class="gb"><em style="width:' + Math.min(100, 100 * done / goal) + '%"></em></em><em class="gt">' + (done >= goal ? (en ? 'goal hit ✓' : 'sasaran capai ✓') : (wk === cur ? (goal - done) + (en ? ' to go' : ' lagi') : (en ? 'missed by ' : 'kurang ') + (goal - done))) + '</em></div>'; }
       h += '<div class="wkp"><div class="wkl">' + lab + '</div>' + gl + '<div class="wkg">';
       for (var i = 0; i < 7; i++) {
         var k = addDays(wk, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
