@@ -596,7 +596,7 @@
     <button type="button" class="stk" id="streakChip" title="Streak workout" aria-label="Streak workout"></button><button type="button" class="ib pbbtn" id="pbBtn" title="Personal Best" aria-label="Personal Best"></button><span class="navsp" aria-hidden="true"></span>
     <button type="button" class="ib txt" id="langBtn" title="Bahasa / Language" aria-label="Bahasa / Language">BM</button>
     <button type="button" class="ib" id="themeBtn" title="Dark / Bright mode" aria-label="Dark mode"><svg class="ico ih ih-moon hi tm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mn" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg><svg class="ico ih ih-sun hi ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><g class="sr"><path d="M12 5l0 .01"/><path d="M17 7l0 .01"/><path d="M19 12l0 .01"/><path d="M17 17l0 .01"/><path d="M12 19l0 .01"/><path d="M7 17l0 .01"/><path d="M5 12l0 .01"/><path d="M7 7l0 .01"/></g></svg></button>
-    <button type="button" class="ib" id="setBtn" title="Settings" aria-label="Settings"><svg class="ico ih ih-gear hi" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="gr"><circle class="gc" cx="16" cy="16" r="5"/><path d="m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z"/></g></svg></button>
+    <button type="button" class="ib" id="kcBtn" title="Knowledge Centre" aria-label="Knowledge Centre"><svg class="ico ih ih-help hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><g class="hq"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path class="hd" d="M12 17h.01"/></g></svg></button><button type="button" class="ib" id="setBtn" title="Settings" aria-label="Settings"><svg class="ico ih ih-gear hi" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="gr"><circle class="gc" cx="16" cy="16" r="5"/><path d="m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z"/></g></svg></button>
   </nav>
   <div class="wk" id="weekStrip" aria-label="Minggu ini"></div>
 
@@ -1377,6 +1377,38 @@
   .pbr .pbn em { font-style:normal; font-size:10px; font-weight:800; margin-left:6px; padding:2px 6px; border-radius:6px; background:#f59e0b; color:#111; vertical-align:1px; }
   .pbr .pbv { text-align:right; white-space:nowrap; } .pbr .pbv b { font-size:16px; font-weight:800; } .pbr .pbv small { font-size:11px; color:var(--muted); }
   .pbr .pbgo { width:14px; height:14px; color:var(--muted); flex:none; }
+  /* Knowledge Centre */
+  .ih-help .hq { transform-box:view-box; transform-origin:12px 12px; animation:kcWob 3.2s ease-in-out infinite; }
+  .ih-help .hd { animation:kcDot 3.2s ease-in-out infinite; }
+  @keyframes kcWob { 0%, 62%, 100% { transform:rotate(0); } 70% { transform:rotate(-14deg); } 78% { transform:rotate(11deg); } 86% { transform:rotate(-6deg); } 93% { transform:rotate(2deg); } }
+  @keyframes kcDot { 0%, 60%, 100% { opacity:1; } 66% { opacity:.2; } 72% { opacity:1; } }
+  @media (prefers-reduced-motion: reduce) { .ih-help .hq, .ih-help .hd { animation:none; } }
+  .kc .kcs input { width:100%; box-sizing:border-box; border-radius:12px; padding:11px 13px; font-size:15px; margin-bottom:10px; }
+  .kc .kctip { all:unset; box-sizing:border-box; width:100%; display:flex; gap:10px; align-items:flex-start; cursor:pointer; padding:12px !important; border-radius:14px !important; margin-bottom:4px;
+    background:color-mix(in srgb, var(--accent) 12%, transparent) !important; font-size:14px; line-height:1.45; color:var(--ink); height:auto !important; text-align:left; }
+  .kc .kctip small { display:block; font-size:11px; font-weight:800; letter-spacing:.5px; color:var(--accent); margin-bottom:2px; }
+  .kc .kcti { flex:none; width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--accent); color:#fff; } .kc .kcti .ico { width:18px; height:18px; }
+  .kc .kcg { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .kc .kcc { all:unset; box-sizing:border-box; cursor:pointer; display:flex; flex-direction:column; gap:3px; padding:12px !important; border-radius:14px !important; background:var(--tile) !important; min-width:0; height:auto !important; text-align:left; }
+  .kc .kcc:active, .kc .kca:active, .kc .kctip:active { transform:scale(.98); }
+  .kc .kcc .ki { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:6px; color:var(--accent); background:color-mix(in srgb, var(--accent) 15%, transparent); }
+  .kc .kcc .ki .ico { width:19px; height:19px; } .kc .kcc b { font-size:14px; color:var(--ink); } .kc .kcc small { font-size:12px; color:var(--muted); line-height:1.35; }
+  .kc .kcc[data-c="walk"] .ki { color:var(--walk); background:color-mix(in srgb, var(--walk) 15%, transparent); }
+  .kc .kcc[data-c="recovery"] .ki { color:var(--sleepc); background:color-mix(in srgb, var(--sleepc) 15%, transparent); }
+  .kc .kcc[data-c="ex"] .ki { color:var(--wk); background:color-mix(in srgb, var(--wk) 15%, transparent); }
+  .kc .kcl { display:flex; flex-direction:column; gap:6px; }
+  .kc .kca { all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; gap:8px; padding:12px !important; border-radius:12px !important; background:var(--tile) !important; font-size:14.5px; font-weight:700; color:var(--ink); height:auto !important; text-align:left; width:100%; }
+  .kc .kca > span { flex:1; min-width:0; } .kc .kca small { display:block; font-size:12px; font-weight:500; color:var(--muted); margin-top:2px; }
+  .kc .kcn .kca { font-weight:600; font-size:13.5px; line-height:1.4; }
+  .kc .kcgo { width:15px; height:15px; color:var(--muted); flex:none; }
+  .kc .kcb { font-size:14.5px; line-height:1.6; color:var(--ink); } .kc .kcb p { margin:2px 0 10px; } .kc .kcb ol, .kc .kcb ul { margin:4px 0 10px; padding-left:20px; } .kc .kcb li { margin-bottom:6px; }
+  .kc .kc2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px; } .kc .kc2 div { background:var(--tile); border-radius:12px; padding:9px 10px; font-size:13px; line-height:1.4; } .kc .kc2 span { display:block; font-size:11.5px; font-weight:800; color:var(--muted); margin-bottom:2px; }
+  .kc .kcgo2, .kl.tip .kcmore { all:unset; box-sizing:border-box; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin:6px 0 4px; padding:10px 14px; border-radius:999px; background:var(--accent); color:#fff; font-weight:800; font-size:14px; }
+  .kl.tip .kcmore { background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent); font-size:13px; padding:8px 12px; margin-top:12px; }
+  .kc .kcgo2 .ico, .kl.tip .kcmore .ico { width:15px; height:15px; }
+
+  .kl .grp.pbg { display:flex; align-items:center; gap:6px; margin:4px 2px 8px; } .kl .grp.pbg .ico { width:16px; height:16px; } .kl .pbl + .grp.pbg { margin-top:16px; }
+  .kl .grp.pbg .ih-walk { color:var(--walk); } .kl .grp.pbg .ih-dumbbell { color:var(--wk); } .kl.tip .day .k { color:var(--walk); font-weight:800; }
   .pbh { font-size:11px; color:var(--muted); margin:8px 2px 0; }
   .kl.tip .pbt { width:14px; height:14px; color:#f59e0b; vertical-align:-2px; }
 
@@ -1385,7 +1417,8 @@
     background:rgba(245,158,11,.16) !important; color:#b45309 !important; flex:none; font-size:15px; } body.dark #pbBtn { color:#fbbf24 !important; } #pbBtn b { font-weight:800; }
   #pbBtn .ico { width:18px; height:18px; overflow:visible; }
   #pbBtn .pbdot { position:absolute; top:5px; right:5px; width:7px; height:7px; border-radius:50%; background:#ef4444; box-shadow:0 0 0 2px var(--page); }
-  .navsp { order:3; width:50px; flex:none; }
+  .navsp { order:3; width:0; flex:none; margin-left:-8px; }   /* right side now holds ? + gear, which balances the streak + PB on the left */
+  #kcBtn { order:4; }
   .nav .lt { container-type:inline-size; } .nav .lt small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
   @container (max-width:200px) { .lt small .gr { display:none; } }
 
@@ -1594,6 +1627,7 @@
   ICONS.walk = ["0 0 24 24", "<g class=\"wkb\"><circle cx=\"13\" cy=\"4\" r=\"1.6\"/><path class=\"wl1\" d=\"M7 21l3-4\"/><path class=\"wl2\" d=\"M16 21l-2-4l-3-3l1-6\"/><path class=\"wa\" d=\"M6 12l2-3l4-1l3 3l3 1\"/></g><path class=\"wm wm1\" d=\"M2.5 9h2\"/><path class=\"wm wm2\" d=\"M1.5 13h2.5\"/>"];
   ICONS.bars = ["0 0 24 24", "<path class=\"b1\" d=\"M5 20V12\"/><path class=\"b2\" d=\"M12 20V6\"/><path class=\"b3\" d=\"M19 20V9\"/><path d=\"M3 20h18\"/>"];
   ICONS.trophy = ["0 0 24 24", "<g class=\"tro\"><path d=\"M8 21h8\"/><path d=\"M12 17v4\"/><path d=\"M7 4h10\"/><path d=\"M17 4v8a5 5 0 0 1-10 0V4\"/><path d=\"M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/><path d=\"M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0\"/></g><path class=\"tsh\" d=\"M10 7.5v3\"/>"];
+  ICONS.help = ["0 0 24 24", "<circle cx=\"12\" cy=\"12\" r=\"10\"/><g class=\"hq\"><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path class=\"hd\" d=\"M12 17h.01\"/></g>"];
   ICONS.bed = ["0 0 24 24", "<path d=\"M7 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\"/><path d=\"M22 19v-3h-20\"/><path d=\"M2 10v9\"/><path d=\"M12 16h10v-2a3 3 0 0 0 -3 -3h-7v5z\"/><path class=\"zz z1\" d=\"M11 6.5h2l-2 2h2\"/><path class=\"zz z2\" d=\"M14.5 3.5h2.5l-2.5 2.5h2.5\"/><path class=\"zz z3\" d=\"M18.5 .5h3l-3 3h3\"/>"];
   ICONS.lift = ["0 0 24 24", "<g class=\"lb\"><path d=\"M2.5 4h19\"/><path d=\"M4.5 1.5v5\"/><path d=\"M19.5 1.5v5\"/></g><path class=\"la la1\" d=\"M9.3 12.6l-1.3 -8.6\"/><path class=\"la la2\" d=\"M14.7 12.6l1.3 -8.6\"/><circle class=\"lh\" cx=\"12\" cy=\"9.6\" r=\"1.5\"/><path d=\"M9.3 12.6h5.4\"/><path d=\"M12 12.6v4.6\"/><path d=\"M12 17.2l-3 4.3\"/><path d=\"M12 17.2l3 4.3\"/>"];
   function ic(n, cls) { n = ICON_ALIAS[n] || n; var I = ICONS[n] || ICONS.info, vb = I[0], sw = vb === '0 0 24 24' ? '2' : (vb === '0 0 32 32' ? '2.6' : '4');
@@ -2071,7 +2105,9 @@
     }
     $('detailBack').style.display = 'none';
     $('dTitle').textContent = title;
-    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + text + '</p>' + html + '</div>';
+    var KCM = { cons: 'm-cons', 'k-w': 'm-cons', cmp: 'm-cmp', reps: 'm-time', 'k-reps': 'm-time', 'k-min': 'm-time', run: 'r-rest', 'k-r': 'g-rest', 'k-streak': 'm-streak', sleep: 'm-sleep', 'k-sl': 'm-sleep', 'k-steps': 'm-steps', 'k-brisk': 'k-150', none: 'g-workout' }[kind];
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + text + '</p>' + html + (KCM ? '<button type="button" class="kcmore">' + ic('help') + T('Ketahui lebih dalam Knowledge Centre', 'Learn more in the Knowledge Centre') + '</button>' : '') + '</div>';
+    if (KCM) $('dBody').querySelector('.kcmore').onclick = function () { kcOpen('art', KCM); DBACK = function () { openTip(kind, x); }; };
     [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
@@ -2726,24 +2762,77 @@
     return Object.keys(by).map(function (k) { var o = by[k]; if (!o.best) { o.best = o.tot; o.bd = o.td; } return o; }).filter(function (o) { return o.best > 0; })
       .sort(function (a, b) { return a.bd < b.bd ? 1 : (a.bd > b.bd ? -1 : a.n.localeCompare(b.n)); });
   }
+  // ---------------- Personal Best: brisk walk / steps (all records) ----------------
+  function walkPBs() {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, all = (WALK_ALL || (DASH && DASH.walk) || []).filter(function (x) { return wTot(x) > 0; });
+    if (!all.length) return [];
+    var g = S.stepGoal || 8000, mk = function (id, lbl, f, fmt, ok, unitBM, unitEN) {
+      var L = all.filter(ok || function () { return true; }).filter(function (x) { return f(x) > 0; }).sort(function (a, b) { return f(b) - f(a) || (a.d < b.d ? -1 : 1); });
+      return L.length ? { id: id, n: lbl, v: f(L[0]), d: L[0].d, fmt: fmt, top: L.slice(0, 5), f: f, u: T(unitBM, unitEN) } : null;
+    };
+    var R = [
+      mk('steps', T('Langkah terbanyak sehari', 'Most steps in a day'), wTot, fmtN, null, 'langkah', 'steps'),
+      mk('brisk', T('Langkah brisk terbanyak', 'Most brisk-walk steps'), function (x) { return x.steps || 0; }, fmtN, null, 'langkah', 'steps'),
+      mk('min', T('Brisk walk paling lama', 'Longest brisk walk'), function (x) { return x.steps ? x.min || 0 : 0; }, function (v) { return v + ' min'; }),
+      mk('km', T('Paling jauh', 'Furthest'), function (x) { return x.steps ? x.km || 0 : 0; }, function (v) { return (+v).toFixed(2) + ' km'; }),
+      mk('cad', T('Rentak paling laju', 'Fastest pace'), function (x) { return x.cad || 0; }, function (v) { return Math.round(v) + '/min'; }, function (x) { return x.min >= 10; })
+    ];
+    // best calendar week (Mon–Sun) of total steps
+    var wk = {}; all.forEach(function (x) { var dw = (new Date(x.d + 'T00:00:00').getDay() + 6) % 7, k = addDays(x.d, -dw); (wk[k] = wk[k] || { d: k, t: 0, days: [] }).t += wTot(x); wk[k].days.push(x); });
+    var bw = Object.keys(wk).map(function (k) { return wk[k]; }).sort(function (a, b) { return b.t - a.t; });
+    if (bw.length) R.push({ id: 'week', n: T('Minggu terbaik', 'Best week'), v: bw[0].t, d: bw[0].d, fmt: fmtN, wk: bw.slice(0, 5), u: T('langkah', 'steps'), last: bw[0].days.reduce(function (a, x) { return x.d > a ? x.d : a; }, '') });
+    // longest run of days on the step goal
+    var byD = {}; all.forEach(function (x) { byD[x.d] = x; });
+    var ks = Object.keys(byD).sort(), best = 0, bEnd = '', run = 0, prev = null;
+    ks.forEach(function (k) { if (wTot(byD[k]) >= g) { run = prev && addDays(prev, 1) === k ? run + 1 : 1; prev = k; if (run > best) { best = run; bEnd = k; } } else { run = 0; prev = null; } });
+    if (best) R.push({ id: 'run', n: T('Streak capai target', 'Step-goal streak'), v: best, d: bEnd, fmt: function (v) { return v + T(' hari', v === 1 ? ' day' : ' days'); }, runFrom: addDays(bEnd, -(best - 1)) });
+    return R.filter(Boolean);
+  }
+  function openWalkPB(o) {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, dd = function (k) { return isoToDmy(k); };
+    DBACK = openPBList; $('detailBack').style.display = '';
+    $('dTitle').textContent = o.n;
+    var TXT = {
+      steps: T('Jumlah langkah tertinggi dalam satu hari (nilai jam atau brisk walk, mana lebih tinggi). Untuk pecahkan rekod, tambah satu jalan pendek 10–15 minit selepas makan — biasanya 1,000–1,500 langkah lagi.', 'Your highest step count in one day (watch total or brisk walk, whichever is higher). To beat it, add a short 10–15 minute walk after a meal — usually another 1,000–1,500 steps.'),
+      brisk: T('Langkah terbanyak dalam sesi brisk walk yang kau rekod. Tambah 5 minit pada sesi seterusnya pada rentak yang sama untuk pecahkan rekod.', 'Most steps in a logged brisk-walk session. Add 5 minutes to your next session at the same pace to beat it.'),
+      min: T('Sesi brisk walk paling lama. Naikkan masa perlahan-lahan — 5 minit seminggu — supaya kaki dan sendi sempat biasa.', 'Your longest brisk-walk session. Build time slowly — about 5 minutes a week — so your legs and joints can adapt.'),
+      km: T('Jarak paling jauh dalam satu sesi (anggaran dari langkah × panjang langkah ' + (S.stride || 75) + ' cm dalam Tetapan).', 'Furthest distance in one session (estimated from steps × your ' + (S.stride || 75) + ' cm stride in Settings).'),
+      cad: T('Rentak terpantas (langkah seminit) untuk sesi 10 minit atau lebih. 100+ langkah/min biasanya dikira brisk walk. Cuba langkah lebih pendek dan cepat untuk naikkan rentak.', 'Fastest pace (steps per minute) for sessions of 10 minutes or more. 100+ steps/min usually counts as brisk walking. Try shorter, quicker steps to raise it.'),
+      week: T('Jumlah langkah tertinggi dalam satu minggu (Isnin–Ahad). Minggu yang konsisten lebih penting dari satu hari yang tinggi.', 'Highest step total in one week (Mon–Sun). Steady weeks matter more than one big day.'),
+      run: T('Bilangan hari berturut-turut paling panjang kau capai target ' + fmtN(S.stepGoal || 8000) + ' langkah.', 'Your longest run of consecutive days hitting the ' + fmtN(S.stepGoal || 8000) + '-step goal.')
+    };
+    var kv = '<div class="tkv"><div><span>' + T('Rekod', 'Record') + '</span><b>' + o.fmt(o.v) + '</b></div><div><span>' + T('Tarikh', 'Date') + '</span><b>' + (o.id === 'week' ? dd(o.d).slice(0, 5) + ' – ' + dd(addDays(o.d, 6)).slice(0, 5) : o.id === 'run' ? dd(o.runFrom).slice(0, 5) + ' – ' + dd(o.d).slice(0, 5) : dd(o.d)) + '</b></div></div>';
+    var list = '';
+    if (o.top) list = '<div class="grp">' + T('5 terbaik', 'Top 5') + '</div>' + o.top.map(function (x, i) { return '<div class="day" data-d="' + x.d + '"><span class="k">' + (i === 0 ? ic('trophy', 'pbt') + ' ' : '') + dd(x.d) + '</span><span>' + o.fmt(o.f(x)) + ' <b class="go">' + ic('right') + '</b></span></div>'; }).join('');
+    else if (o.wk) list = '<div class="grp">' + T('5 minggu terbaik', 'Top 5 weeks') + '</div>' + o.wk.map(function (w, i) { return '<div class="day" data-d="' + w.days[0].d + '"><span class="k">' + (i === 0 ? ic('trophy', 'pbt') + ' ' : '') + dd(w.d).slice(0, 5) + ' – ' + dd(addDays(w.d, 6)).slice(0, 5) + '</span><span>' + fmtN(w.t) + ' · ' + w.days.length + T(' hari', 'd') + ' <b class="go">' + ic('right') + '</b></span></div>'; }).join('');
+    $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + TXT[o.id] + '</p>' + kv + list + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { DBACK = function () { openWalkPB(o); }; openDetail(d2.dataset.d, true); }; });
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
+  }
   function openPBList() {
     DBACK = openPBList;
     var en = S.lang === 'en', L = pbList(), t = REC_TODAY || todayKey();
     $('detailBack').style.display = 'none';
     $('dTitle').textContent = 'Personal Best';
-    var body = !L.length ? '<div class="empty">' + (en ? 'Save a workout to start your records.' : 'Simpan workout untuk mula rekod terbaik.') + '</div>'
-      : '<p class="ttx">' + (en ? 'Your best single set for each exercise, from all your records. NEW = beaten in the last 7 days.' : 'Set terbaik kau untuk setiap latihan, dari semua rekod. BARU = dipecahkan dalam 7 hari terakhir.') + '</p><div class="pbl">' + L.map(function (o, i) {
+    var WP = walkPBs(), wt = REC_TODAY || todayKey();
+    var walkHtml = WP.length ? '<div class="grp pbg">' + ic('walk') + (en ? 'Brisk walk & steps' : 'Brisk walk & langkah') + '</div><div class="pbl">' + WP.map(function (o, i) {
+        var fresh = (o.last || o.d) >= addDays(wt, -6) && o.id !== 'week';
+        return '<button type="button" class="pbr pbw" data-w="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span><span class="pbv"><b>' + o.fmt(o.v) + '</b><small> · ' + o.d.slice(8) + '/' + o.d.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
+      }).join('') + '</div>' : '';
+    var body = !L.length ? (walkHtml ? '' : '<div class="empty">' + (en ? 'Save a workout to start your records.' : 'Simpan workout untuk mula rekod terbaik.') + '</div>')
+      : '<div class="grp pbg">' + ic('dumbbell') + 'Workout</div><p class="ttx">' + (en ? 'Your best single set for each exercise, from all your records. NEW = beaten in the last 7 days.' : 'Set terbaik kau untuk setiap latihan, dari semua rekod. BARU = dipecahkan dalam 7 hari terakhir.') + '</p><div class="pbl">' + L.map(function (o, i) {
         var fresh = o.bd >= addDays(t, -6);
         return '<button type="button" class="pbr" data-i="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span>' +
           '<span class="pbv"><b>' + fmtV(o.best, o.sec) + '</b><small>' + (o.sec ? '' : ' reps') + (o.kg ? ' · ' + o.kg + 'kg' : '') + ' · ' + o.bd.slice(8) + '/' + o.bd.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
       }).join('') + '</div>';
-    $('dBody').innerHTML = '<div class="kl tip">' + body + '</div>';
-    [].forEach.call($('dBody').querySelectorAll('.pbr'), function (b) { b.onclick = function () { openPB(L[+b.dataset.i], true); }; });
+    $('dBody').innerHTML = '<div class="kl tip">' + body + walkHtml + '</div>';
+    [].forEach.call($('dBody').querySelectorAll('.pbr[data-i]'), function (b) { b.onclick = function () { openPB(L[+b.dataset.i], true); }; });
+    [].forEach.call($('dBody').querySelectorAll('.pbr[data-w]'), function (b) { b.onclick = function () { openWalkPB(WP[+b.dataset.w]); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
   function paintPBBtn() {
     var b = $('pbBtn'); if (!b) return;
-    var L = pbList(), t = REC_TODAY || todayKey(), fresh = L.some(function (o) { return o.bd >= addDays(t, -6); });
+    var L = pbList(), t = REC_TODAY || todayKey(), fresh = L.some(function (o) { return o.bd >= addDays(t, -6); }) || walkPBs().some(function (o) { return o.id !== 'week' && o.d >= addDays(t, -6); });
     b.innerHTML = ic('trophy') + (fresh ? '<i class="pbdot"></i>' : '');
   }
   $('pbBtn').onclick = openPBList;
@@ -2769,6 +2858,274 @@
     [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { DBACK = function () { openPB(o, fromList); }; openDetail(d2.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
+  // ---------------- Knowledge Centre ("?" button): guides, metrics, exercise library, recovery, walking, glossary, FAQ, tip of the day ----------------
+  var KC_CATS = [
+    ['guide', 'cal', ['Panduan guna app', 'How to use the app'], ['Langkah demi langkah untuk setiap fungsi', 'Step by step for every feature']],
+    ['metrics', 'chart', ['Maksud setiap angka', 'What the numbers mean'], ['Cara setiap angka dikira, ikut tetapan kau', 'How each number is worked out, with your settings']],
+    ['ex', 'dumbbell', ['Pustaka latihan', 'Exercise library'], ['Cara buat, otot, kesilapan biasa, PB kau', 'Form, muscles, common mistakes, your PB']],
+    ['recovery', 'bed', ['Recovery & tidur', 'Recovery & sleep'], ['Rehat, tidur dan pemulihan otot', 'Rest, sleep and muscle recovery']],
+    ['walk', 'walk', ['Panduan brisk walk', 'Brisk walk guide'], ['Rentak, sasaran mingguan, data jam', 'Pace, weekly target, watch data']],
+    ['terms', 'info', ['Kamus istilah', 'Glossary'], ['Rep, set, RPE, overload dan lain-lain', 'Rep, set, RPE, overload and more']],
+    ['faq', 'alert', ['Soalan lazim & masalah', 'FAQ & troubleshooting'], ['Data tak keluar, install, backup', 'Missing data, installing, backups']]
+  ];
+  // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
+  var KC_NEWS = [
+    ['2026-11-25', ['Knowledge Centre (butang ?) dengan panduan, pustaka latihan, kamus istilah dan petua harian.', 'Knowledge Centre (the ? button) with guides, an exercise library, a glossary and a daily tip.'], 'g-workout'],
+    ['2026-11-25', ['Personal Best kini ada rekod brisk walk & langkah (langkah terbanyak, sesi paling lama, paling laju, paling jauh, minggu terbaik, streak target).', 'Personal Best now includes brisk walk & step records (most steps, longest session, fastest, furthest, best week, goal streak).'], 'g-pb'],
+    ['2026-11-25', ['Records: Ringkasan & cadangan jadi senarai boleh buka/tutup dengan penapis, dan cadangan brisk walk.', 'Records: Summary & tips is now a collapsible list with filters, plus brisk-walk tips.'], 'g-rec'],
+    ['2026-11-25', ['Records tunjuk langkah setiap hari dan petak Langkah, Purata langkah, Capai sasaran.', 'Records shows each day’s steps plus Steps, Avg steps and Goal days tiles.'], 'm-steps'],
+    ['2026-11-25', ['Langkah sehari dari jam boleh diisi berasingan dari sesi brisk walk; preview terangkan cara jumlah dikira.', 'Daily watch steps can be entered apart from brisk-walk sessions; the preview explains how the total is worked out.'], 'g-walk']
+  ];
+  function kcGo(what) {          // jump from an article into the app
+    closeDetail();
+    var home = function () { if (!$('homeBtn').classList.contains('on')) $('homeBtn').click(); };
+    setTimeout(function () {
+      if (what === 'w' || what === 's' || what === 'k') { home(); setHTab(what, true); setTimeout(function () { var c = $({ w: 'wkCard', s: 'sleepCard', k: 'walkCard' }[what]); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
+      else if (what === 'tpl') { home(); setHTab('w'); setTimeout(function () { $('tplBtn').click(); }, 250); }
+      else if (what === 'timer') { home(); setHTab('w'); setTimeout(function () { $('sw').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 250); }
+      else if (what === 'rec') { home(); setTimeout(function () { $('rSum').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
+      else if (what === 'dash') { if (!$('dashBtn').classList.contains('on')) $('dashBtn').click(); }
+      else if (what === 'pb') openPBList();
+      else if (what === 'streak') $('streakChip').click();
+      else if (what === 'set') openSettings();
+    }, 80);
+  }
+  function kcArticles() {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
+    var g = S.stepGoal || 8000, wm = S.walkMin || 30, st = S.stride || 75, lo = slLo(), hi = slHi(), wg = S.weekGoal || 4;
+    var ul = function (a) { return '<ul>' + a.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; };
+    var ol = function (a) { return '<ol>' + a.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>'; };
+    var A = [];
+    function add(id, c, t, b, go, k) { A.push({ id: id, c: c, t: t, b: b, go: go || null, k: (k || '') }); }
+    // 1. how to use
+    add('g-workout', 'guide', T('Isi workout', 'Log a workout'), ol([
+      T('Pergi ke <b>Utama</b> → tab <b>Workout</b>.', 'Go to <b>Home</b> → the <b>Workout</b> tab.'),
+      T('Pilih tarikh (lalai: hari ini). Pilih <b>Template</b> kalau nak isi nama latihan dengan cepat.', 'Pick the date (today by default). Use <b>Template</b> to fill exercise names quickly.'),
+      T('Isi nama latihan dan reps setiap pusingan. Untuk latihan masa (contoh plank), isi saat.', 'Enter each exercise and the reps for each round. For timed moves (e.g. plank), enter seconds.'),
+      T('Guna <b>timer</b> untuk rekod masa sebenar, kemudian tekan <b>Simpan</b>.', 'Use the <b>timer</b> to record the actual time, then tap <b>Save</b>.'),
+      T('Kalau ada nama atau nombor yang app tak pasti, rekod ditanda <b>⚠ semak</b> — tekan rekod tu untuk betulkan.', 'If a name or number looks uncertain, the record is marked <b>⚠ check</b> — tap it to fix.')]), ['w', T('Buka Workout', 'Open Workout')], 'save simpan reps template');
+    add('g-rest', 'guide', T('Hari rehat', 'Rest days'), ul([
+      T('Tekan <b>Rest day</b> dalam kad Workout — tarikh diambil terus dari kad Workout.', 'Tap <b>Rest day</b> in the Workout card — it uses the Workout card’s date.'),
+      T('Hari lepas yang langsung tiada rekod diisi <b>automatik</b> sebagai rehat, supaya kalendar dan streak tetap tepat.', 'Past days with no record at all are filled in <b>automatically</b> as rest, so the calendar and streak stay accurate.'),
+      T('Rehat tak memutuskan rekod lain, tapi streak workout hanya dikira untuk hari workout.', 'Rest does not erase anything, but the workout streak only counts workout days.')]), ['w', T('Buka Workout', 'Open Workout')], 'rest rehat auto');
+    add('g-sleep', 'guide', T('Rekod tidur', 'Log sleep'), ol([
+      T('Utama → tab <b>Sleep</b>.', 'Home → the <b>Sleep</b> tab.'),
+      T('Isi waktu <b>tidur</b> dan <b>bangun</b>. Tempoh dikira automatik, termasuk melepasi tengah malam.', 'Enter <b>bedtime</b> and <b>wake-up</b> time. Duration is worked out for you, including past midnight.'),
+      T('Tarikh tidur ialah tarikh kau <b>bangun</b>.', 'A night is saved under the date you <b>wake up</b>.'),
+      T('Target tidur kau sekarang: <b>' + lo + '–' + hi + ' jam</b> (ubah dalam Tetapan).', 'Your sleep target now: <b>' + lo + '–' + hi + ' hours</b> (change it in Settings).')]), ['s', T('Buka Sleep', 'Open Sleep')], 'sleep tidur bangun');
+    add('g-walk', 'guide', T('Rekod langkah & brisk walk', 'Log steps & brisk walks'), ul([
+      T('<b>Langkah sehari (jam)</b>: isi jumlah langkah dari jam pada waktu malam. Boleh simpan tanpa sesi brisk walk.', '<b>Daily steps (watch)</b>: enter the day’s total from your watch at night. You can save it without a brisk-walk session.'),
+      T('<b>Langkah brisk + masa</b>: untuk sesi jalan laju — app kira rentak, kelajuan, jarak dan kalori.', '<b>Brisk steps + time</b>: for a brisk-walk session — the app works out pace, speed, distance and calories.'),
+      T('Jumlah hari = nilai jam, atau langkah brisk jika lebih tinggi. Ia <b>tak dicampur</b> sebab jam dah kira langkah brisk walk.', 'The day’s total = the watch value, or brisk steps if higher. They are <b>not added</b> because the watch already counts the brisk-walk steps.'),
+      T('Kalau sesi untuk tarikh tu dah ada, app tanya sama ada nak <b>tambah</b> (2 sesi) atau <b>ganti</b>.', 'If a session already exists for that date, the app asks whether to <b>add</b> it (2 sessions) or <b>replace</b> it.')]), ['k', T('Buka Walk', 'Open Walk')], 'steps langkah jam watch brisk');
+    add('g-tpl', 'guide', T('Template latihan', 'Workout templates'), ul([
+      T('Tekan butang <b>Template</b> untuk pilih set latihan yang selalu kau buat — nama latihan diisi terus.', 'Tap <b>Template</b> to pick a routine you do often — the exercise names are filled in.'),
+      T('Ikon pen dalam senarai template untuk ubah, tambah atau padam template.', 'Use the pen icon in the template list to edit, add or delete templates.'),
+      T('Sebelah butang Template ada ringkasan <b>workout terakhir</b> — tekan untuk detail penuh.', 'Beside Template is a summary of your <b>last workout</b> — tap for the full detail.')]), ['tpl', T('Buka Template', 'Open Templates')], 'template');
+    add('g-timer', 'guide', T('Timer workout', 'Workout timer'), ul([
+      T('Tekan main untuk mula, sekali lagi untuk berhenti seketika.', 'Tap play to start, again to pause.'),
+      T('Bila berhenti, tekan butang isi untuk masukkan masa ke ruang <b>SEBENAR</b>.', 'When paused, tap the fill button to put the time into the <b>ACTUAL</b> field.'),
+      T('Masa SEBENAR digunakan untuk “Masa workout” dalam Records dan Dashboard.', 'ACTUAL time feeds “Workout time” in Records and the Dashboard.')]), ['timer', T('Pergi ke timer', 'Go to timer')], 'timer masa actual sebenar');
+    add('g-pb', 'guide', T('Personal Best & streak', 'Personal Best & streak'), ul([
+      T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik kecil = rekod baru dalam 7 hari.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. A small dot = a new record in the last 7 days.'),
+      T('Cip <b>api</b> sebelahnya: streak workout semasa dan terbaik — tekan untuk detail.', 'The <b>flame</b> chip beside it: current and best workout streak — tap for details.')]), ['pb', T('Buka Personal Best', 'Open Personal Best')], 'pb trophy trofi streak');
+    add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
+      T('<b>Records</b> (bawah halaman Utama): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (bottom of Home): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
+      T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Slide your finger over a chart to see each day.'),
+      T('Tekan mana-mana hari untuk lihat, ubah atau padam rekod. Data yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b> dalam Google Sheet.', 'Tap any day to view, edit or delete it. Deleted data is first copied to the <b>DELETED (BACKUP)</b> tab in the Google Sheet.')]), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'records dashboard carta chart');
+    add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
+      T('Butang bahasa di atas: tukar BM / English. Ikon gear: tulisan besar, sasaran (workout seminggu, tidur, langkah, minit brisk walk, panjang langkah).', 'The language button at the top switches BM / English. Gear icon: large text, goals (workouts a week, sleep, steps, brisk-walk minutes, stride length).'),
+      T('Gabungan warna sedia ada, atau <b>Custom</b> untuk pilih warna setiap aktiviti, butang dan panel.', 'Ready-made colour combos, or <b>Custom</b> to choose colours for each activity, buttons and panels.'),
+      T('Ikon bulan/matahari: mod gelap atau terang.', 'Moon/sun icon: dark or light mode.')]), ['set', T('Buka Tetapan', 'Open Settings')], 'settings tetapan tema theme bahasa language warna colour');
+    // 2. metrics
+    add('m-streak', 'metrics', 'Streak', T('Bilangan hari <b>berturut-turut</b> kau workout, sehingga hari ini atau semalam. Kalau hari ini belum workout, streak semalam masih dikira sampai hujung hari. Satu hari tanpa workout (termasuk rehat) memulakan semula streak.', 'The number of days <b>in a row</b> you trained, up to today or yesterday. If you have not trained yet today, yesterday’s streak still counts until the day ends. One day without a workout (rest included) restarts it.'), ['streak', T('Lihat streak', 'See streak')], 'streak');
+    add('m-cons', 'metrics', T('Konsistensi', 'Consistency'), T('Peratus hari dalam tempoh yang ada workout: hari workout ÷ jumlah hari. Sasaran mingguan kau <b>' + wg + ' workout</b> ≈ ' + Math.round(wg / 7 * 100) + '%. Records menanda 60%+ sebagai bagus dan bawah 30% perlu tindakan.', 'Share of days in the period with a workout: workout days ÷ days. Your weekly goal of <b>' + wg + ' workouts</b> ≈ ' + Math.round(wg / 7 * 100) + '%. Records marks 60%+ as good and under 30% as needing action.'), ['rec', T('Lihat Records', 'See Records')], 'consistency konsisten peratus');
+    add('m-cmp', 'metrics', T('Banding tempoh sebelum', 'Vs the previous period'), T('Setiap petak dalam Records dibanding dengan tempoh yang sama panjang <b>sebelumnya</b> (contoh 7 hari ini vs 7 hari sebelum). ▲ hijau = lebih baik, ▼ merah = menurun. Untuk tidur, “lebih baik” maksudnya lebih dekat dengan target, bukan semestinya lebih lama.', 'Each Records tile is compared with the period of the same length <b>just before</b> it (e.g. these 7 days vs the 7 before). Green ▲ = better, red ▼ = down. For sleep, “better” means closer to your target, not simply longer.'), null, 'compare banding period tempoh');
+    add('m-sleep', 'metrics', T('Target tidur', 'Sleep target'), T('Target kau sekarang <b>' + lo + '–' + hi + ' jam</b>. Warna malam: merah = kurang dari ' + lo + 'j, hijau = dalam target, biru = lebih dari ' + hi + 'j. Purata tidur dikira dari malam yang direkod sahaja.', 'Your target now is <b>' + lo + '–' + hi + ' hours</b>. Night colours: red = under ' + lo + 'h, green = on target, blue = over ' + hi + 'h. The average uses only the nights you logged.'), ['s', T('Buka Sleep', 'Open Sleep')], 'sleep tidur target');
+    add('m-steps', 'metrics', T('Jumlah langkah & target', 'Step total & goal'), T('Jumlah sehari = langkah jam atau langkah brisk walk, mana lebih tinggi (tak dicampur). Target kau <b>' + fmtN(g) + ' langkah</b>. “Capai sasaran” = hari dengan jumlah ≥ target. Heatmap: bawah 60%, 60–99%, capai target, 150%+.', 'Daily total = watch steps or brisk-walk steps, whichever is higher (never added). Your goal is <b>' + fmtN(g) + ' steps</b>. “Goal days” = days with a total ≥ goal. Heatmap bands: under 60%, 60–99%, goal hit, 150%+.'), ['k', T('Buka Walk', 'Open Walk')], 'steps langkah goal target');
+    add('m-pace', 'metrics', T('Rentak (cadence) & kelajuan', 'Pace (cadence) & speed'), T('Rentak = langkah brisk ÷ minit. <b>100+ langkah/min</b> biasanya dikira brisk walk (intensiti sederhana). Kelajuan = jarak ÷ masa.', 'Cadence = brisk steps ÷ minutes. <b>100+ steps/min</b> usually counts as brisk walking (moderate intensity). Speed = distance ÷ time.'), null, 'cadence rentak pace speed kelajuan');
+    add('m-dist', 'metrics', T('Jarak & kalori (anggaran)', 'Distance & calories (estimates)'), T('Jarak = langkah × panjang langkah kau (<b>' + st + ' cm</b>, ubah dalam Tetapan — ukur 10 langkah biasa dan bahagi 10). Kalori ≈ 5 kcal seminit brisk walk; ini anggaran kasar sahaja, sebenar bergantung pada berat badan dan kelajuan.', 'Distance = steps × your stride (<b>' + st + ' cm</b>, change it in Settings — measure 10 normal steps and divide by 10). Calories ≈ 5 kcal per brisk-walk minute; a rough estimate — the real figure depends on body weight and speed.'), ['set', T('Ubah panjang langkah', 'Change stride')], 'distance jarak km kalori calories stride');
+    add('m-time', 'metrics', T('Masa workout & reps', 'Workout time & reps'), T('Masa workout = jumlah masa <b>SEBENAR</b> yang diisi (workout tanpa masa tak dikira). Reps = jumlah semua reps; latihan masa seperti plank tak dikira sebagai reps.', 'Workout time = total <b>ACTUAL</b> time entered (workouts without a time are not counted). Reps = all reps added up; timed moves like plank are not counted as reps.'), null, 'time masa reps');
+    // 4. recovery & sleep
+    add('r-rest', 'recovery', T('Berapa lama rehat antara sesi?', 'How much rest between sessions?'), ul([
+      T('Otot yang sama biasanya perlukan <b>48 jam</b> untuk pulih selepas sesi berat.', 'The same muscles usually need about <b>48 hours</b> to recover after a hard session.'),
+      T('Workout setiap hari boleh — tukar fokus (contoh atas badan / bawah badan) atau selang dengan hari ringan.', 'Training daily is fine — alternate focus (e.g. upper / lower body) or mix in easy days.'),
+      T('1–2 hari rehat seminggu biasanya cukup. Lebih 3 hari berturut boleh buat rentak hilang.', '1–2 rest days a week is usually enough. More than 3 in a row can cost you momentum.')]), null, 'rest rehat recovery');
+    add('r-sleep', 'recovery', T('Tidur & otot', 'Sleep & muscle'), T('Badan membaiki otot dan simpan tenaga paling banyak semasa tidur. Kebanyakan orang dewasa perlukan 7–9 jam. Kurang tidur boleh kurangkan kekuatan, tenaga dan motivasi pada sesi seterusnya. Target kau sekarang ' + lo + '–' + hi + ' jam.', 'Your body does most of its muscle repair and energy refill during sleep. Most adults need 7–9 hours. Short sleep can lower strength, energy and motivation for the next session. Your target now is ' + lo + '–' + hi + ' hours.'), ['s', T('Buka Sleep', 'Open Sleep')], 'sleep tidur muscle otot');
+    add('r-habit', 'recovery', T('Tabiat tidur yang baik', 'Good sleep habits'), ul([
+      T('Bangun pada waktu yang <b>sama</b> setiap hari, termasuk hujung minggu.', 'Wake up at the <b>same</b> time every day, weekends included.'),
+      T('Kurangkan skrin dan cahaya terang 30–60 minit sebelum tidur.', 'Cut screens and bright light 30–60 minutes before bed.'),
+      T('Elak kafein lewat petang dan makan berat dekat waktu tidur.', 'Avoid caffeine late in the day and heavy meals close to bedtime.'),
+      T('Bilik gelap, sejuk dan senyap. Workout berat terlalu lewat malam boleh susahkan tidur.', 'Keep the room dark, cool and quiet. Very hard workouts late at night can make sleep harder.')]), null, 'sleep tidur habit tabiat');
+    add('r-doms', 'recovery', T('Sakit otot selepas workout (DOMS)', 'Muscle soreness (DOMS)'), T('Sakit otot 1–3 hari selepas latihan baru atau lebih berat adalah normal (DOMS). Jalan ringan, regangan dan tidur cukup membantu. Sakit yang tajam, di sendi, atau tak berkurang selepas beberapa hari bukan DOMS — rehatkan bahagian tu dan dapatkan nasihat profesional.', 'Soreness 1–3 days after new or harder training is normal (DOMS). Light walking, stretching and good sleep help. Sharp pain, joint pain, or pain that does not ease after a few days is not DOMS — rest that area and get professional advice.'), null, 'doms sakit sore pain');
+    add('r-over', 'recovery', T('Tanda terlebih latihan', 'Signs of overtraining'), ul([
+      T('Prestasi turun beberapa sesi berturut walaupun usaha sama.', 'Performance drops for several sessions despite the same effort.'),
+      T('Penat berpanjangan, susah tidur, atau mudah sakit.', 'Lasting tiredness, poor sleep, or getting ill easily.'),
+      T('Hilang motivasi. Kalau nampak tanda ni, ambil 2–3 hari ringan dan semak tidur kau.', 'Loss of motivation. If you see these, take 2–3 easy days and check your sleep.')]), null, 'overtraining penat tired');
+    // 5. brisk walk
+    add('k-what', 'walk', T('Apa itu brisk walk?', 'What is brisk walking?'), T('Berjalan cukup laju sampai nafas lebih cepat, tapi masih boleh bercakap dalam ayat pendek (tak boleh menyanyi). Biasanya sekitar <b>100+ langkah seminit</b>. Target sesi kau sekarang <b>' + wm + ' minit</b>.', 'Walking fast enough that you breathe harder but can still talk in short sentences (not sing). Usually around <b>100+ steps a minute</b>. Your session target now is <b>' + wm + ' minutes</b>.'), ['k', T('Buka Walk', 'Open Walk')], 'brisk what apa');
+    add('k-150', 'walk', T('Saranan 150 minit seminggu', 'The 150 minutes a week guideline'), T('Garis panduan kesihatan (WHO) menyarankan orang dewasa buat sekurang-kurangnya <b>150 minit</b> aktiviti sederhana seminggu — contohnya ' + Math.ceil(150 / wm) + ' sesi brisk walk ' + wm + ' minit. Boleh dipecah kepada sesi pendek sepanjang minggu.', 'Health guidelines (WHO) recommend adults get at least <b>150 minutes</b> of moderate activity a week — for example ' + Math.ceil(150 / wm) + ' brisk walks of ' + wm + ' minutes. It can be split into shorter sessions across the week.'), null, '150 who minggu week');
+    add('k-tech', 'walk', T('Teknik berjalan', 'Walking technique'), ul([
+      T('Badan tegak, pandang ke depan, bahu rileks.', 'Stand tall, look ahead, shoulders relaxed.'),
+      T('Hayun tangan dengan siku bengkok ~90° — ini bantu naikkan rentak.', 'Swing your arms with elbows bent ~90° — it helps raise your pace.'),
+      T('Langkah lebih pendek dan cepat lebih baik dari langkah panjang.', 'Shorter, quicker steps beat long strides.'),
+      T('Mula 3–5 minit perlahan untuk panaskan badan, akhiri dengan 3–5 minit perlahan.', 'Start with 3–5 easy minutes to warm up, finish with 3–5 easy minutes.')]), null, 'technique teknik form');
+    add('k-watch', 'walk', T('Baca data jam (Aolon / GloryFitPro)', 'Reading your watch (Aolon / GloryFitPro)'), ol([
+      T('Buka GloryFitPro dan biar jam <b>sync</b> sepenuhnya.', 'Open GloryFitPro and let the watch <b>sync</b> fully.'),
+      T('Ambil jumlah langkah hari tu (lebih tepat kalau ambil waktu malam, selepas aktiviti hari tu habis).', 'Take that day’s step total (most accurate at night, once the day’s activity is done).'),
+      T('Isi dalam <b>Langkah sehari (jam)</b> dalam tab Walk. Kalau ada sesi brisk walk, isi langkah dan minit sesi tu juga.', 'Enter it in <b>Daily steps (watch)</b> in the Walk tab. If you did a brisk walk, enter that session’s steps and minutes too.'),
+      T('Lupa? Tukar tarikh dalam kad Walk dan isi untuk hari sebelumnya — rekod lama dikemas kini, bukan digandakan.', 'Forgot? Change the date in the Walk card and enter it for that day — the old record is updated, not doubled.')]), ['k', T('Buka Walk', 'Open Walk')], 'watch jam aolon gloryfit sync');
+    add('k-more', 'walk', T('Cara tambah langkah harian', 'Easy ways to add steps'), ul([
+      T('Jalan 10 minit selepas makan — biasanya 1,000+ langkah.', 'Walk 10 minutes after meals — usually 1,000+ steps.'),
+      T('Guna tangga, parkir lebih jauh, jalan semasa panggilan telefon.', 'Take stairs, park further away, walk during phone calls.'),
+      T('Naikkan target sedikit demi sedikit (contoh +500 seminggu) bila dah selalu capai ' + fmtN(g) + '.', 'Raise the goal gradually (e.g. +500 a week) once you often hit ' + fmtN(g) + '.')]), null, 'steps langkah tambah more');
+    // 6. glossary
+    [['Rep', T('Satu ulangan pergerakan penuh (contoh satu push up).', 'One full repetition of a movement (e.g. one push up).')],
+     ['Set', T('Satu kumpulan reps berturut tanpa rehat (contoh 3 set × 10 reps).', 'A group of reps done without rest (e.g. 3 sets × 10 reps).')],
+     [T('Pusingan (round)', 'Round'), T('Satu kitaran semua latihan dalam workout, dalam app ni setiap kotak reps ialah satu pusingan.', 'One pass through all exercises; in this app each reps box is one round.')],
+     ['RPE', T('Rating of Perceived Exertion — skala 1–10 betapa susah satu set terasa. 7–8 = susah tapi masih ada 2–3 reps lagi.', 'Rating of Perceived Exertion — a 1–10 scale of how hard a set feels. 7–8 = hard with 2–3 reps left.')],
+     ['Progressive overload', T('Tambah cabaran sedikit demi sedikit (reps, set, berat atau masa) supaya badan terus jadi kuat.', 'Gradually adding challenge (reps, sets, weight or time) so your body keeps getting stronger.')],
+     ['AMRAP', T('As Many Reps/Rounds As Possible — sebanyak mungkin dalam masa yang ditetapkan.', 'As Many Reps/Rounds As Possible — as many as you can in a set time.')],
+     ['EMOM', T('Every Minute On the Minute — buat reps yang ditetapkan pada awal setiap minit, rehat baki minit tu.', 'Every Minute On the Minute — do set reps at the start of each minute, rest for the rest of it.')],
+     ['Superset', T('Dua latihan berturut tanpa rehat di antaranya.', 'Two exercises back to back with no rest in between.')],
+     ['Tempo', T('Kelajuan setiap fasa pergerakan, contoh turun 3 saat, naik 1 saat.', 'The speed of each phase of a rep, e.g. 3 seconds down, 1 second up.')],
+     ['Failure', T('Titik di mana kau tak boleh buat satu rep lagi dengan form yang betul. Tak perlu setiap set.', 'The point where you cannot do another rep with good form. Not needed on every set.')],
+     ['Warm-up / Cool-down', T('5–10 minit pergerakan ringan sebelum (panaskan badan) dan selepas (tenangkan badan) workout.', '5–10 minutes of light movement before (warm-up) and after (cool-down) training.')],
+     ['Cadence', T('Rentak langkah seminit semasa berjalan.', 'Steps per minute while walking.')],
+     ['DOMS', T('Delayed Onset Muscle Soreness — sakit otot 1–3 hari selepas latihan.', 'Delayed Onset Muscle Soreness — muscle soreness 1–3 days after training.')],
+     ['PB', T('Personal Best — rekod terbaik kau.', 'Personal Best — your best record.')]
+    ].forEach(function (x, i) { add('t-' + i, 'terms', x[0], x[1], null, 'term istilah'); });
+    // 7. FAQ
+    add('f-missing', 'faq', T('Data aku tak keluar / tak update', 'My data is missing or not updating'), ul([
+      T('Tutup dan buka semula app untuk muat data terkini.', 'Close and reopen the app to load the latest data.'),
+      T('Pastikan ada internet — data disimpan dan dibaca dari Google Sheet kau.', 'Make sure you are online — data is saved to and read from your Google Sheet.'),
+      T('Semak tarikh yang kau isi; rekod disimpan ikut tarikh dalam kad, bukan tarikh hari ini.', 'Check the date you entered; records are saved under the card’s date, not today’s.'),
+      T('Dalam Records, pastikan tempoh (7D, 30D…) meliputi tarikh tu.', 'In Records, make sure the period (7D, 30D…) covers that date.')]), null, 'missing hilang tak keluar update');
+    add('f-version', 'faq', T('App nampak versi lama', 'The app looks out of date'), T('App simpan salinan untuk dibuka tanpa internet. Bila ada versi baru, tutup app sepenuhnya dan buka semula (kadang-kadang dua kali) untuk dapat versi terkini.', 'The app keeps a copy so it can open offline. When there is a new version, fully close and reopen the app (sometimes twice) to get it.'), null, 'version versi lama old update cache');
+    add('f-install', 'faq', T('Install ke skrin utama', 'Install to the home screen'), ol([
+      T('Buka app dalam Chrome di telefon.', 'Open the app in Chrome on your phone.'),
+      T('Tekan menu ⋮ → <b>Add to Home screen</b> / <b>Install app</b>.', 'Tap the ⋮ menu → <b>Add to Home screen</b> / <b>Install app</b>.'),
+      T('App dibuka penuh skrin macam app biasa.', 'It then opens full screen like a normal app.')]), null, 'install pwa home screen');
+    add('f-data', 'faq', T('Di mana data aku disimpan?', 'Where is my data stored?'), T('Semua rekod disimpan dalam Google Sheet <b>DAILY WORKOUT DATABASE</b> dalam Google Drive kau sendiri. Buka melalui Tetapan → <b>Buka Sheet &amp; Dashboard</b>. Rekod yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b>, jadi masih boleh dipulihkan dari situ.', 'All records live in the Google Sheet <b>DAILY WORKOUT DATABASE</b> in your own Google Drive. Open it from Settings → <b>Open Sheet &amp; Dashboard</b>. Deleted records are first copied to the <b>DELETED (BACKUP)</b> tab, so they can still be restored from there.'), ['set', T('Buka Tetapan', 'Open Settings')], 'data sheet google backup simpan');
+    add('f-review', 'faq', T('Kenapa ada tanda ⚠ semak?', 'Why is there a ⚠ check mark?'), T('App menanda latihan bila nama atau nombornya tak pasti. Tekan hari tu, betulkan latihan dan simpan — tanda akan hilang. Jumlah “Perlu semak” juga ada dalam Dashboard.', 'The app flags an exercise when its name or numbers look uncertain. Tap that day, fix the exercise and save — the mark goes away. The “Needs review” count is also on the Dashboard.'), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'review semak warning');
+    add('f-rest', 'faq', T('Kenapa ada hari rehat yang aku tak isi?', 'Why are there rest days I did not log?'), T('Hari lepas yang langsung tiada workout atau rehat diisi automatik sebagai rehat (sebab: diisi automatik). Kalau sebenarnya kau workout hari tu, isi workout untuk tarikh tu — rekod rehat automatik akan diganti.', 'Past days with no workout or rest are filled in automatically as rest (reason: filled automatically). If you actually trained that day, log the workout for that date — the automatic rest is replaced.'), null, 'auto rest rehat automatik');
+    return A;
+  }
+  // exercise library: [bm name, en name, aliases, muscles bm/en, cues bm/en, mistakes bm/en, easier bm/en, harder bm/en]
+  var KC_EX = [
+    ['Push up', 'Push up', ['push up', 'pushup', 'push-up', 'tekan tubi'], ['Dada, bahu depan, trisep, teras', 'Chest, front shoulders, triceps, core'], [['Tangan sedikit lebih luas dari bahu', 'Badan lurus dari kepala ke tumit', 'Turun sampai dada hampir ke lantai, siku ~45° dari badan'], ['Hands slightly wider than shoulders', 'Body straight from head to heels', 'Lower until your chest nearly touches, elbows ~45° from your body']], [['Pinggul jatuh atau terangkat', 'Siku terbuka 90° ke sisi'], ['Hips sagging or piking', 'Elbows flaring straight out to the sides']], ['Push up lutut atau tangan di atas bangku', 'Knee push ups or hands on a bench'], ['Kaki di atas bangku, tempo perlahan, atau diamond push up', 'Feet on a bench, slow tempo, or diamond push ups']],
+    ['Squat', 'Squat', ['squat', 'air squat', 'bodyweight squat'], ['Paha depan, punggung, paha belakang', 'Quads, glutes, hamstrings'], [['Kaki selebar bahu, jari kaki sedikit ke luar', 'Duduk ke belakang seperti ke kerusi, dada tegak', 'Lutut ikut arah jari kaki, tumit kekal di lantai'], ['Feet shoulder-width, toes slightly out', 'Sit back as if onto a chair, chest up', 'Knees track over toes, heels stay down']], [['Lutut masuk ke dalam', 'Tumit terangkat'], ['Knees caving in', 'Heels lifting']], ['Squat ke kerusi atau separuh squat', 'Squat to a chair or a half squat'], ['Jump squat, pause squat, atau pegang dumbbell', 'Jump squats, pause squats, or hold a dumbbell']],
+    ['Lunge', 'Lunge', ['lunge', 'lunges', 'reverse lunge', 'walking lunge'], ['Paha depan, punggung, keseimbangan', 'Quads, glutes, balance'], [['Langkah panjang, turun sampai kedua lutut ~90°', 'Badan tegak, lutut depan atas buku lali', 'Tolak dari tumit kaki depan untuk naik'], ['Take a long step, lower until both knees are ~90°', 'Torso upright, front knee over the ankle', 'Push through the front heel to rise']], [['Lutut depan terlalu ke depan atau ke dalam', 'Badan condong ke depan'], ['Front knee drifting far forward or inward', 'Leaning the torso forward']], ['Reverse lunge sambil pegang dinding', 'Reverse lunges holding a wall'], ['Walking lunge, jump lunge, atau pegang dumbbell', 'Walking lunges, jump lunges, or hold dumbbells']],
+    ['Plank', 'Plank', ['plank', 'forearm plank'], ['Teras (abdomen), bahu, punggung', 'Core, shoulders, glutes'], [['Siku bawah bahu', 'Badan lurus, ketatkan perut dan punggung', 'Bernafas biasa, jangan tahan nafas'], ['Elbows under shoulders', 'Body straight, brace your belly and glutes', 'Breathe normally, do not hold your breath']], [['Pinggul jatuh atau terlalu tinggi', 'Kepala tunduk'], ['Hips sagging or too high', 'Head dropping']], ['Plank lutut atau tempoh lebih pendek', 'Knee plank or shorter holds'], ['Angkat satu tangan/kaki, atau tambah 10 saat setiap minggu', 'Lift one arm/leg, or add 10 seconds each week']],
+    ['Side plank', 'Side plank', ['side plank'], ['Teras sisi (oblik), bahu', 'Side core (obliques), shoulders'], [['Siku bawah bahu, kaki bertindan', 'Angkat pinggul sampai badan lurus', 'Buat kedua-dua belah sama lama'], ['Elbow under shoulder, feet stacked', 'Lift hips until your body is straight', 'Hold both sides equally']], [['Pinggul jatuh', 'Bahu naik ke telinga'], ['Hips dropping', 'Shoulder shrugging to the ear']], ['Lutut bawah di lantai', 'Bottom knee on the floor'], ['Angkat kaki atas atau tambah hip dips', 'Lift the top leg or add hip dips']],
+    ['Burpee', 'Burpee', ['burpee', 'burpees'], ['Seluruh badan, jantung', 'Full body, cardio'], [['Squat, tangan ke lantai, lompat kaki ke belakang ke posisi plank', 'Lompat kaki balik ke depan', 'Lompat ke atas dengan tangan di atas kepala'], ['Squat, hands down, jump feet back to a plank', 'Jump feet back in', 'Jump up with arms overhead']], [['Pinggul jatuh dalam plank', 'Mendarat dengan lutut kaku'], ['Hips sagging in the plank', 'Landing with stiff knees']], ['Langkah ke belakang tanpa lompat', 'Step back instead of jumping'], ['Tambah push up di bawah atau tuck jump', 'Add a push up at the bottom or a tuck jump']],
+    ['Sit up', 'Sit up', ['sit up', 'situp', 'sit-up'], ['Abdomen, otot pinggul', 'Abs, hip flexors'], [['Lutut bengkok, kaki rata di lantai', 'Tangan di dada atau sisi kepala (jangan tarik leher)', 'Naik dan turun terkawal'], ['Knees bent, feet flat', 'Hands on chest or beside head (do not pull the neck)', 'Controlled up and down']], [['Tarik leher dengan tangan', 'Hentak belakang ke lantai'], ['Yanking the neck with the hands', 'Dropping back down fast']], ['Crunch atau sit up separuh', 'Crunches or half sit ups'], ['Pegang beban di dada atau perlahankan turun', 'Hold a weight at the chest or slow the descent']],
+    ['Crunch', 'Crunch', ['crunch', 'crunches'], ['Abdomen atas', 'Upper abs'], [['Angkat bahu dari lantai dengan ketatkan perut', 'Bawah belakang kekal di lantai', 'Hembus nafas semasa naik'], ['Lift your shoulders by tightening your abs', 'Lower back stays on the floor', 'Exhale on the way up']], [['Tarik kepala dengan tangan', 'Guna momentum'], ['Pulling the head with your hands', 'Using momentum']], ['Julat pergerakan lebih kecil', 'Smaller range of motion'], ['Bicycle crunch atau kaki diangkat', 'Bicycle crunches or legs raised']],
+    ['Jumping jack', 'Jumping jack', ['jumping jack', 'jumping jacks', 'star jump'], ['Jantung, kaki, bahu', 'Cardio, legs, shoulders'], [['Lompat buka kaki sambil tangan ke atas', 'Mendarat lembut atas hujung kaki', 'Rentak tetap'], ['Jump feet out as arms go up', 'Land softly on the balls of your feet', 'Keep a steady rhythm']], [['Mendarat dengan tumit keras', 'Lutut kaku'], ['Landing hard on the heels', 'Locked knees']], ['Langkah ke sisi tanpa lompat', 'Step out to the side instead of jumping'], ['Seal jack atau tambah kelajuan', 'Seal jacks or go faster']],
+    ['Mountain climber', 'Mountain climber', ['mountain climber', 'mountain climbers'], ['Teras, bahu, jantung', 'Core, shoulders, cardio'], [['Mula dalam posisi plank tangan', 'Tarik lutut ke dada bergilir-gilir', 'Pinggul rendah dan stabil'], ['Start in a high plank', 'Drive knees to chest one at a time', 'Hips low and steady']], [['Pinggul terlalu tinggi', 'Tangan di depan bahu'], ['Hips too high', 'Hands in front of the shoulders']], ['Perlahan, langkah satu-satu', 'Slow, one step at a time'], ['Laju atau cross-body', 'Faster or cross-body']],
+    ['Pull up', 'Pull up', ['pull up', 'pullup', 'pull-up', 'chin up', 'chinup'], ['Belakang (lats), bisep, genggaman', 'Back (lats), biceps, grip'], [['Genggam bar sedikit lebih luas dari bahu', 'Tarik dada ke bar, bahu ke bawah dan belakang', 'Turun sampai tangan hampir lurus'], ['Grip slightly wider than shoulders', 'Pull your chest to the bar, shoulders down and back', 'Lower until arms are nearly straight']], [['Hayun badan (kipping) tanpa sengaja', 'Separuh pergerakan'], ['Swinging unintentionally', 'Half reps']], ['Negative (turun perlahan), band, atau inverted row', 'Negatives (slow lowering), a band, or inverted rows'], ['Tambah beban atau pause di atas', 'Add weight or pause at the top']],
+    ['Dips', 'Dips', ['dip', 'dips', 'bench dip', 'tricep dip'], ['Trisep, dada, bahu', 'Triceps, chest, shoulders'], [['Tangan di belakang atas bangku/kerusi', 'Turun sampai siku ~90°', 'Siku ke belakang, bukan ke luar'], ['Hands behind you on a bench/chair', 'Lower until elbows are ~90°', 'Elbows point back, not out']], [['Turun terlalu dalam sampai bahu sakit', 'Bahu naik ke telinga'], ['Going so deep the shoulders hurt', 'Shoulders shrugging up']], ['Lutut bengkok, kaki dekat', 'Knees bent, feet close'], ['Kaki lurus atau di atas bangku lain', 'Straight legs or feet on another bench']],
+    ['Glute bridge', 'Glute bridge', ['glute bridge', 'bridge', 'hip thrust', 'hip bridge'], ['Punggung, paha belakang', 'Glutes, hamstrings'], [['Baring, lutut bengkok, kaki rata', 'Tolak tumit, angkat pinggul sampai lurus dari lutut ke bahu', 'Ketatkan punggung 1–2 saat di atas'], ['Lie down, knees bent, feet flat', 'Push through heels, lift hips to a straight line knees-to-shoulders', 'Squeeze glutes 1–2 seconds at the top']], [['Lengkung bawah belakang berlebihan', 'Tolak guna hujung kaki'], ['Over-arching the lower back', 'Pushing through the toes']], ['Julat lebih kecil', 'Smaller range'], ['Satu kaki atau beban atas pinggul', 'Single leg or a weight on the hips']],
+    ['Bicep curl', 'Bicep curl', ['bicep curl', 'biceps curl', 'curl', 'dumbbell curl', 'hammer curl'], ['Bisep, lengan bawah', 'Biceps, forearms'], [['Siku rapat di sisi badan', 'Angkat terkawal, turun perlahan (2–3 saat)', 'Pergelangan tangan lurus'], ['Elbows tucked at your sides', 'Lift with control, lower slowly (2–3 s)', 'Wrists straight']], [['Hayun badan untuk angkat', 'Siku bergerak ke depan'], ['Swinging the body to lift', 'Elbows drifting forward']], ['Berat lebih ringan', 'Lighter weight'], ['Tempo perlahan, hammer curl, atau tambah berat sedikit', 'Slow tempo, hammer curls, or a little more weight']],
+    ['Shoulder press', 'Shoulder press', ['shoulder press', 'overhead press', 'military press', 'dumbbell press'], ['Bahu, trisep', 'Shoulders, triceps'], [['Dumbbell paras bahu, siku sedikit ke depan', 'Tolak ke atas sampai tangan hampir lurus', 'Ketatkan perut, jangan lengkung belakang'], ['Dumbbells at shoulder height, elbows slightly forward', 'Press up until arms are nearly straight', 'Brace your belly, do not arch your back']], [['Lengkung bawah belakang', 'Turun terlalu laju'], ['Arching the lower back', 'Dropping the weight fast']], ['Duduk dengan sandaran, berat ringan', 'Seated with back support, lighter weight'], ['Berdiri, satu tangan, atau pike push up', 'Standing, single arm, or pike push ups']],
+    ['Deadlift (dumbbell)', 'Deadlift (dumbbell)', ['deadlift', 'romanian deadlift', 'rdl'], ['Paha belakang, punggung, belakang bawah', 'Hamstrings, glutes, lower back'], [['Belakang lurus, tolak pinggul ke belakang', 'Beban dekat dengan kaki', 'Berdiri dengan ketatkan punggung'], ['Flat back, push hips back', 'Keep the weight close to your legs', 'Stand up by squeezing your glutes']], [['Belakang membongkok', 'Angkat guna belakang, bukan pinggul'], ['Rounded back', 'Lifting with the back instead of the hips']], ['Berat ringan, julat separuh', 'Light weight, half range'], ['Satu kaki atau tambah berat perlahan-lahan', 'Single leg or add weight slowly']],
+    ['Russian twist', 'Russian twist', ['russian twist'], ['Teras sisi (oblik)', 'Side core (obliques)'], [['Duduk, condong sedikit ke belakang, belakang lurus', 'Pusing bahu, bukan hanya tangan', 'Kawal pergerakan'], ['Sit, lean back slightly, back straight', 'Rotate your shoulders, not just your arms', 'Stay controlled']], [['Belakang membongkok', 'Terlalu laju'], ['Rounded back', 'Going too fast']], ['Kaki di lantai', 'Feet on the floor'], ['Angkat kaki atau pegang beban', 'Lift your feet or hold a weight']],
+    ['Wall sit', 'Wall sit', ['wall sit'], ['Paha depan, punggung', 'Quads, glutes'], [['Belakang rata ke dinding', 'Lutut ~90°, atas buku lali', 'Bernafas biasa'], ['Back flat against the wall', 'Knees ~90°, over ankles', 'Breathe normally']], [['Lutut melepasi jari kaki', 'Tangan tolak paha'], ['Knees past the toes', 'Pushing on thighs with hands']], ['Kurang dalam (lutut > 90°)', 'Higher position (knees > 90°)'], ['Satu kaki atau tambah masa', 'Single leg or longer holds']],
+    ['High knees', 'High knees', ['high knee', 'high knees'], ['Jantung, kaki, teras', 'Cardio, legs, core'], [['Angkat lutut ke paras pinggang', 'Mendarat atas hujung kaki', 'Hayun tangan'], ['Drive knees to hip height', 'Land on the balls of your feet', 'Pump your arms']], [['Badan condong ke belakang', 'Mendarat berat'], ['Leaning back', 'Landing heavily']], ['Berjalan di tempat dengan lutut tinggi', 'March in place with high knees'], ['Lebih laju atau lebih lama', 'Faster or longer']],
+    ['Superman', 'Superman', ['superman', 'back extension'], ['Belakang bawah, punggung', 'Lower back, glutes'], [['Meniarap, tangan ke depan', 'Angkat tangan dan kaki sedikit, tahan 2 saat', 'Pandang lantai'], ['Lie face down, arms forward', 'Lift arms and legs slightly, hold 2 seconds', 'Look at the floor']], [['Angkat kepala terlalu tinggi', 'Pergerakan menghentak'], ['Lifting the head too high', 'Jerky movement']], ['Angkat tangan sahaja atau kaki sahaja', 'Lift arms only or legs only'], ['Tahan lebih lama', 'Longer holds']]
+  ];
+  function kcExFind(name) {
+    var norm = function (v) { return ' ' + String(v || '').toLowerCase().replace(/[^a-z ]/g, ' ').split(/\s+/).filter(Boolean).map(function (w) { return w.length >= 3 ? w.replace(/s$/, '') : w; }).join(' ') + ' '; };
+    var n = norm(name), best = null, bl = 0;   // "Squats" / "Push Ups" match "squat" / "push up"
+    KC_EX.forEach(function (e) { e[2].forEach(function (a) { var q = norm(a); if (n.indexOf(q) >= 0 && q.length > bl) { best = e; bl = q.length; } }); });
+    return best;
+  }
+  function kcTip() {          // tip of the day: picked from the person's own data, else a rotating tip
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, t = REC_TODAY || todayKey();
+    var ns = (SLEEP_ALL || []).slice().sort(function (a, b) { return a.d < b.d ? 1 : -1; })[0];
+    if (ns && ns.d >= addDays(t, -1) && ns.h < slLo()) return [T('Tidur semalam ' + hm(ns.h * 60) + ' — bawah target. Buat sesi ringan hari ini dan tidur lebih awal malam ni.', 'Last night was ' + hm(ns.h * 60) + ' — under target. Keep today’s session light and get to bed earlier tonight.'), 'r-sleep'];
+    var lastW = null; (REC || []).forEach(function (r) { if (r.activity === 'Workout' && (!lastW || r.date > lastW)) lastW = r.date; });
+    var gap = lastW ? Math.round((Date.parse(t) - Date.parse(lastW)) / 864e5) : 99;
+    if (lastW && gap >= 3) return [T(gap + ' hari sejak workout terakhir. Sesi 15 minit pun cukup untuk mula semula.', gap + ' days since your last workout. Even a 15-minute session gets you going again.'), 'r-rest'];
+    var y = (WALK_ALL || []).filter(function (x) { return x.d === addDays(t, -1); })[0], g = S.stepGoal || 8000;
+    if (y && wTot(y) < g) return [T('Semalam ' + fmtN(wTot(y)) + ' langkah. Jalan 10 minit selepas makan boleh tambah 1,000+ langkah.', 'Yesterday was ' + fmtN(wTot(y)) + ' steps. A 10-minute walk after a meal adds 1,000+ steps.'), 'k-more'];
+    if (gap === 0) return [T('Workout hari ini dah siap — minum air dan tidur cukup untuk recovery otot.', 'Today’s workout is done — drink water and sleep well so your muscles recover.'), 'r-sleep'];
+    var R = [[T('Tambah 1–2 reps pada set pertama setiap minggu — itulah progressive overload.', 'Add 1–2 reps to your first set each week — that is progressive overload.'), 't-4'],
+      [T('Bangun pada waktu yang sama setiap hari bantu kualiti tidur lebih dari tidur lebih lama.', 'Waking at the same time daily helps sleep quality more than sleeping longer.'), 'r-habit'],
+      [T('Brisk walk: kalau boleh bercakap tapi tak boleh menyanyi, rentak kau dah betul.', 'Brisk walking: if you can talk but not sing, your pace is right.'), 'k-what'],
+      [T('Form dulu, reps kemudian. Rekod yang betul lebih berguna dari nombor besar.', 'Form first, reps second. Honest records are worth more than big numbers.'), 'g-workout'],
+      [T('Panaskan badan 5 minit sebelum workout kurangkan risiko cedera.', 'A 5-minute warm-up before training lowers injury risk.'), 't-10']];
+    return R[Math.floor(Date.parse(t) / 864e5) % R.length];
+  }
+  function kcOpen(view, arg) {
+    var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, A = kcArticles();
+    var byId = {}; A.forEach(function (a) { byId[a.id] = a; });
+    var card = function (a) { return '<button type="button" class="kca" data-a="' + a.id + '"><span>' + a.t + '</span>' + ic('right', 'kcgo') + '</button>'; };
+    $('detailBack').style.display = view === 'home' ? 'none' : '';
+    var html = '';
+    if (view === 'home') {
+      DBACK = null;
+      $('dTitle').textContent = 'Knowledge Centre';
+      var tip = kcTip();
+      html = '<div class="kcs"><input type="search" id="kcQ" placeholder="' + T('Cari: tidur, langkah, plank…', 'Search: sleep, steps, plank…') + '" autocomplete="off"></div><div id="kcRes"></div><div id="kcMain">' +
+        '<button type="button" class="kctip" data-a="' + tip[1] + '"><span class="kcti">' + ic('bulb') + '</span><span><small>' + T('PETUA HARI INI', 'TIP OF THE DAY') + '</small>' + tip[0] + '</span></button>' +
+        '<div class="grp">' + T('Apa yang baru', 'What’s new') + '</div><div class="kcl kcn">' + KC_NEWS.slice(0, 3).map(function (n) { return '<button type="button" class="kca" data-a="' + n[2] + '"><span>' + T(n[1][0], n[1][1]) + '<small>' + isoToDmy(n[0]) + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>' +
+        '<div class="grp">' + T('Topik', 'Topics') + '</div><div class="kcg">' + KC_CATS.map(function (c) { return '<button type="button" class="kcc" data-c="' + c[0] + '"><i class="ki">' + ic(c[1]) + '</i><b>' + T(c[2][0], c[2][1]) + '</b><small>' + T(c[3][0], c[3][1]) + '</small></button>'; }).join('') + '</div></div>';
+    } else if (view === 'cat') {
+      DBACK = function () { kcOpen('home'); };
+      var C = KC_CATS.filter(function (c) { return c[0] === arg; })[0];
+      $('dTitle').textContent = T(C[2][0], C[2][1]);
+      if (arg === 'ex') {
+        var mine = pbList(), seen = {};
+        html = (mine.length ? '<div class="grp">' + T('Latihan kau', 'Your exercises') + '</div><div class="kcl">' + mine.map(function (o) { var e = kcExFind(o.n); if (e) seen[e[0]] = 1; return '<button type="button" class="kca" data-x="' + esc(o.n) + '"><span>' + esc(o.n) + '<small>PB ' + fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>' : '') +
+          '<div class="grp">' + T('Semua latihan', 'All exercises') + '</div><div class="kcl">' + KC_EX.filter(function (e) { return !seen[e[0]]; }).map(function (e) { return '<button type="button" class="kca" data-x="' + esc(e[0]) + '"><span>' + T(e[0], e[1]) + '<small>' + T(e[3][0], e[3][1]) + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>';
+      } else html = '<div class="kcl">' + A.filter(function (a) { return a.c === arg; }).map(card).join('') + '</div>';
+    } else if (view === 'art') {
+      var a = byId[arg]; if (!a) return kcOpen('home');
+      DBACK = function () { kcOpen('cat', a.c); };
+      $('dTitle').textContent = a.t;
+      var rel = A.filter(function (b) { return b.c === a.c && b.id !== a.id; }).slice(0, 3);
+      html = '<div class="kcb">' + (a.b.charAt(0) === '<' ? a.b : '<p>' + a.b + '</p>') + '</div>' + (a.go ? '<button type="button" class="kcgo2" data-go="' + a.go[0] + '">' + a.go[1] + ic('right') + '</button>' : '') +
+        (rel.length ? '<div class="grp">' + T('Berkaitan', 'Related') + '</div><div class="kcl">' + rel.map(card).join('') + '</div>' : '');
+    } else if (view === 'ex') {
+      var e = kcExFind(arg), mineO = pbList().filter(function (o) { return o.n.toLowerCase() === String(arg).toLowerCase(); })[0];
+      DBACK = function () { kcOpen('cat', 'ex'); };
+      $('dTitle').textContent = mineO ? mineO.n : (e ? T(e[0], e[1]) : arg);
+      var I = en ? 1 : 0;
+      if (mineO) {
+        var last = mineO.list.reduce(function (q, x) { return !q || x.d > q ? x.d : q; }, '');
+        html += '<div class="tkv"><div><span>' + T('PB kau', 'Your PB') + '</span><b>' + fmtV(mineO.best, mineO.sec) + (mineO.sec ? '' : ' reps') + '</b></div><div><span>' + T('Terakhir', 'Last done') + '</span><b>' + isoToDmy(last).slice(0, 5) + '</b></div><div><span>' + T('Sesi', 'Sessions') + '</span><b>' + mineO.list.length + '</b></div><div><span>' + T('Berat tertinggi', 'Heaviest') + '</span><b>' + (mineO.kg ? mineO.kg + 'kg' : '–') + '</b></div></div>';
+      }
+      if (e) {
+        html += '<div class="kcb"><p><b>' + T('Otot', 'Muscles') + ':</b> ' + e[3][I] + '</p><div class="grp">' + T('Cara buat', 'How to') + '</div><ol>' + e[4][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>' +
+          '<div class="grp">' + T('Kesilapan biasa', 'Common mistakes') + '</div><ul>' + e[5][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
+          '<div class="kc2"><div><span>' + T('Lebih mudah', 'Easier') + '</span>' + e[6][I] + '</div><div><span>' + T('Lebih susah', 'Harder') + '</span>' + e[7][I] + '</div></div></div>';
+      } else html += '<div class="kcb"><p>' + T('Belum ada panduan untuk latihan ni dalam pustaka. Prinsip umum: buat dengan form yang betul dan terkawal, mula dengan reps yang selesa, dan tambah sedikit setiap minggu.', 'There is no guide for this exercise in the library yet. General rule: keep good, controlled form, start with comfortable reps, and add a little each week.') + '</p></div>';
+      if (mineO) html += '<button type="button" class="kcgo2" data-pb="1">' + T('Lihat sejarah & PB', 'See history & PB') + ic('right') + '</button>';
+    }
+    $('dBody').innerHTML = '<div class="kl tip kc">' + html + '</div>';
+    var B = $('dBody');
+    [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
+    [].forEach.call(B.querySelectorAll('[data-c]'), function (b) { b.onclick = function () { kcOpen('cat', b.dataset.c); }; });
+    [].forEach.call(B.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
+    [].forEach.call(B.querySelectorAll('[data-go]'), function (b) { b.onclick = function () { kcGo(b.dataset.go); }; });
+    var pbb = B.querySelector('[data-pb]'); if (pbb) pbb.onclick = function () { var o = pbList().filter(function (q) { return q.n.toLowerCase() === String(arg).toLowerCase(); })[0]; if (o) { openPB(o, false); DBACK = function () { kcOpen('ex', arg); }; $('detailBack').style.display = ''; } };
+    var q = $('kcQ');
+    if (q) q.oninput = function () {
+      var v = q.value.trim().toLowerCase(), res = $('kcRes'), main = $('kcMain');
+      if (!v) { res.innerHTML = ''; main.style.display = ''; return; }
+      main.style.display = 'none';
+      var hitA = A.filter(function (a) { return (a.t + ' ' + a.b.replace(/<[^>]+>/g, ' ') + ' ' + a.k).toLowerCase().indexOf(v) >= 0; });
+      var hitE = KC_EX.filter(function (e) { return (e[0] + ' ' + e[1] + ' ' + e[2].join(' ') + ' ' + e[3].join(' ')).toLowerCase().indexOf(v) >= 0; });
+      res.innerHTML = (hitA.length + hitE.length) ? '<div class="kcl">' + hitA.map(card).join('') + hitE.map(function (e) { return '<button type="button" class="kca" data-x="' + esc(e[0]) + '"><span>' + T(e[0], e[1]) + '<small>' + T('Pustaka latihan', 'Exercise library') + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>'
+        : '<div class="empty">' + T('Tiada hasil untuk “', 'No results for “') + esc(q.value) + '”.</div>';
+      [].forEach.call(res.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
+      [].forEach.call(res.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
+    };
+    $('detail').classList.add('on'); $('detailBg').classList.add('on');
+    B.scrollTop = 0; try { $('detail').scrollTop = 0; } catch (e) {}
+  }
+  $('kcBtn').onclick = function () { kcOpen('home'); };
   function renderDash() {
     if (!DASH) return;
     paintFilter();
