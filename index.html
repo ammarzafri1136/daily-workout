@@ -4880,6 +4880,6 @@
   applySettings();
   applyLang();
 </script>
-<script>if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js'); });</script>
+<script>if ('serviceWorker' in navigator) window.addEventListener('load', function () { var had = !!navigator.serviceWorker.controller, done = false; navigator.serviceWorker.addEventListener('controllerchange', function () { if (had && !done) { done = true; location.reload(); } }); navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(function (r) { r.update(); document.addEventListener('visibilitychange', function () { if (!document.hidden) r.update(); }); }); });</script>
 </body>
 </html>

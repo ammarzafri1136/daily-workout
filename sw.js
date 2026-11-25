@@ -8,6 +8,8 @@ self.addEventListener('activate', function (e) {
 });
 self.addEventListener('fetch', function (e) {
   var r = e.request; if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;
-  e.respondWith(fetch(r).then(function (res) { var cp = res.clone(); caches.open(CACHE).then(function (c) { c.put(r, cp); }); return res; })
+  // the page itself is always re-checked with the server (GitHub Pages lets browsers reuse it for 10 min otherwise)
+  var page = r.mode === 'navigate' || /\/(index\.html)?$/.test(new URL(r.url).pathname);
+  e.respondWith(fetch(page ? new Request(r.url, { cache: 'no-cache', credentials: 'same-origin' }) : r).then(function (res) { var cp = res.clone(); caches.open(CACHE).then(function (c) { c.put(r, cp); }); return res; })
     .catch(function () { return caches.match(r).then(function (m) { return m || caches.match('index.html'); }); }));
 });
