@@ -457,7 +457,7 @@
   .tabs::before { content:''; position:absolute; z-index:0; top:5px; bottom:5px; left:5px; width:calc((100% - 10px) / 3); border-radius:999px;
     background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.55)); border:1px solid rgba(255,255,255,.9);
     box-shadow:inset 0 1px 0 #fff, 0 3px 10px rgba(0,0,0,.12); transition:transform .45s cubic-bezier(.32,1.25,.5,1); }
-  .tabs:has(#recBtn.on)::before { transform:translateX(100%); } .tabs:has(#dashBtn.on)::before { transform:translateX(200%); }
+  .tabs::before { transform:translateX(100%); } .tabs:has(#recBtn.on)::before { transform:translateX(0); } .tabs:has(#dashBtn.on)::before { transform:translateX(200%); }   /* order: Records · Home · Dashboard */
   .tabs button { position:relative; z-index:1; flex:1 1 0 !important; display:flex; flex-direction:column; align-items:center; gap:1px; padding:6px 0 5px !important; font-size:10.5px !important;
     font-weight:600 !important; background:none !important; color:var(--muted) !important; border-radius:999px !important; transition:color .25s, transform .2s; }
   .tabs button:active { transform:scale(.94); }
@@ -592,7 +592,7 @@
 <body>
 <div class="wrap">
   <nav class="nav">
-    <div class="tabs" role="tablist"><button type="button" id="homeBtn" class="on" role="tab">Home</button><button type="button" id="recBtn" role="tab">Rekod</button><button type="button" id="dashBtn" role="tab">Dashboard</button></div>
+    <div class="tabs" role="tablist"><button type="button" id="recBtn" role="tab">Rekod</button><button type="button" id="homeBtn" class="on" role="tab">Home</button><button type="button" id="dashBtn" role="tab">Dashboard</button></div>
     <button type="button" class="stk" id="streakChip" title="Streak workout" aria-label="Streak workout"></button><button type="button" class="ib pbbtn" id="pbBtn" title="Personal Best" aria-label="Personal Best"></button><span class="navsp" aria-hidden="true"></span>
     <button type="button" class="ib txt" id="langBtn" title="Bahasa / Language" aria-label="Bahasa / Language">BM</button>
     <button type="button" class="ib" id="themeBtn" title="Dark / Bright mode" aria-label="Dark mode"><svg class="ico ih ih-moon hi tm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mn" d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg><svg class="ico ih ih-sun hi ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><g class="sr"><path d="M12 5l0 .01"/><path d="M17 7l0 .01"/><path d="M19 12l0 .01"/><path d="M17 17l0 .01"/><path d="M12 19l0 .01"/><path d="M7 17l0 .01"/><path d="M5 12l0 .01"/><path d="M7 7l0 .01"/></g></svg></button>
@@ -2432,12 +2432,12 @@
   function weekStart(k) { var p = k.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); }
   function esc(t) { var x = document.createElement('span'); x.textContent = t; return x.innerHTML; }
   // Home <-> Dashboard: header + week strip stay still; only the content below swaps with a short fade/slide
-  // three bottom tabs: Home (cards) · Records · Dashboard. setView(true/false) still means Dashboard / Home.
+  // three bottom tabs: Records · Home (cards, centre) · Dashboard. setView(true/false) still means Dashboard / Home.
   (function () {   // Records gets its own view (moved out of the bottom of Home)
     var rv = document.createElement('div'); rv.id = 'recView'; rv.style.display = 'none';
     $('cardView').parentNode.insertBefore(rv, $('cardView').nextSibling); rv.appendChild(document.querySelector('#cardView .recent'));
   })();
-  var VIEWS = { home: 'cardView', rec: 'recView', dash: 'dashView' }, VORD = ['home', 'rec', 'dash'];
+  var VIEWS = { home: 'cardView', rec: 'recView', dash: 'dashView' }, VORD = ['rec', 'home', 'dash'];
   function curView() { return $('dashView').style.display !== 'none' ? 'dash' : $('recView').style.display !== 'none' ? 'rec' : 'home'; }
   function setView(v) {
     if (v === true) v = 'dash'; else if (v === false || !VIEWS[v]) v = 'home';
@@ -2459,6 +2459,12 @@
   $('dashBtn').onclick = function () { setView('dash'); };
   $('recBtn').onclick = function () { setView('rec'); };
   $('homeBtn').onclick = function () { setView('home'); };
+  // always open on Home: at start, and when the app comes back after being in the background for a while
+  setView('home');
+  (function () { var hid = 0; document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { hid = Date.now(); return; }
+    if (hid && Date.now() - hid > 5 * 60 * 1000 && !document.querySelector('.sheet.on') && curView() !== 'home') setView('home');
+  }); })();
 
   // ---- dashboard date filter ----
   var RANGE = '30d';
@@ -2924,7 +2930,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
-    ['2026-11-25', ['Rekod kini ada tab sendiri di bar bawah — tak perlu scroll ke bawah Utama lagi.', 'Records now has its own tab in the bottom bar — no more scrolling to the bottom of Home.'], 'g-rec'],
+    ['2026-11-25', ['Rekod kini ada tab sendiri di bar bawah (Rekod · Utama · Dashboard). App sentiasa dibuka di Utama.', 'Records now has its own tab in the bottom bar (Records · Home · Dashboard). The app always opens on Home.'], 'g-rec'],
     ['2026-11-25', ['Pustaka latihan kini guna lukisan Workout Guide 3 frame yang bergerak dan ikut warna tema (19 latihan; sit up guna animasi figura).', 'The exercise library now uses 3-frame Workout Guide drawings that move and follow your theme colour (19 exercises; sit up uses the figure animation).'], 'f-credits'],
     ['2026-11-25', ['Swipe kiri/kanan di mana-mana pada Utama & Dashboard untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right anywhere on Home & the Dashboard to switch Workout, Sleep and Walk.'], 'g-swipe'],
     ['2026-11-25', ['Pustaka latihan kini ada animasi form yang betul (main sendiri) untuk 20 latihan, dan artikel ada grafik dari data kau.', 'The exercise library now has auto-playing correct-form animations for 20 exercises, and articles have graphics from your own data.'], 'k-tech'],
@@ -2995,7 +3001,7 @@
       T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik kecil = rekod baru dalam 7 hari.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. A small dot = a new record in the last 7 days.'),
       T('Cip <b>api</b> sebelahnya: streak workout semasa dan terbaik — tekan untuk detail.', 'The <b>flame</b> chip beside it: current and best workout streak — tap for details.')]), ['pb', T('Buka Personal Best', 'Open Personal Best')], 'pb trophy trofi streak');
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
-      T('<b>Rekod</b> (tab sendiri di bar bawah, antara Utama dan Dashboard): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (its own tab in the bottom bar, between Home and Dashboard): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
+      T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
       T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Slide your finger over a chart to see each day.'),
       T('Tekan mana-mana hari untuk lihat, ubah atau padam rekod. Data yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b> dalam Google Sheet.', 'Tap any day to view, edit or delete it. Deleted data is first copied to the <b>DELETED (BACKUP)</b> tab in the Google Sheet.')]), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'records dashboard carta chart');
     add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
