@@ -1946,7 +1946,7 @@
   function show(type, text, list) {
     text = msgEN(String(text || ''));
     if (/…$/.test(text)) { wait(text); return; }
-    try { sfx(type === 'ok' ? 'ok' : type === 'bad' ? 'bad' : 'warn'); } catch (e) {}
+    try { var tg = arguments[3], k = type === 'ok' ? (SFX_NEXT || (tg === 'sleepMsg' ? 'okSleep' : tg === 'walkMsg' ? 'okWalk' : 'ok')) : type === 'bad' ? 'bad' : (SFX_NEXT || 'warn'); SFX_NEXT = null; sfx(k); } catch (e) {}
     clearTimeout(OVL_T); WAITING = false; var o = ovl(), b = $('ovlBox');
     b.className = 'ovlbox ' + type;
     b.innerHTML = '<span class="ic">' + ic(type === 'ok' ? 'check' : (type === 'bad' ? 'x' : 'warning'), 'go') + '</span>';
@@ -1979,6 +1979,7 @@
     RUN().withSuccessHandler(function (res) {
       busy(false);
       var names = S.autoNames ? card.rows.map(function (r) { return r.name; }) : [];
+      if (res.ok) SFX_NEXT = pbs.length ? 'okPB' : 'okWk';   // workout saved: its own sound (a fanfare when there is a new PB)
       if (res.ok && res.status === 'SUCCESS' && pbs.length) { show('ok', '✔ ' + res.message + ' 🏆 PB baru!', pbs); clearCard(true, names); }
       else if (res.ok && res.status === 'SUCCESS') { show('ok', '✔ ' + res.message); clearCard(true, names); }
       else if (res.ok) { show('warn', '✔ ' + res.message + ' Sila semak dalam Sheet:', res.reasons); clearCard(true, names); }
@@ -3321,6 +3322,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Setiap aktiviti ada bunyi simpan sendiri: Workout bunyi "power-up" (dan fanfare kecil bila ada PB baru), Tidur bunyi lembut menurun macam dodoi, Jalan bunyi dua tapak kaki diikuti "ping".', 'Each activity has its own save sound: Workout a rising "power-up" (a little fanfare for a new PB), Sleep a soft falling lullaby, Walk two footsteps then a "ping".'], 'g-set'],
     ['2026-11-25', ['Bunyi butang: bunyi lembut bila tekan butang, bunyi "ding" bila simpan berjaya, dan bunyi rendah kalau gagal. Matikan di Tetapan → Paparan → Bunyi butang untuk mod senyap.', 'Button sounds: a soft tap when you press buttons, a chime when a save works and a low tone if it fails. Turn off in Settings → Display → Button sounds for silent mode.'], 'g-set'],
     ['2026-11-25', ['Template yang terpadam boleh dipulihkan: tekan butang Pulihkan dalam senarai Template (template asal yang hilang pun keluar di situ).', 'Deleted templates can be restored: tap Restore in the Template list (missing built-in templates show up there too).'], 'g-tpl'],
     ['2026-11-25', ['Kemas kini kecil: kotak carian Knowledge Centre lebih kemas dan tak rapat dengan butang Tutup; senarai Template tiada lagi jalur bayang di tepi.', 'Small polish: the Knowledge Centre search box is cleaner and no longer crowds the Close button; the Template list no longer has the shadow-like side stripe.'], 'g-kc'],
@@ -4250,16 +4252,23 @@
   $('optLarge').onchange = function () { S.large = this.checked; saveSettings(); applySettings(); };
   $('optSound').onchange = function () { S.sound = this.checked; saveSettings(); if (S.sound) sfx('ok'); };
   // ---- button sounds (made with Web Audio, no files): soft tap on buttons, a chime when a save works, a low tone when it fails; off in silent mode ----
-  var SFX = null;
+  var SFX = null, SFX_NEXT = null;
   function sfx(kind) {
     if (S.sound === false) return;
     try {
       SFX = SFX || new (window.AudioContext || window.webkitAudioContext)(); if (SFX.state === 'suspended') SFX.resume();
-      var t0 = SFX.currentTime, notes = { tap: [[1100, 0, .035, .035]], ok: [[660, 0, .09, .07], [990, .08, .16, .07]], warn: [[520, 0, .12, .06]], bad: [[220, 0, .1, .07], [180, .11, .14, .07]] }[kind] || [];
+      var t0 = SFX.currentTime, notes = {
+        tap: [[1100, 0, .035, .035]], ok: [[660, 0, .09, .07], [990, .08, .16, .07]], warn: [[520, 0, .12, .06]], bad: [[220, 0, .1, .07], [180, .11, .14, .07]],
+        okWk: [[523, 0, .08, .08], [659, .07, .08, .08], [784, .14, .08, .08], [1047, .21, .22, .09]],                      // workout: quick rising "power-up"
+        okPB: [[523, 0, .07, .08], [659, .06, .07, .08], [784, .12, .07, .08], [1047, .18, .12, .09], [784, .32, .07, .07], [1047, .39, .3, .1]],   // new PB: little fanfare
+        okSleep: [[784, 0, .35, .05], [659, .22, .4, .045], [523, .46, .7, .04]],                                           // sleep: slow, soft lullaby fall
+        okWalk: [[260, 0, .05, .09], [260, .16, .05, .09], [880, .3, .1, .06], [1175, .4, .22, .06]]                        // walk: two footsteps, then a bright ping
+      }[kind] || [];
+      var wave = { tap: 'triangle', okWk: 'square', okPB: 'square', okWalk: 'triangle' }[kind] || 'sine';
       notes.forEach(function (n) {
-        var o = SFX.createOscillator(), g = SFX.createGain(); o.type = kind === 'tap' ? 'triangle' : 'sine'; o.frequency.setValueAtTime(n[0], t0 + n[1]);
+        var o = SFX.createOscillator(), g = SFX.createGain(); o.type = (kind === 'okWalk' && n[0] < 400) ? 'sine' : wave; o.frequency.setValueAtTime(n[0], t0 + n[1]);
         if (kind === 'tap') o.frequency.exponentialRampToValueAtTime(700, t0 + n[1] + n[2]);
-        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(n[3], t0 + n[1] + .008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(wave === 'square' ? n[3] * .45 : n[3], t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
         o.connect(g); g.connect(SFX.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + .02);
       });
     } catch (e) {}
