@@ -420,6 +420,7 @@
   .day { display:flex; justify-content:space-between; border-top:1px solid var(--rule); padding:7px 2px; font-size:15px; }
   .day .w { font-weight:800; color:var(--wk, var(--ink)); }
   .day .r { color:var(--rest-tx, var(--rest)); font-weight:800; }
+  .day .k { color:var(--walk); font-weight:800; } .day .kst { color:var(--walk); font-weight:700; } .kl.tip .day .k { color:var(--walk); }
   .day small { color:var(--muted); }
   .flag { color:var(--warn); font-weight:800; }
 
@@ -704,9 +705,10 @@
       <div class="box date tm"><span class="k">DATE</span>
         <span class="dwrap"><input id="walkDate" class="dmy" inputmode="numeric" placeholder="dd/mm/yyyy" maxlength="10" autocomplete="off">
           <span class="cal" title="Pilih tarikh"><svg class="ico ih ih-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"/><path class="cr" d="M16 3v4"/><path class="cr" d="M8 3v4"/><path d="M4 11h16"/></svg><input type="date" id="walkPick" tabindex="-1" aria-label="Pilih tarikh"></span></span></div>
-      <div class="box tm"><label class="k" for="walkSteps">STEPS</label><span class="dv wv"><input id="walkSteps" inputmode="numeric" placeholder="0" maxlength="7" autocomplete="off"></span></div>
+      <div class="box tm"><label class="k" for="walkSteps">BRISK STEPS</label><span class="dv wv"><input id="walkSteps" inputmode="numeric" placeholder="0" maxlength="7" autocomplete="off"></span></div>
       <div class="box tm"><label class="k" for="walkMin">TIME (MIN)</label><span class="dv wv"><input id="walkMin" inputmode="decimal" placeholder="0" maxlength="5" autocomplete="off"></span></div>
     </div>
+    <div class="box tm wdayb"><label class="k" for="walkDay">DAILY STEPS (WATCH)</label><span class="dv wv"><input id="walkDay" inputmode="numeric" placeholder="0" maxlength="6" autocomplete="off"></span><small class="wdn">Total steps for the whole day from your watch</small></div>
     <div class="wsum" id="walkSum"></div>
     <div class="actions" style="margin-top:0"><button type="button" class="save" id="walkSave">SAVE BRISK WALK</button><button type="button" class="clear" id="walkClear" title="Kosongkan" aria-label="Kosongkan"></button></div>
     <div class="msg" id="walkMsg"></div>
@@ -1414,12 +1416,23 @@
 
   /* dashboard rings follow their own section colour */
   #dKpi .hk-ring .prg { stroke:var(--wk) !important; }
-  #sKpi .hk-ring .prg { stroke:#8b5cf6 !important; }
+  #sKpi .hk-ring .prg { stroke:var(--sleepc) !important; }
   .pal .pd i { width:14px; height:14px; margin-left:-4px; }
 
   .wsum .wtip { grid-column:1 / -1; margin:0 !important; background:var(--tile) !important; }
   .wst span { font-size:10.5px !important; font-weight:700; letter-spacing:.3px; text-transform:uppercase; }
   .wst b { color:var(--accent); }
+
+  .wdayb { margin-top:8px; padding:4px 6px 6px !important; flex-direction:column; align-items:stretch !important; gap:3px; display:flex; }
+  .wdayb .wdn { font-size:11px; color:var(--muted); padding:0 2px; }
+
+  /* each activity has its own colour (from the colour combo): workout = --wk, sleep = --sleepc, walk = --walk */
+  body { --sleepc:#ec4899; }
+  .sleep .ti, .sleep h2 .ti.ih-bed, #sleepCard h2 .ti { color:var(--sleepc) !important; }
+  #sleepDash .ch h4 .hic, .ch h4 .hic[data-ic="bed"], .ch h4 .hic[data-ic="moon"] { color:var(--sleepc) !important; }
+  .sleep.walk h2 .ti.ih-walk { color:var(--walk) !important; }
+  .title h1 .ti { color:var(--wk) !important; }
+  .pal .pd i { width:13px; height:13px; margin-left:-4px; }
 </style>
 <script>
   var ROWS = 5, ROUNDS = 5, DRAFT_KEY = 'dw-draft-v1';
@@ -1601,6 +1614,8 @@
     [/^Tempoh tidur lebih 20 jam — semak semula waktu\.$/, 'Over 20 hours of sleep — check the times.'],
     [/^Isi waktu tidur dan waktu bangun \(contoh (.+?) dan (.+?)\)\.$/, 'Enter bedtime and wake time (e.g. $1 and $2).'],
     [/^Isi waktu tidur dan waktu bangun\.$/, 'Enter bedtime and wake time.'],
+    [/^Brisk walk ([\d,]+) langkah \((.+?) min\) · ([\d,]+) langkah sehari disimpan untuk (\S+)\.$/, 'Brisk walk of $1 steps ($2 min) · $3 steps today saved for $4.'],
+    [/^([\d,]+) langkah sehari disimpan untuk (\S+)\.$/, '$1 steps for the day saved for $2.'],
     [/^Brisk walk ([\d,]+) langkah \((.+?) min\) disimpan untuk (\S+)\.$/, 'Brisk walk of $1 steps ($2 min) saved for $3.'],
     [/^Brisk walk untuk (\S+) sudah ada \((\d+) langkah, (.+?) min\)\./, 'A brisk walk for $1 already exists ($2 steps, $3 min).'],
     [/^Rekod brisk walk (\S+) dipadam\. Salinan dalam (.+?)\.$/, 'Brisk walk record $1 deleted. A copy is kept in $2.'],
@@ -1721,19 +1736,32 @@
     $('rCustom').classList.toggle('on', RREC === 'custom'); $('rLabel').textContent = rg.label;
     var list = REC.filter(function (x) { return x.date >= rg.from && x.date <= rg.to; });
       renderRecSummary(list, rg);
+      // walk steps per day; days with only a walk log still get a row
+      var WD = {}; (WALK_ALL || []).forEach(function (w) { if (w.d >= rg.from && w.d <= rg.to && wTot(w) > 0) WD[w.d] = w; });
+      var seen = {}; list.forEach(function (x) { seen[x.date] = 1; });
+      Object.keys(WD).forEach(function (d) { if (!seen[d]) list.push({ date: d, activity: 'Walk' }); });
+      list.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+      var shown = {};
       var box = $('days'); box.innerHTML = '';
       if (!list.length) { box.innerHTML = '<div class="day"><small>' + (REC.length ? 'Tiada rekod dalam tempoh ini.' : 'Belum ada rekod.') + '</small></div>'; return; }
       list.forEach(function (x) {
         var row = document.createElement('div'); row.className = 'day'; row.setAttribute('role', 'button'); row.tabIndex = 0;
         row.onclick = function () { openDetail(x.date); };
         var p = x.date.split('-'), left = document.createElement('span');
-        left.innerHTML = '<span class="' + (x.activity === 'Workout' ? 'w' : (x.activity === 'Sleep' ? 's' : 'r')) + '"></span> <small></small>';
-        left.firstChild.textContent = p[2] + '/' + p[1] + '/' + p[0] + '  ' + (x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? '' : 'Rest Day'));
+        left.innerHTML = '<span class="' + (x.activity === 'Workout' ? 'w' : (x.activity === 'Sleep' ? 's' : (x.activity === 'Walk' ? 'k' : 'r'))) + '"></span> <small></small>';
+        left.firstChild.textContent = p[2] + '/' + p[1] + '/' + p[0] + '  ' + (x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? '' : (x.activity === 'Walk' ? 'Walk' : 'Rest Day')));
         left.lastChild.textContent = x.review === 'Needs Review' ? ' ⚠ semak' : '';
         if (x.review === 'Needs Review') left.lastChild.className = 'flag';
         var right = document.createElement('small');
         right.textContent = (x.activity === 'Workout' ? (x.exercises + ' latihan · ' + x.reps + ' reps' + (x.actual ? ' · ' + x.actual : '')) : '') +
           (x.sleep ? (x.activity === 'Workout' ? ' · ' : '') + 'Tidur ' + x.sleep : '');
+        var wk = WD[x.date];
+        if (wk && !shown[x.date]) {
+          shown[x.date] = 1;
+          var st = document.createElement('span'); st.className = 'kst';
+          st.textContent = (right.textContent ? ' · ' : '') + wTot(wk).toLocaleString() + (S.lang === 'en' ? ' steps' : ' langkah');
+          right.appendChild(st);
+        }
         var go = document.createElement('span'); go.className = 'go'; go.innerHTML = '<svg class="ico ih ih-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="cv" d="M9 6l6 6l-6 6"/></svg>'; right.appendChild(go);
         row.appendChild(left); row.appendChild(right); box.appendChild(row);
       });
@@ -1775,11 +1803,14 @@
         else if (x.activity === 'Rest Day') rd[x.date] = 1;
       });
       var ns = (SLEEP_ALL || []).filter(function (x) { return x.d >= a && x.d <= b; });
+      var wk = (WALK_ALL || []).filter(function (x) { return x.d >= a && x.d <= b && wTot(x) > 0; }), g = S.stepGoal || 8000;
+      var stp = wk.reduce(function (q, x) { return q + wTot(x); }, 0);
       return { w: Object.keys(wd).length, r: Object.keys(rd).length, reps: reps, min: Math.round(min), wd: wd, rd: rd,
+        st: stp, kn: wk.length, kavg: wk.length ? Math.round(stp / wk.length) : null, kg: wk.filter(function (x) { return wTot(x) >= g; }).length, wk: wk,
         n: ns.length, sl: ns.length ? ns.reduce(function (q, x) { return q + x.h; }, 0) / ns.length : null,
         ok: ns.filter(function (x) { return x.h >= lo && x.h <= hi; }).length };
     }
-    var c = stats(from, to), p = stats(pFrom, pTo), hasP = (p.w + p.r + p.n) > 0;
+    var c = stats(from, to), p = stats(pFrom, pTo), hasP = (p.w + p.r + p.n + p.kn) > 0;
     function dl(a, b, kind) {                   // change badge vs previous period
       if (!hasP) return '<em class="z">–</em>';
       if (kind === 'sl') {
@@ -1803,7 +1834,10 @@
       tile('Reps', c.reps.toLocaleString(), dl(c.reps, p.reps), 'k-reps') +
       tile(T('Masa workout', 'Workout time'), c.min >= 60 ? Math.floor(c.min / 60) + T('j ', 'h ') + (c.min % 60) + 'm' : c.min + 'm', dl(c.min, p.min), 'k-min') +
       tile(T('Purata tidur', 'Avg sleep'), c.sl === null ? '–' : hm(c.sl * 60), dl(c.sl, p.sl, 'sl'), 'k-sl') +
-      tile('Streak', cur + '<i> ' + T('hari', cur === 1 ? 'day' : 'days') + '</i>', '<em class="z">' + T('terbaik ', 'best ') + best + '</em>', 'k-streak') + '</div>';
+      tile('Streak', cur + '<i> ' + T('hari', cur === 1 ? 'day' : 'days') + '</i>', '<em class="z">' + T('terbaik ', 'best ') + best + '</em>', 'k-streak') +
+      tile(T('Langkah', 'Steps'), c.st >= 1e5 ? Math.round(c.st / 1000) + 'k' : c.st.toLocaleString(), dl(c.st, p.st), 'k-steps') +
+      tile(T('Purata langkah', 'Avg steps'), c.kavg === null ? '–' : c.kavg.toLocaleString(), (c.kavg === null || p.kavg === null) ? '<em class="z">–</em>' : dl(c.kavg, p.kavg), 'k-steps') +
+      tile(T('Capai sasaran', 'Step goal'), c.kg + '<i>/' + span + '</i>', dl(c.kg, p.kg, 'n'), 'k-steps') + '</div>';
     // recommendations: one short line each, coloured dot = tone
     var R = [], cons = Math.round(100 * c.w / span), run = 0;
     var k0 = (to === t && !c.wd[t] && !c.rd[t]) ? addDays(t, -1) : to;
@@ -1826,8 +1860,13 @@
       else if (c.sl > hi) add(sleepColor(c.sl), 'bed', 'Tidur purata <b>' + hm(c.sl * 60) + '</b>, lebih dari ' + hi + 'j. Bangun pada waktu tetap.', 'Average sleep <b>' + hm(c.sl * 60) + '</b>, over ' + hi + 'h. Keep a fixed wake time.', 'sleep');
       else add(sleepColor(c.sl), 'bed', 'Tidur dalam target: <b>' + c.ok + '/' + c.n + '</b> malam.', 'Sleep on target: <b>' + c.ok + '/' + c.n + '</b> nights.', 'sleep');
     }
+    if (c.kn) {
+      var g0 = S.stepGoal || 8000;
+      if (c.kavg >= g0) add('var(--walk)', 'chart', 'Purata <b>' + c.kavg.toLocaleString() + ' langkah</b> sehari — atas sasaran ' + g0.toLocaleString() + '.', 'Averaging <b>' + c.kavg.toLocaleString() + ' steps</b> a day — above your ' + g0.toLocaleString() + ' goal.', 'k-steps');
+      else add('var(--walk)', 'chart', 'Purata <b>' + c.kavg.toLocaleString() + ' langkah</b> sehari. Tambah ' + (g0 - c.kavg).toLocaleString() + ' lagi untuk capai sasaran.', 'Averaging <b>' + c.kavg.toLocaleString() + ' steps</b> a day. ' + (g0 - c.kavg).toLocaleString() + ' more to hit your goal.', 'k-steps');
+    }
     if (!R.length) add('#3b82f6', 'bulb', 'Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.', 'info');
-    el.innerHTML = head + grid + '<div class="kl">' + T('RINGKASAN & CADANGAN', 'SUMMARY & TIPS') + '</div><ul class="kr">' + R.slice(0, 4).join('') + '</ul>';
+    el.innerHTML = head + grid + '<div class="kl">' + T('RINGKASAN & CADANGAN', 'SUMMARY & TIPS') + '</div><ul class="kr">' + R.slice(0, 5).join('') + '</ul>';
     var ctx = { c: c, p: p, from: from, to: to, pFrom: pFrom, pTo: pTo, span: span, cons: cons, run: run, k0: k0, lo: lo, hi: hi, hasP: hasP };
     ctx.cur = cur; ctx.best = best;
     [].forEach.call(el.querySelectorAll('.kt[data-k]'), function (tl) {
@@ -1928,6 +1967,17 @@
         'Your streak is the number of days in a row you trained, up to today or yesterday. Current streak ' + x.cur + ' days; your best is ' + x.best + ' days. One workout today is enough to start or extend it.');
       html = kv([[T('Semasa', 'Current'), x.cur], [T('Terbaik', 'Best'), x.best]]) + grp(T('14 hari terakhir', 'Last 14 days')) +
         last14.map(function (k2) { return row(k2, wset[k2] ? '✓ Workout' : (c.rd[k2] ? T('Rehat', 'Rest') : '–'), wset[k2] ? 'w' : (c.rd[k2] ? 'r' : '')); }).join('');
+    } else if (kind === 'k-steps') {
+      var g1 = S.stepGoal || 8000, kw = c.wk.slice().sort(function (q, w) { return q.d < w.d ? 1 : -1; });
+      var top = kw.reduce(function (a, q) { return !a || wTot(q) > wTot(a) ? q : a; }, null);
+      var brisk = kw.reduce(function (a, q) { return a + (q.steps || 0); }, 0), bmin = kw.reduce(function (a, q) { return a + (q.min || 0); }, 0);
+      title = T('Langkah', 'Steps') + ' · ' + c.st.toLocaleString();
+      text = !c.kn ? T('Belum ada rekod langkah dalam tempoh ni. Isi langkah brisk walk atau jumlah langkah sehari dari jam dalam tab Walk.', 'No steps logged in this period yet. Enter brisk-walk steps or the daily total from your watch in the Walk tab.')
+        : T('Jumlah langkah dalam tempoh ' + rngTxt(x.from, x.to) + ' ialah ' + c.st.toLocaleString() + ' dari ' + c.kn + ' hari direkod — purata ' + c.kavg.toLocaleString() + ' sehari' + (x.hasP && p.kavg !== null ? ' (sebelum: ' + p.kavg.toLocaleString() + ')' : '') + '. ' + c.kg + ' hari capai sasaran ' + g1.toLocaleString() + ' langkah. Jumlah sehari guna nilai jam jika lebih tinggi dari langkah brisk walk.',
+          'Total steps in ' + rngTxt(x.from, x.to) + ': ' + c.st.toLocaleString() + ' over ' + c.kn + ' logged days — ' + c.kavg.toLocaleString() + ' a day on average' + (x.hasP && p.kavg !== null ? ' (before: ' + p.kavg.toLocaleString() + ')' : '') + '. ' + c.kg + ' days hit your ' + g1.toLocaleString() + '-step goal. Each day uses the watch total when it is higher than the brisk-walk steps.');
+      html = kv([[T('Jumlah', 'Total'), c.st.toLocaleString()], [T('Purata / hari', 'Avg / day'), c.kavg === null ? '–' : c.kavg.toLocaleString()], [T('Capai sasaran', 'Goal days'), c.kg + ' / ' + c.kn],
+        [T('Brisk walk', 'Brisk walk'), brisk.toLocaleString() + ' · ' + bmin + 'm'], [T('Sebelum', 'Before'), x.hasP ? p.st.toLocaleString() : '–'], [T('Hari terbaik', 'Best day'), top ? wTot(top).toLocaleString() + ' (' + dd(top.d).slice(0, 5) + ')' : '–']]) +
+        grp(T('Setiap hari', 'Each day')) + (kw.map(function (q) { return row(q.d, wTot(q).toLocaleString() + T(' langkah', ' steps') + (q.steps ? ' · brisk ' + q.steps.toLocaleString() : '') + (wTot(q) >= g1 ? ' ✓' : ''), 'k'); }).join('') || '<div class="empty">–</div>');
     } else if (kind === 'k-sl' && c.sl === null) {
       title = T('Purata tidur', 'Avg sleep');
       text = T('Belum ada rekod tidur dalam tempoh ni. Isi waktu tidur dan bangun dalam tab Tidur — tempoh dikira automatik.', 'No sleep logged in this period yet. Enter bed and wake times in the Sleep tab — hours are worked out for you.');
@@ -2390,19 +2440,20 @@
   var WALK_MODE = '';           // '' new · 'replace' editing a saved day
   function walkNums() {
     var steps = parseInt(String($('walkSteps').value).replace(/[^\d]/g, ''), 10) || 0, min = parseFloat(String($('walkMin').value).replace(',', '.')) || 0;
-    var km = steps * (S.stride || 75) / 100000;
-    return { steps: steps, min: min, km: km, cad: min ? steps / min : 0, kmh: min ? km / (min / 60) : 0, kcal: Math.round(min * 5) };
+    var day = parseInt(String($('walkDay').value).replace(/[^\d]/g, ''), 10) || 0, km = steps * (S.stride || 75) / 100000;
+    return { steps: steps, min: min, day: day, total: Math.max(day, steps), km: km, cad: min ? steps / min : 0, kmh: min ? km / (min / 60) : 0, kcal: Math.round(min * 5) };
   }
   function fmtN(n) { return Math.round(n).toLocaleString('en-US'); }
   function calcWalk() {
     var box = $('walkSum'); if (!box) return;
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, n = walkNums(), goal = S.stepGoal || 8000, gMin = S.walkMin || 30;
-    var f = Math.min(1, n.steps / goal), C = 2 * Math.PI * 16;
+    var f = Math.min(1, n.total / goal), C = 2 * Math.PI * 16;
     var tip = '', tone = 'g', head = '';
-    if (!n.steps && !n.min) { head = T('Sedia untuk jalan?', 'Ready for a walk?'); tip = T('Isi jumlah langkah dan masa. Target hari ini: ' + fmtN(goal) + ' langkah · ' + gMin + ' min.', 'Enter your steps and time. Today’s goal: ' + fmtN(goal) + ' steps · ' + gMin + ' min.'); tone = 'b'; }
+    if (!n.steps && !n.min && n.day) { var lf = goal - n.day; head = lf <= 0 ? T('Target capai!', 'Goal reached!') : T('Langkah sehari', 'Daily steps'); tip = (lf > 0 ? T(fmtN(lf) + ' langkah lagi untuk capai target. ', fmtN(lf) + ' more steps to hit your goal. ') : '') + T('Isi sesi brisk walk juga kalau ada, untuk kira kelajuan.', 'Add a brisk-walk session too if you did one, to work out your pace.'); tone = lf <= 0 ? 'g' : 'b'; }
+    else if (!n.steps && !n.min) { head = T('Sedia untuk jalan?', 'Ready for a walk?'); tip = T('Isi jumlah langkah dan masa. Target hari ini: ' + fmtN(goal) + ' langkah · ' + gMin + ' min.', 'Enter your steps and time. Today’s goal: ' + fmtN(goal) + ' steps · ' + gMin + ' min.'); tone = 'b'; }
     else if (n.steps && !n.min) { head = T('Isi masa', 'Add the time'); tip = T('Isi masa berjalan untuk kira kelajuan.', 'Add the walking time to work out your pace.'); tone = 'b'; }
     else {
-      var brisk = n.cad >= 100, left = goal - n.steps;
+      var brisk = n.cad >= 100, left = goal - n.total;
       tip = (brisk ? T('Laju bagus — ' + Math.round(n.cad) + ' langkah/min (100+ dikira brisk walk). ', 'Good pace — ' + Math.round(n.cad) + ' steps/min (100+ counts as brisk). ')
                    : T('Agak perlahan — ' + Math.round(n.cad) + ' langkah/min. Sasarkan 100+ untuk brisk walk. ', 'A bit slow — ' + Math.round(n.cad) + ' steps/min. Aim for 100+ to make it brisk. ')) +
         (left > 0 ? T(fmtN(left) + ' langkah lagi untuk capai target.', fmtN(left) + ' more steps to hit your goal.') : T('Target langkah hari ini capai ✓', 'Step goal reached today ✓'));
@@ -2411,18 +2462,19 @@
       tip = tip.replace(/^(Laju bagus|Agak perlahan|Good pace|A bit slow) — /, '');
     }
     box.innerHTML = '<div class="wring" style="--wc:var(--walk)"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" class="trk"/><circle cx="20" cy="20" r="16" class="prg" stroke-dasharray="' + (C * f).toFixed(1) + ' ' + C.toFixed(1) + '"/></svg>' +
-      '<div><b>' + Math.round(100 * n.steps / goal) + '%</b><small>' + fmtN(n.steps) + ' / ' + fmtN(goal) + '</small></div></div>' +
-      '<div class="wst">' + [[T('Jarak (anggaran)', 'Distance (est.)'), n.steps ? n.km.toFixed(2) + ' km' : '–'], [T('Kadar langkah', 'Cadence'), n.cad ? Math.round(n.cad) + '/min' : '–'],
+      '<div><b>' + Math.round(100 * n.total / goal) + '%</b><small>' + fmtN(n.total) + ' / ' + fmtN(goal) + '</small></div></div>' +
+      '<div class="wst">' + [[T('Jarak (anggaran)', 'Distance (est.)'), n.total ? (n.total * (S.stride || 75) / 100000).toFixed(2) + ' km' : '–'], [T('Kadar langkah', 'Cadence'), n.cad ? Math.round(n.cad) + '/min' : '–'],
         [T('Kelajuan', 'Speed'), n.kmh ? n.kmh.toFixed(1) + (en ? ' km/h' : ' km/j') : '–'], [T('Kalori (anggaran)', 'Calories (est.)'), n.min ? '~' + n.kcal : '–']]
         .map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
       '<div class="stip wtip"><span class="si" style="background:' + (tone === 'g' ? '#22c55e' : tone === 'o' ? '#f97316' : 'var(--walk)') + '">' + ic(tone === 'o' ? 'warning' : (tone === 'g' ? 'check' : 'walk')) + '</span><div><b>' + head + '</b><span>' + tip + '</span></div></div>';
   }
-  function resetWalkCard() { $('walkDate').value = isoToDmy(todayKey()); $('walkSteps').value = ''; $('walkMin').value = ''; WALK_MODE = ''; $('walkMsg').innerHTML = ''; calcWalk(); }
+  function resetWalkCard() { $('walkDate').value = isoToDmy(todayKey()); $('walkSteps').value = ''; $('walkMin').value = ''; $('walkDay').value = ''; WALK_MODE = ''; $('walkMsg').innerHTML = ''; calcWalk(); }
   function saveWalk(mode) {
     var en = S.lang === 'en', iso = dmyToIso($('walkDate').value), n = walkNums();
     if (!iso) { $('walkDate').classList.add('bad'); show('bad', en ? 'Invalid date. Use dd/mm/yyyy.' : 'Tarikh tak sah. Guna dd/mm/yyyy.', null, 'walkMsg'); return; }
-    if (!n.steps) { show('bad', en ? 'Enter your steps.' : 'Isi jumlah langkah.', null, 'walkMsg'); $('walkSteps').focus(); return; }
-    if (!n.min) { show('bad', en ? 'Enter the walking time (minutes).' : 'Isi masa berjalan (minit).', null, 'walkMsg'); $('walkMin').focus(); return; }
+    if (!n.steps && !n.min && !n.day) { show('bad', en ? 'Enter your daily steps or a brisk-walk session.' : 'Isi langkah sehari atau sesi brisk walk.', null, 'walkMsg'); $('walkDay').focus(); return; }
+    if ((n.steps || n.min) && !n.steps) { show('bad', en ? 'Enter the brisk-walk steps.' : 'Isi langkah brisk walk.', null, 'walkMsg'); $('walkSteps').focus(); return; }
+    if ((n.steps || n.min) && !n.min) { show('bad', en ? 'Enter the walking time (minutes).' : 'Isi masa berjalan (minit).', null, 'walkMsg'); $('walkMin').focus(); return; }
     var btn = $('walkSave'); btn.disabled = true; btn.textContent = en ? 'Saving…' : 'Menyimpan…'; wait(en ? 'Saving…' : 'Menyimpan…');
     RUN().withSuccessHandler(function (res) {
       btn.disabled = false; btn.textContent = en ? 'SAVE BRISK WALK' : 'SIMPAN BRISK WALK';
@@ -2438,14 +2490,14 @@
       show(res.ok ? 'ok' : 'bad', (res.ok ? '✔ ' : '') + res.message, null, 'walkMsg');
       if (res.ok) { resetWalkCard(); loadSleepAll(); loadRecent(); if (DASH) loadDash(); }
     }).withFailureHandler(function (e) { btn.disabled = false; btn.textContent = en ? 'SAVE BRISK WALK' : 'SIMPAN BRISK WALK'; show('bad', 'Gagal: ' + (e && e.message ? e.message : e), null, 'walkMsg'); })
-      .appSaveWalk({ date: iso, steps: n.steps, minutes: n.min, km: Math.round(n.km * 100) / 100, mode: mode || WALK_MODE });
+      .appSaveWalk({ date: iso, steps: n.steps, minutes: n.min, km: Math.round(n.km * 100) / 100, daily: n.day, mode: mode || WALK_MODE });
   }
   function renderWalkDetail(d, box) {
     var en = S.lang === 'en', w = d.walk, el = document.createElement('div'); el.className = 'sess';
-    el.innerHTML = '<div class="meta">Brisk walk <span>' + fmtN(w.steps) + (en ? ' steps' : ' langkah') + '</span> <span>' + w.min + ' min</span> <span>' + (w.km || 0).toFixed(2) + ' km</span> <span>' + w.cad + '/min</span>' + (w.sess > 1 ? ' <span>' + w.sess + (en ? ' sessions' : ' sesi') + '</span>' : '') + '</div>' +
+    el.innerHTML = '<div class="meta">' + (en ? 'Walk' : 'Jalan') + (w.day ? ' <span>' + fmtN(w.day) + (en ? ' steps today (watch)' : ' langkah sehari (jam)') + '</span>' : '') + (w.min ? ' <span>brisk ' + fmtN(w.steps) + (en ? ' steps' : ' langkah') + '</span> <span>' + w.min + ' min</span> <span>' + (w.km || 0).toFixed(2) + ' km</span> <span>' + w.cad + '/min</span>' : '') + (w.sess > 1 ? ' <span>' + w.sess + (en ? ' sessions' : ' sesi') + '</span>' : '') + '</div>' +
       '<div class="acts"><button type="button" class="rest">' + ic('pen') + ' Edit</button><button type="button" class="del">' + ic('trash') + ' Padam</button></div>';
     var b = el.querySelectorAll('.acts button');
-    b[0].onclick = function () { closeDetail(); showCardView(); setHTab('k'); $('walkDate').value = isoToDmy(d.date); $('walkSteps').value = w.steps; $('walkMin').value = w.min; WALK_MODE = 'replace'; calcWalk(); $('walkCard').scrollIntoView({ behavior: 'smooth' }); };
+    b[0].onclick = function () { closeDetail(); showCardView(); setHTab('k'); $('walkDate').value = isoToDmy(d.date); $('walkSteps').value = w.min ? w.steps : ''; $('walkMin').value = w.min || ''; $('walkDay').value = w.day || ''; WALK_MODE = 'replace'; calcWalk(); $('walkCard').scrollIntoView({ behavior: 'smooth' }); };
     b[1].onclick = function () { confirmDelete(b[1], 'walk', d.date); };
     box.appendChild(el);
   }
@@ -2453,29 +2505,30 @@
   // one colour, four shades (light → deep) — the look of the Walk dashboard, used by every dashboard
   function cssV(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
   function toneOf(base, lvl) { return [mixC(base, '#ffffff', .74), mixC(base, '#ffffff', .42), base, mixC(base, '#000000', .32)][Math.max(0, Math.min(3, lvl))]; }
-  function walkTone(x) { var g = S.stepGoal || 8000, r = x.steps / g; return toneOf(cssV('--walk'), r >= 1.5 ? 3 : r >= 1 ? 2 : r >= .6 ? 1 : 0); }
+  function wTot(x) { return x.total != null ? x.total : Math.max(x.day || 0, x.steps || 0); }
+  function walkTone(x) { var g = S.stepGoal || 8000, r = wTot(x) / g; return toneOf(cssV('--walk'), r >= 1.5 ? 3 : r >= 1 ? 2 : r >= .6 ? 1 : 0); }
   function renderWalkDash() {
     if (!DASH || !$('kKpi')) return;
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, all = DASH.walk || [], rg = dRange(), goal = S.stepGoal || 8000;
     var rows = all.filter(function (x) { return x.d >= rg.from && x.d <= rg.to; });
     var span = Math.max(1, Math.round((Date.parse(rg.to > DASH.today ? DASH.today : rg.to) - Date.parse(rg.from)) / 864e5) + 1);
     var sum = function (a, f) { return a.reduce(function (q, x) { return q + f(x); }, 0); };
-    var n = rows.length, steps = sum(rows, function (x) { return x.steps; }), km = sum(rows, function (x) { return x.km; }), min = sum(rows, function (x) { return x.min; });
-    var hit = rows.filter(function (x) { return x.steps >= goal; }).length, avg = n ? steps / n : 0, cad = min ? steps / min : 0;
+    var n = rows.length, steps = sum(rows, wTot), sessSteps = sum(rows, function (x) { return x.min ? x.steps : 0; }), km = sum(rows, function (x) { return wTot(x) * (S.stride || 75) / 100000; }), min = sum(rows, function (x) { return x.min; });
+    var hit = rows.filter(function (x) { return wTot(x) >= goal; }).length, avg = n ? steps / n : 0, cad = min ? sessSteps / min : 0;
     var byD = {}; all.forEach(function (x) { byD[x.d] = x; });
-    var cur = 0, k = byD[DASH.today] ? DASH.today : addDays(DASH.today, -1); while (byD[k] && byD[k].steps >= goal) { cur++; k = addDays(k, -1); }
-    var best = 0, run = 0, prev = null; all.forEach(function (x) { if (x.steps >= goal) { run = prev && addDays(prev, 1) === x.d && byD[prev].steps >= goal ? run + 1 : 1; } else run = 0; if (run > best) best = run; prev = x.d; });
+    var cur = 0, k = byD[DASH.today] ? DASH.today : addDays(DASH.today, -1); while (byD[k] && wTot(byD[k]) >= goal) { cur++; k = addDays(k, -1); }
+    var best = 0, run = 0, prev = null; all.forEach(function (x) { if (wTot(x) >= goal) { run = prev && addDays(prev, 1) === x.d && wTot(byD[prev]) >= goal ? run + 1 : 1; } else run = 0; if (run > best) best = run; prev = x.d; });
     $('kKpi').innerHTML = statRow({ v: n ? (avg >= 1000 ? (Math.round(avg / 100) / 10) + 'k' : Math.round(avg)) : '–', frac: n ? avg / goal : 0, label: T('Purata langkah', 'Avg steps'), k: 'k-avg' },
         [[n + '/' + span, T('Hari jalan', 'Walk days'), 'k-days'], [hit, T('Capai target', 'Goal hit'), 'k-hit'], [cur, 'Streak', 'k-streak'], [best, T('Streak terbaik', 'Best streak'), 'k-streak']]) +
       statRow(null, [[fmtN(steps), T('Jumlah langkah', 'Total steps'), 'k-avg'], [km.toFixed(1) + ' km', T('Jarak', 'Distance'), 'k-km'], [hm(min), T('Masa', 'Time'), 'k-min'], [cad ? Math.round(cad) + '/m' : '–', T('Kadar', 'Cadence'), 'k-cad']]);
     [].forEach.call($('kKpi').querySelectorAll('[data-k]'), function (b) { b.onclick = function () { openWalkKpi(b.dataset.k, rows, rg); }; });
     renderStepsChart(rows, rg);
-    renderHeat(all, rg, { el: 'cWalkHeat', col: walkTone, lab: function (x) { return fmtN(x.steps) + (en ? ' steps' : ' langkah'); },
-      tip: function (x) { return isoToDmy(x.d) + ': ' + x.min + ' min, ' + (x.km || 0).toFixed(2) + ' km'; },
+    renderHeat(all, rg, { el: 'cWalkHeat', col: walkTone, lab: function (x) { return fmtN(wTot(x)) + (en ? ' steps' : ' langkah'); },
+      tip: function (x) { return isoToDmy(x.d) + (x.min ? ': brisk ' + fmtN(x.steps) + ' / ' + x.min + ' min' : ''); },
       legend: (function () { var b = cssV('--walk'); return '<div class="hml"><span style="--c:' + toneOf(b, 0) + '">' + T('Bawah 60%', 'Under 60%') + '</span><span style="--c:' + toneOf(b, 1) + '">60–99%</span><span style="--c:' + toneOf(b, 2) + '">' + T('Capai target', 'Goal hit') + '</span><span style="--c:' + toneOf(b, 3) + '">150%+</span></div>'; })() });
     var top = function (f, ok) { return all.filter(ok || function () { return true; }).reduce(function (a, x) { return !a || f(x) > f(a) ? x : a; }, null); };
-    var a1 = top(function (x) { return x.steps; }), a2 = top(function (x) { return x.min; }), a3 = top(function (x) { return x.cad; }, function (x) { return x.min >= 10; }), a4 = top(function (x) { return x.km; });
-    var pr = [[T('Langkah terbanyak', 'Most steps'), a1, a1 && fmtN(a1.steps)], [T('Jalan paling lama', 'Longest walk'), a2, a2 && a2.min + ' min'], [T('Paling laju', 'Fastest pace'), a3, a3 && a3.cad + '/min'], [T('Paling jauh', 'Furthest'), a4, a4 && a4.km.toFixed(2) + ' km']];
+    var a1 = top(wTot), a2 = top(function (x) { return x.min; }), a3 = top(function (x) { return x.cad; }, function (x) { return x.min >= 10; }), a4 = top(function (x) { return x.km; }, function (x) { return x.min > 0; });
+    var pr = [[T('Langkah terbanyak', 'Most steps'), a1, a1 && fmtN(wTot(a1))], [T('Jalan paling lama', 'Longest walk'), a2, a2 && a2.min + ' min'], [T('Paling laju', 'Fastest pace'), a3, a3 && a3.cad + '/min'], [T('Paling jauh', 'Furthest'), a4, a4 && a4.km.toFixed(2) + ' km']];
     $('cWalkPB').innerHTML = all.length ? '<div class="pbl">' + pr.map(function (r) { return r[1] ? '<button type="button" class="pbr" data-d="' + r[1].d + '"><span class="pbn">' + r[0] + '</span><span class="pbv"><b>' + r[2] + '</b><small> · ' + r[1].d.slice(8) + '/' + r[1].d.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>' : ''; }).join('') + '</div>'
       : '<div class="empty">' + T('Simpan brisk walk pertama untuk mula rekod.', 'Save your first brisk walk to start your records.') + '</div>';
     [].forEach.call($('cWalkPB').querySelectorAll('[data-d]'), function (b) { b.onclick = function () { openDetail(b.dataset.d); }; });
@@ -2487,10 +2540,10 @@
     for (var k = from; k <= to; k = addDays(k, 1)) keys.push(k);
     var byD = {}; rows.forEach(function (x) { byD[x.d] = x; });
     if (!rows.length) { el.innerHTML = '<div class="empty">' + (en ? 'No walks in this period yet.' : 'Belum ada brisk walk dalam tempoh ni.') + '</div>'; return; }
-    var W = 320, H = 150, L = 34, R = 8, Tp = 12, B = 22, max = Math.max(goal * 1.15, Math.max.apply(null, rows.map(function (x) { return x.steps; })) * 1.08);
+    var W = 320, H = 150, L = 34, R = 8, Tp = 12, B = 22, max = Math.max(goal * 1.15, Math.max.apply(null, rows.map(wTot)) * 1.08);
     var bw = (W - L - R) / keys.length, y = function (v) { return Tp + (H - Tp - B) * (1 - v / max); }, g = '';
     [0, max / 2, max].forEach(function (v) { g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="currentColor" opacity=".12" stroke-dasharray="3 4"/><text x="' + (L - 4) + '" y="' + (y(v) + 4) + '" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">' + (v >= 1000 ? Math.round(v / 1000) + 'k' : Math.round(v)) + '</text>'; });
-    keys.forEach(function (k2, i) { var x = byD[k2]; if (x) g += '<rect x="' + (L + i * bw + bw * .15).toFixed(1) + '" y="' + y(x.steps).toFixed(1) + '" width="' + Math.max(1.5, bw * .7).toFixed(1) + '" height="' + (H - B - y(x.steps)).toFixed(1) + '" rx="' + Math.min(4, bw * .25).toFixed(1) + '" fill="' + walkTone(x) + '"/>'; });
+    keys.forEach(function (k2, i) { var x = byD[k2]; if (x) g += '<rect x="' + (L + i * bw + bw * .15).toFixed(1) + '" y="' + y(wTot(x)).toFixed(1) + '" width="' + Math.max(1.5, bw * .7).toFixed(1) + '" height="' + (H - B - y(wTot(x))).toFixed(1) + '" rx="' + Math.min(4, bw * .25).toFixed(1) + '" fill="' + walkTone(x) + '"/>'; });
     g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(goal) + '" y2="' + y(goal) + '" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4"/><text x="' + (L + 3) + '" y="' + (y(goal) - 4) + '" font-size="9.5" text-anchor="start" fill="#d97706" font-weight="700">target ' + fmtN(goal) + '</text>';
     var step = Math.max(1, Math.ceil(keys.length / 7)); keys.forEach(function (k2, i) { if (i % step === 0 || i === keys.length - 1) g += '<text x="' + (L + i * bw + bw / 2) + '" y="' + (H - 6) + '" font-size="9.5" text-anchor="middle" fill="currentColor" opacity=".6">' + k2.slice(8) + '/' + k2.slice(5, 7) + '</text>'; });
     el.innerHTML = '<div class="schart lchart"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg><div class="stt"></div></div>' +
@@ -2501,7 +2554,7 @@
     var show2 = function (i) {
       if (i === cur) return; cur = i; var k2 = keys[i], x = byD[k2], gx = L + i * bw + bw / 2;
       guide.setAttribute('x1', gx); guide.setAttribute('x2', gx); guide.classList.add('on');
-      tip.innerHTML = '<b>' + isoToDmy(k2) + '</b>' + (x ? '<span><i style="background:' + walkTone(x) + '"></i>' + fmtN(x.steps) + (en ? ' steps' : ' langkah') + ' (' + Math.round(100 * x.steps / goal) + '%)</span><span>' + x.min + ' min · ' + (x.km || 0).toFixed(2) + ' km · ' + x.cad + '/min</span>' : '<span>' + (en ? 'No walk' : 'Tiada rekod') + '</span>');
+      tip.innerHTML = '<b>' + isoToDmy(k2) + '</b>' + (x ? '<span><i style="background:' + walkTone(x) + '"></i>' + fmtN(wTot(x)) + (en ? ' steps' : ' langkah') + ' (' + Math.round(100 * wTot(x) / goal) + '%)</span>' + (x.min ? '<span>Brisk: ' + fmtN(x.steps) + ' · ' + x.min + ' min · ' + x.cad + '/min</span>' : '') : '<span>' + (en ? 'No walk' : 'Tiada rekod') + '</span>');
       tip.classList.add('on');
       var sr = svg.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), px = sr.left - wr.left + gx / W * sr.width, tw = tip.offsetWidth;
       var lx = px + 12 + tw <= wr.width ? px + 12 : px - 12 - tw; tip.style.left = Math.max(4, lx) + 'px'; tip.style.top = '4px';
@@ -2527,13 +2580,13 @@
     $('dTitle').textContent = 'Brisk walk';
     var list = rows.slice().sort(function (a, b) { return a.d < b.d ? 1 : -1; });
     $('dBody').innerHTML = '<div class="kl tip"><p class="ttx">' + txt + '</p><div class="grp">' + T('Setiap hari', 'Each day') + '</div>' + (list.map(function (x) {
-      return '<div class="day" data-d="' + x.d + '"><span style="color:' + (x.steps >= goal ? '#0d9488' : 'inherit') + '">' + isoToDmy(x.d) + '</span><span>' + fmtN(x.steps) + ' · ' + x.min + 'm · ' + (x.km || 0).toFixed(1) + 'km <b class="go">' + ic('right') + '</b></span></div>';
+      return '<div class="day" data-d="' + x.d + '"><span style="color:' + (wTot(x) >= goal ? 'var(--walk)' : 'inherit') + '">' + isoToDmy(x.d) + '</span><span>' + fmtN(wTot(x)) + (x.min ? ' · brisk ' + x.min + 'm' : '') + ' <b class="go">' + ic('right') + '</b></span></div>';
     }).join('') || '<div class="empty">' + T('Tiada rekod.', 'No records.') + '</div>') + '</div>';
     [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { openDetail(d2.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
   wireDate('walkDate', 'walkPick');
-  ['walkSteps', 'walkMin', 'walkDate'].forEach(function (id) { $(id).addEventListener('input', calcWalk); });
+  ['walkSteps', 'walkMin', 'walkDate', 'walkDay'].forEach(function (id) { $(id).addEventListener('input', calcWalk); });
   $('walkSteps').addEventListener('blur', function () { var v = parseInt(String(this.value).replace(/[^\d]/g, ''), 10); this.value = v ? v : ''; });
   $('walkSave').onclick = function () { saveWalk(''); };
   $('walkClear').innerHTML = RF_ICON;
@@ -2791,14 +2844,15 @@
     ['Grafit', '#334155', '#cbd5e1', '#f59e0b', '#fbbf24', '#b45309', '#475569', '#64748b', ['#ffffff', '#eaecef', '#23272e', '#14171b']]
   ];   // optional 9th item: surfaces [panel light, background light, panel dark, background dark]
   var PAL_EN = ['Classic', 'Ocean', 'Sunset', 'Neon', 'Forest', 'Graphite'];
-  var PAL_WALK = ['#14b8a6', '#8b5cf6', '#14b8a6', '#84cc16', '#0ea5e9', '#14b8a6'];   // walk colour per combo (contrasts with its workout/rest colours)
+  var PAL_WALK = ['#14b8a6', '#8b5cf6', '#14b8a6', '#84cc16', '#0ea5e9', '#14b8a6'];
+  var PAL_SLEEP = ['#ec4899', '#ec4899', '#8b5cf6', '#60a5fa', '#8b5cf6', '#8b5cf6'];   // sleep colour per combo (differs from its workout, rest and walk colours)   // walk colour per combo (contrasts with its workout/rest colours)
   function palNow(dark) {        // -> {wk, rest, restTx, acc}
     if (S.palette === 'custom') {
       var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), rest = S.cRest || P0[3], acc = S.cAcc || (dark ? P0[7] : P0[6]);
-      return { wk: wk, rest: rest, restTx: (!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest, acc: acc, walk: S.cWalk || PAL_WALK[0] };
+      return { wk: wk, rest: rest, restTx: (!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest, acc: acc, walk: S.cWalk || PAL_WALK[0], sleep: S.cSleep || PAL_SLEEP[0] };
     }
     var P = PALS[+S.palette] || PALS[0];
-    return { wk: dark ? P[2] : P[1], rest: dark ? P[4] : P[3], restTx: dark ? P[4] : P[5], acc: dark ? P[7] : P[6], walk: PAL_WALK[+S.palette] || PAL_WALK[0] };
+    return { wk: dark ? P[2] : P[1], rest: dark ? P[4] : P[3], restTx: dark ? P[4] : P[5], acc: dark ? P[7] : P[6], walk: PAL_WALK[+S.palette] || PAL_WALK[0], sleep: PAL_SLEEP[+S.palette] || PAL_SLEEP[0] };
   }
   function shade(c, f) { var q = parseCss(c); return 'rgb(' + Math.round(q.r * f) + ',' + Math.round(q.g * f) + ',' + Math.round(q.b * f) + ')'; }
   var PENS = [ // [name, bright-mode colour, dark-mode colour]
@@ -2807,7 +2861,7 @@
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cPanel: '', cPage: '', cInk: '' };
+  var DEFAULTS = { theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cSleep: '', cPanel: '', cPage: '', cInk: '' };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -2844,7 +2898,7 @@
     b.setProperty('--pen', dark ? pen[2] : pen[1]);
     // data colours (fixed, all different): workout = purple, rest = amber; sleep uses red / green / blue
     var pl = palNow(dark);
-    b.setProperty('--wk', pl.wk); b.setProperty('--walk', pl.walk); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
+    b.setProperty('--wk', pl.wk); b.setProperty('--walk', pl.walk); b.setProperty('--sleepc', pl.sleep); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
     applySurfaces();
     paintPal(dark);
     setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 0); setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
@@ -2883,16 +2937,16 @@
   function paintPal(dark) {
     var box = $('optPal'); if (!box) return;
     var en = S.lang === 'en', cur = S.palette === 'custom' ? 'custom' : String(+S.palette || 0);
-    var dots = function (a, b2, c, w) { return '<span class="pd"><i style="background:' + a + '"></i><i style="background:' + b2 + '"></i>' + (w ? '<i style="background:' + w + '"></i>' : '') + '<i style="background:' + c + '"></i></span>'; };
+    var dots = function (a, b2, c, w, z) { return '<span class="pd"><i style="background:' + a + '"></i>' + (z ? '<i style="background:' + z + '"></i>' : '') + (w ? '<i style="background:' + w + '"></i>' : '') + '<i style="background:' + b2 + '"></i><i style="background:' + c + '"></i></span>'; };
     var cp = palNow(dark), csel = S.palette === 'custom';
     box.innerHTML = PALS.map(function (P, i) {
       var sf = P[8], bgc = sf ? (dark ? sf[3] : sf[1]) : '', fg = sf ? (lum(dark ? sf[2] : sf[0]) > 0.55 ? '#111114' : '#f4f4f6') : '';
-      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6], PAL_WALK[i]) + '<b>' + (en ? PAL_EN[i] : P[0]) + '</b></button>';
-    }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc, cp.walk) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
+      return '<button type="button" data-p="' + i + '"' + (cur === String(i) ? ' class="on"' : '') + (sf ? ' style="background:' + bgc + ' !important;color:' + fg + ' !important"' : '') + '>' + dots(dark ? P[2] : P[1], dark ? P[4] : P[3], dark ? P[7] : P[6], PAL_WALK[i], PAL_SLEEP[i]) + '<b>' + (en ? PAL_EN[i] : P[0]) + '</b></button>';
+    }).join('') + '<button type="button" data-p="custom" class="pcust' + (csel ? ' on' : '') + '">' + (csel ? dots(cp.wk, cp.rest, cp.acc, cp.walk, cp.sleep) : '<span class="pd pplus">+</span>') + '<b>' + (en ? 'Custom' : 'Tersuai') + '</b></button>';
     [].forEach.call(box.children, function (x) {
       x.onclick = function () {
         if (x.dataset.p === 'custom') {
-          if (S.palette !== 'custom') { var d = palNow(isDark()); S.cWk = S.cWk || d.wk; S.cRest = S.cRest || d.rest; S.cAcc = S.cAcc || d.acc; S.cWalk = S.cWalk || d.walk; }
+          if (S.palette !== 'custom') { var d = palNow(isDark()); S.cWk = S.cWk || d.wk; S.cRest = S.cRest || d.rest; S.cAcc = S.cAcc || d.acc; S.cWalk = S.cWalk || d.walk; S.cSleep = S.cSleep || d.sleep; }
           S.palette = 'custom';
         } else S.palette = +x.dataset.p;
         saveSettings(); applySettings();
@@ -2901,7 +2955,7 @@
     var c = $('optPalC');
     if (!csel) { c.innerHTML = ''; return; }
     var cs = getComputedStyle(document.body), cv = function (v) { return cs.getPropertyValue(v).trim(); };
-    c.innerHTML = [['cWk', 'Workout', cp.wk], ['cRest', en ? 'Rest day' : 'Hari rehat', cp.rest], ['cWalk', en ? 'Walk' : 'Jalan', cp.walk], ['cAcc', en ? 'Buttons' : 'Butang', cp.acc],
+    c.innerHTML = [['cWk', 'Workout', cp.wk], ['cRest', en ? 'Rest day' : 'Hari rehat', cp.rest], ['cWalk', en ? 'Walk' : 'Jalan', cp.walk], ['cSleep', en ? 'Sleep' : 'Tidur', cp.sleep], ['cAcc', en ? 'Buttons' : 'Butang', cp.acc],
       ['cPanel', 'Panel', cv('--paper')], ['cPage', en ? 'Background' : 'Latar belakang', cv('--page')], ['cInk', en ? 'Text' : 'Tulisan', cv('--ink')]].map(function (r) {
       return '<button type="button" data-k="' + r[0] + '"><i style="background:' + r[2] + '"></i><span>' + r[1] +
         (/^c(Panel|Page|Ink)$/.test(r[0]) && !S[r[0]] ? '<small>' + (en ? 'auto' : 'auto') + '</small>' : '') + '</span>' + ic('pen') + '</button>';
@@ -3041,11 +3095,11 @@
   })();
   function openCP(key) {
     CP.key = key;
-    var VAR = { pen: '--pen', head: '--headbg', cWk: '--wk', cRest: '--rest', cWalk: '--walk', cAcc: '--accent', cPanel: '--paper', cPage: '--page', cInk: '--ink' };
+    var VAR = { pen: '--pen', head: '--headbg', cWk: '--wk', cRest: '--rest', cWalk: '--walk', cSleep: '--sleepc', cAcc: '--accent', cPanel: '--paper', cPage: '--page', cInk: '--ink' };
     var cur = typeof S[key] === 'string' && S[key] ? S[key] : getComputedStyle(document.body).getPropertyValue(VAR[key] || '--pen').trim();
     var c = parseCss(cur); CP.r = c.r; CP.g = c.g; CP.b = c.b; CP.a = c.a;
     var en = S.lang === 'en';
-    $('cpTitle').textContent = { pen: 'Warna tulisan', head: 'Warna kad', cWk: en ? 'Workout colour' : 'Warna workout', cRest: en ? 'Rest day colour' : 'Warna hari rehat', cAcc: en ? 'Button colour' : 'Warna butang', cWalk: en ? 'Walk colour' : 'Warna jalan', cPanel: en ? 'Panel colour' : 'Warna panel', cPage: en ? 'Background colour' : 'Warna latar belakang', cInk: en ? 'Text colour' : 'Warna tulisan' }[key] || '';
+    $('cpTitle').textContent = { pen: 'Warna tulisan', head: 'Warna kad', cWk: en ? 'Workout colour' : 'Warna workout', cRest: en ? 'Rest day colour' : 'Warna hari rehat', cAcc: en ? 'Button colour' : 'Warna butang', cWalk: en ? 'Walk colour' : 'Warna jalan', cSleep: en ? 'Sleep colour' : 'Warna tidur', cPanel: en ? 'Panel colour' : 'Warna panel', cPage: en ? 'Background colour' : 'Warna latar belakang', cInk: en ? 'Text colour' : 'Warna tulisan' }[key] || '';
     paintCP(); $('cp').classList.add('on'); $('cpBg').classList.add('on');
   }
   function closeCP() { $('cp').classList.remove('on'); $('cpBg').classList.remove('on'); }
@@ -3415,7 +3469,7 @@
         var k = addDays(wk, i), a = by[k] || [], cls = a.indexOf('Workout') >= 0 ? 'w' : (a.indexOf('Rest Day') >= 0 ? 'r' : '');
         if (k > t) cls += ' f'; if (k === t) cls += ' t';
         var sh = sleepH(k, slp[k]), wk2 = WALKD[k];
-        if (wk2 && wk2.steps >= (S.stepGoal || 8000)) cls += ' kw';
+        if (wk2 && wTot(wk2) >= (S.stepGoal || 8000)) cls += ' kw';
         h += '<button type="button" data-d="' + k + '" class="' + cls + (sh !== null ? ' s' : '') + '"' + (sh !== null ? ' style="--sc:' + sleepColor(sh) + '"' : '') + '><small>' + L[i] + '</small><b>' + (+k.slice(8)) + '</b></button>';
       }
       h += '</div></div>';
@@ -3816,7 +3870,7 @@
     'Today': 'Hari ini', 'Yest.': 'Semalam', 'Yesterday': 'Semalam', 'Custom': 'Pilih', 'Range': 'Julat', 'This week': 'Minggu ini',
     'ACTUAL': 'SEBENAR', 'TARGET': 'SASARAN', 'AWAKE': 'TERJAGA', 'DATE': 'TARIKH', 'DURATION (MIN)': 'TEMPOH (MIN)', 'WAKE-UP DATE': 'TARIKH BANGUN',
     'WORKOUT': 'WORKOUT', 'Actual': 'Sebenar', 'Target': 'Sasaran', 'Dark': 'Gelap', 'Bright': 'Cerah', 'Dark mode': 'Mod gelap', 'Bright mode': 'Mod cerah',
-    'Walk': 'Jalan', 'STEPS': 'LANGKAH', 'TIME (MIN)': 'MASA (MIN)', 'SAVE BRISK WALK': 'SIMPAN BRISK WALK', 'Daily steps': 'Langkah harian', 'Walk history': 'Sejarah jalan', 'Best walks': 'Rekod terbaik jalan',
+    'Walk': 'Jalan', 'STEPS': 'LANGKAH', 'BRISK STEPS': 'LANGKAH BRISK', 'DAILY STEPS (WATCH)': 'LANGKAH SEHARI (JAM)', 'Total steps for the whole day from your watch': 'Jumlah langkah sepanjang hari dari jam tangan', 'TIME (MIN)': 'MASA (MIN)', 'SAVE BRISK WALK': 'SIMPAN BRISK WALK', 'Daily steps': 'Langkah harian', 'Walk history': 'Sejarah jalan', 'Best walks': 'Rekod terbaik jalan',
     'Settings': 'Tetapan', 'Edit': 'Ubah', 'Sleep': 'Tidur', 'Sleep Tracker': 'Rekod Tidur', 'Daily Workout': 'Workout Harian',
     'Rest Day': 'Hari Rehat', 'Workout vs Rest Day': 'Workout vs Hari Rehat', 'History workout': 'Sejarah workout', 'History tidur': 'Sejarah tidur',
     'Progress latihan': 'Kemajuan latihan', 'Home': 'Utama', 'Target default': 'Target asal', 'Streak workout': 'Streak workout',
