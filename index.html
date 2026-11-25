@@ -3301,6 +3301,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Pustaka latihan pun kini guna dropdown: tekan nama latihan untuk buka panduan (gambar, cara buat, kesilapan biasa, PB kau) di tempat yang sama.', 'The exercise library now uses dropdowns too: tap an exercise to open its guide (picture, how-to, common mistakes, your PB) in place.'], 'g-kc'],
     ['2026-11-25', ['Dalam Knowledge Centre, artikel dalam setiap topik kini terbuka di tempat yang sama macam dropdown — tak perlu tukar halaman.', 'In the Knowledge Centre, articles inside each topic now open in place like a dropdown — no page change.'], 'g-kc'],
     ['2026-11-25', ['Setiap carta di Dashboard kini tertutup — tekan tajuk untuk buka, tekan lagi untuk tutup. App ingat mana yang kau biar terbuka.', 'Every chart on the Dashboard is now folded — tap its title to open, tap again to close. The app remembers which ones you leave open.'], 'g-rec'],
     ['2026-11-25', ['Panel Rekod lebih padat: jadual 7 hari kini muat dalam satu skrin tanpa skrol. Tempoh lebih panjang (14D, 30D…) bersambung ke bawah.', 'The Records panel is more compact: the 7-day table now fits on one screen without scrolling. Longer periods (14D, 30D…) continue below.'], 'g-rec'],
@@ -3775,6 +3776,28 @@
       [T('Panaskan badan 5 minit sebelum workout kurangkan risiko cedera.', 'A 5-minute warm-up before training lowers injury risk.'), 't-10']];
     return R[Math.floor(Date.parse(t) / 864e5) % R.length];
   }
+  // one exercise's guide (picture or animation, video link, muscles, how-to, mistakes, easier/harder, your PB) — used by the page and the dropdown
+  function kcExBody(arg) {
+    var en = S.lang === 'en', T = function (bm, e2) { return en ? e2 : bm; }, html = '';
+    var e = kcExFind(arg), mineO = pbList().filter(function (o) { return o.n.toLowerCase() === String(arg).toLowerCase(); })[0];
+    var I = en ? 1 : 0;
+    if (mineO) {
+      var last = mineO.list.reduce(function (q, x) { return !q || x.d > q ? x.d : q; }, '');
+      html += '<div class="tkv"><div><span>' + T('PB kau', 'Your PB') + '</span><b>' + fmtV(mineO.best, mineO.sec) + (mineO.sec ? '' : ' reps') + '</b></div><div><span>' + T('Terakhir', 'Last done') + '</span><b>' + isoToDmy(last).slice(0, 5) + '</b></div><div><span>' + T('Sesi', 'Sessions') + '</span><b>' + mineO.list.length + '</b></div><div><span>' + T('Berat tertinggi', 'Heaviest') + '</span><b>' + (mineO.kg ? mineO.kg + 'kg' : '–') + '</b></div></div>';
+    }
+    if (e) {
+      var yq = encodeURIComponent(e[1] + ' proper form');
+      var img = kcImgHtml(e[0], T);
+      html = img + '<div class="kcanw"' + (img ? ' hidden' : '') + '>' + kcAnimSvg(e[0]) + '<span class="kcanl">' + T('Form yang betul · garis putus = panduan', 'Correct form · dashed line = guide') + '</span></div>' +
+        '<a class="kcyt" href="https://www.youtube.com/results?search_query=' + yq + '" target="_blank" rel="noopener">' + ic('ext') + T('Tonton video sebenar (YouTube)', 'Watch a real video (YouTube)') + '</a>' + html;
+      html += '<div class="kcb"><p><b>' + T('Otot', 'Muscles') + ':</b> ' + e[3][I] + '</p><div class="grp">' + T('Cara buat', 'How to') + '</div><ol>' + e[4][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>' +
+        '<div class="grp">' + T('Kesilapan biasa', 'Common mistakes') + '</div><ul>' + e[5][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
+        '<div class="kc2"><div><span>' + T('Lebih mudah', 'Easier') + '</span>' + e[6][I] + '</div><div><span>' + T('Lebih susah', 'Harder') + '</span>' + e[7][I] + '</div></div></div>';
+    } else html += '<div class="kcb"><p>' + T('Belum ada panduan untuk latihan ni dalam pustaka. Prinsip umum: buat dengan form yang betul dan terkawal, mula dengan reps yang selesa, dan tambah sedikit setiap minggu.', 'There is no guide for this exercise in the library yet. General rule: keep good, controlled form, start with comfortable reps, and add a little each week.') + '</p></div>';
+    if (e && KC_IMG[e[0]]) html += '<p class="kccr">' + (en ? KC_CREDIT_EN : KC_CREDIT_BM) + '</p>';
+    if (mineO) html += '<button type="button" class="kcgo2" data-pb="1">' + T('Lihat sejarah & PB', 'See history & PB') + ic('right') + '</button>';
+    return html;
+  }
   function kcOpen(view, arg) {
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; }, A = kcArticles();
     var byId = {}; A.forEach(function (a) { byId[a.id] = a; });
@@ -3799,8 +3822,9 @@
       $('dTitle').textContent = T(C[2][0], C[2][1]);
       if (arg === 'ex') {
         var mine = pbList(), seen = {};
-        html = (mine.length ? '<div class="grp">' + T('Latihan kau', 'Your exercises') + '</div><div class="kcl">' + mine.map(function (o) { var e = kcExFind(o.n); if (e) seen[e[0]] = 1; return '<button type="button" class="kca" data-x="' + esc(o.n) + '"><span>' + esc(o.n) + '<small>PB ' + fmtV(o.best, o.sec) + (o.sec ? '' : ' reps') + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>' : '') +
-          '<div class="grp">' + T('Semua latihan', 'All exercises') + '</div><div class="kcl">' + KC_EX.filter(function (e) { return !seen[e[0]]; }).map(function (e) { return '<button type="button" class="kca" data-x="' + esc(e[0]) + '"><span>' + T(e[0], e[1]) + '<small>' + T(e[3][0], e[3][1]) + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>';
+        var exq = function (key, title, sub) { return '<div class="kcq" data-qx="' + esc(key) + '"><button type="button" class="kca" aria-expanded="false"><span>' + title + '<small>' + sub + '</small></span>' + ic('down', 'kcgo') + '</button><div class="kcqw"><div></div></div></div>'; };
+        html = (mine.length ? '<div class="grp">' + T('Latihan kau', 'Your exercises') + '</div><div class="kcl kcacc">' + mine.map(function (o) { var e = kcExFind(o.n); if (e) seen[e[0]] = 1; return exq(o.n, esc(o.n), 'PB ' + fmtV(o.best, o.sec) + (o.sec ? '' : ' reps')); }).join('') + '</div>' : '') +
+          '<div class="grp">' + T('Semua latihan', 'All exercises') + '</div><div class="kcl kcacc">' + KC_EX.filter(function (e) { return !seen[e[0]]; }).map(function (e) { return exq(e[0], T(e[0], e[1]), T(e[3][0], e[3][1])); }).join('') + '</div>';
       } else html = '<div class="kcl kcacc">' + A.filter(function (a) { return a.c === arg; }).map(function (a) { return '<div class="kcq" data-q="' + a.id + '"><button type="button" class="kca" aria-expanded="false"><span>' + a.t + '</span>' + ic('down', 'kcgo') + '</button><div class="kcqw"><div></div></div></div>'; }).join('') + '</div>';   // articles open in place, like a dropdown
     } else if (view === 'art') {
       var a = byId[arg]; if (!a) return kcOpen('home');
@@ -3813,22 +3837,7 @@
       var e = kcExFind(arg), mineO = pbList().filter(function (o) { return o.n.toLowerCase() === String(arg).toLowerCase(); })[0];
       DBACK = function () { kcOpen('cat', 'ex'); };
       $('dTitle').textContent = mineO ? mineO.n : (e ? T(e[0], e[1]) : arg);
-      var I = en ? 1 : 0;
-      if (mineO) {
-        var last = mineO.list.reduce(function (q, x) { return !q || x.d > q ? x.d : q; }, '');
-        html += '<div class="tkv"><div><span>' + T('PB kau', 'Your PB') + '</span><b>' + fmtV(mineO.best, mineO.sec) + (mineO.sec ? '' : ' reps') + '</b></div><div><span>' + T('Terakhir', 'Last done') + '</span><b>' + isoToDmy(last).slice(0, 5) + '</b></div><div><span>' + T('Sesi', 'Sessions') + '</span><b>' + mineO.list.length + '</b></div><div><span>' + T('Berat tertinggi', 'Heaviest') + '</span><b>' + (mineO.kg ? mineO.kg + 'kg' : '–') + '</b></div></div>';
-      }
-      if (e) {
-        var yq = encodeURIComponent(e[1] + ' proper form');
-        var img = kcImgHtml(e[0], T);
-        html = img + '<div class="kcanw"' + (img ? ' hidden' : '') + '>' + kcAnimSvg(e[0]) + '<span class="kcanl">' + T('Form yang betul · garis putus = panduan', 'Correct form · dashed line = guide') + '</span></div>' +
-          '<a class="kcyt" href="https://www.youtube.com/results?search_query=' + yq + '" target="_blank" rel="noopener">' + ic('ext') + T('Tonton video sebenar (YouTube)', 'Watch a real video (YouTube)') + '</a>' + html;
-        html += '<div class="kcb"><p><b>' + T('Otot', 'Muscles') + ':</b> ' + e[3][I] + '</p><div class="grp">' + T('Cara buat', 'How to') + '</div><ol>' + e[4][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>' +
-          '<div class="grp">' + T('Kesilapan biasa', 'Common mistakes') + '</div><ul>' + e[5][I].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
-          '<div class="kc2"><div><span>' + T('Lebih mudah', 'Easier') + '</span>' + e[6][I] + '</div><div><span>' + T('Lebih susah', 'Harder') + '</span>' + e[7][I] + '</div></div></div>';
-      } else html += '<div class="kcb"><p>' + T('Belum ada panduan untuk latihan ni dalam pustaka. Prinsip umum: buat dengan form yang betul dan terkawal, mula dengan reps yang selesa, dan tambah sedikit setiap minggu.', 'There is no guide for this exercise in the library yet. General rule: keep good, controlled form, start with comfortable reps, and add a little each week.') + '</p></div>';
-      if (e && KC_IMG[e[0]]) html += '<p class="kccr">' + (en ? KC_CREDIT_EN : KC_CREDIT_BM) + '</p>';
-      if (mineO) html += '<button type="button" class="kcgo2" data-pb="1">' + T('Lihat sejarah & PB', 'See history & PB') + ic('right') + '</button>';
+      html = kcExBody(arg);
     }
     $('dBody').innerHTML = '<div class="kl tip kc">' + html + '</div>';
     var B = $('dBody');
@@ -3838,6 +3847,11 @@
     [].forEach.call(B.querySelectorAll('.kcq'), function (q) {
       var btn = q.querySelector('.kca'), inner = q.querySelector('.kcqw > div');
       btn.onclick = function () {
+        if (!inner.dataset.done && q.dataset.qx) {   // exercise guide, built the first time it is opened
+          var nm = q.dataset.qx; inner.dataset.done = 1; inner.innerHTML = kcExBody(nm);
+          [].forEach.call(inner.querySelectorAll('.kcimg img.kcprobe'), function (im) { im.onerror = function () { var w = im.closest('.kcimg'); if (!w || !w.parentNode) return; var an = w.parentNode.querySelector('.kcanw'); w.remove(); if (an) { an.hidden = false; kcAnimStart(q); } }; });
+          var pb = inner.querySelector('[data-pb]'); if (pb) pb.onclick = function () { var o = pbList().filter(function (z) { return z.n.toLowerCase() === nm.toLowerCase(); })[0]; if (o) { openPB(o, false); DBACK = function () { kcOpen('cat', 'ex'); }; $('detailBack').style.display = ''; } };
+        }
         if (!inner.dataset.done) {   // build the article the first time it is opened
           var a = byId[q.dataset.q]; inner.dataset.done = 1;
           inner.innerHTML = (a.id === 'k-tech' ? '<div class="kcanw">' + kcAnimSvg('walk') + '</div>' : kcFig(a.id)) + '<div class="kcb">' + (a.b.charAt(0) === '<' ? a.b : '<p>' + a.b + '</p>') + '</div>' + (a.go ? '<button type="button" class="kcgo2" data-go="' + a.go[0] + '">' + a.go[1] + ic('right') + '</button>' : '');
