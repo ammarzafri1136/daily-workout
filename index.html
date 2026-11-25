@@ -764,6 +764,8 @@
     <label class="switch"><input type="checkbox" id="optLarge"><span></span></label></div>
   <div class="row"><div>Bunyi butang<small>Bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap</small></div>
     <label class="switch"><input type="checkbox" id="optSound"><span></span></label></div>
+  <div class="row volrow"><div>Kekuatan bunyi<small>Seret untuk kuatkan atau perlahankan</small></div>
+    <div class="vol"><input type="range" id="optVol" min="5" max="100" step="5" aria-label="Kekuatan bunyi"><b id="optVolTx">50%</b></div></div>
 
   <h4>Kad baru</h4>
   <div class="row"><div>Sasaran mingguan<small>Bilangan workout seminggu (Ahad–Sabtu)</small></div>
@@ -1076,6 +1078,10 @@
     padding:12px 14px !important; box-shadow:none !important; transition:transform .12s, background .15s; }
   .tp .tpi .opt:active { transform:scale(.98); background:color-mix(in srgb, var(--wk) 14%, var(--tile)) !important; }
   .tp .tpi .opt b, .tp .tpi .opt span > :first-child { color:var(--ink); }
+  .row.volrow .vol { display:flex; align-items:center; gap:8px; flex:none; width:46%; }
+  .row.volrow input[type=range] { flex:1; min-width:0; accent-color:var(--accent); height:28px; }
+  .row.volrow .vol b { font-size:13px; font-weight:800; min-width:38px; text-align:right; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .row.volrow.off { opacity:.4; pointer-events:none; }
   .tp .tprs { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:4px 0 10px; } .tp .tprs small { font-size:12px; font-weight:700; color:var(--muted); margin-right:2px; }
   .tp .tprb { all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:5px; padding:6px 11px; border-radius:999px; font-size:13px; font-weight:700; color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
   .tp .tprb .ico { width:14px; height:14px; }
@@ -3322,6 +3328,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Slider Kekuatan bunyi di Tetapan → Paparan (bawah Bunyi butang). 50% = kuat sekarang; seret ke 100% untuk lebih kuat. Bunyi contoh dimainkan bila kau lepas slider.', 'Sound volume slider in Settings → Display (under Button sounds). 50% = the current level; drag to 100% for louder. A sample plays when you let go.'], 'g-set'],
     ['2026-11-25', ['Bunyi butang dan bunyi simpan kini 50% lebih kuat.', 'Button and save sounds are now 50% louder.'], 'g-set'],
     ['2026-11-25', ['Bila ada ralat (contohnya tarikh salah, nama template kosong, gagal simpan), app keluarkan bunyi "uh-oh" pendek supaya kau perasan.', 'When something goes wrong (e.g. a wrong date, an empty template name, a failed save) the app plays a short "uh-oh" so you notice.'], 'g-set'],
     ['2026-11-25', ['Setiap aktiviti ada bunyi simpan sendiri: Workout bunyi "power-up" (dan fanfare kecil bila ada PB baru), Tidur bunyi lembut menurun macam dodoi, Jalan bunyi dua tapak kaki diikuti "ping".', 'Each activity has its own save sound: Workout a rising "power-up" (a little fanfare for a new PB), Sleep a soft falling lullaby, Walk two footsteps then a "ping".'], 'g-set'],
@@ -3446,7 +3453,7 @@
       T('Butang bahasa di atas: tukar BM / English. Ikon gear: tulisan besar, sasaran (workout seminggu, tidur, langkah, minit brisk walk, panjang langkah).', 'The language button at the top switches BM / English. Gear icon: large text, goals (workouts a week, sleep, steps, brisk-walk minutes, stride length).'),
       T('Gabungan warna sedia ada, atau <b>Custom</b> untuk pilih warna setiap aktiviti, butang dan panel.', 'Ready-made colour combos, or <b>Custom</b> to choose colours for each activity, buttons and panels.'),
       T('Ikon bulan/matahari: mod gelap atau terang.', 'Moon/sun icon: dark or light mode.'),
-      T('<b>Bunyi butang</b> (Paparan): bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap. Bunyi juga ikut suis senyap telefon (iPhone).', '<b>Button sounds</b> (Display): soft sounds when you tap and save. Turn off for silent mode. Sounds also follow the phone’s mute switch (iPhone).')]), ['set', T('Buka Tetapan', 'Open Settings')], 'settings tetapan tema theme bahasa language warna colour');
+      T('<b>Bunyi butang</b> (Paparan): bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap. <b>Kekuatan bunyi</b> di bawahnya: seret slider (5–100%). Bunyi juga ikut suis senyap telefon (iPhone).', '<b>Button sounds</b> (Display): soft sounds when you tap and save. Turn off for silent mode. <b>Sound volume</b> below it: drag the slider (5–100%). Sounds also follow the phone’s mute switch (iPhone).')]), ['set', T('Buka Tetapan', 'Open Settings')], 'settings tetapan tema theme bahasa language warna colour');
     // 2. metrics
     add('m-streak', 'metrics', 'Streak', T('Bilangan hari <b>berturut-turut</b> kau workout, sehingga hari ini atau semalam. Kalau hari ini belum workout, streak semalam masih dikira sampai hujung hari. Satu hari tanpa workout (termasuk rehat) memulakan semula streak.', 'The number of days <b>in a row</b> you trained, up to today or yesterday. If you have not trained yet today, yesterday’s streak still counts until the day ends. One day without a workout (rest included) restarts it.'), ['streak', T('Lihat streak', 'See streak')], 'streak');
     add('m-cons', 'metrics', T('Konsistensi', 'Consistency'), T('Peratus hari dalam tempoh yang ada workout: hari workout ÷ jumlah hari. Sasaran mingguan kau <b>' + wg + ' workout</b> ≈ ' + Math.round(wg / 7 * 100) + '%. Records menanda 60%+ sebagai bagus dan bawah 30% perlu tindakan.', 'Share of days in the period with a workout: workout days ÷ days. Your weekly goal of <b>' + wg + ' workouts</b> ≈ ' + Math.round(wg / 7 * 100) + '%. Records marks 60%+ as good and under 30% as needing action.'), ['rec', T('Lihat Records', 'See Records')], 'consistency konsisten peratus');
@@ -4137,7 +4144,7 @@
   var HEADS = [
     ['Hitam', '#111111', '#e7e5e4'], ['Biru', '#1e3a8a', '#93c5fd'], ['Hijau', '#14532d', '#86efac'],
     ['Merah', '#7f1d1d', '#fca5a5'], ['Ungu', '#581c87', '#d8b4fe'], ['Kelabu', '#44403c', '#d6d3d1']];
-  var DEFAULTS = { sound: true, theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cSleep: '', cPanel: '', cPage: '', cInk: '' };
+  var DEFAULTS = { sound: true, vol: 50, theme: 'light', pen: 0, head: 0, large: false, defTarget: '', autoNames: false, sleepTarget: 8, sleepMin: 7, lang: 'bm', saved: [], workouts: null, templates: null, weekGoal: 4, stepGoal: 8000, walkMin: 30, stride: 75, palette: 0, cWk: '', cRest: '', cAcc: '', cWalk: '', cSleep: '', cPanel: '', cPage: '', cInk: '' };
   var S = JSON.parse(JSON.stringify(DEFAULTS));
   try {
     var saved = JSON.parse(localStorage.getItem('dw-settings') || 'null');
@@ -4187,7 +4194,7 @@
     [].forEach.call($('optPen').children, function (x, i) { if (!PENS[i]) { x.classList.toggle('on', typeof S.pen === 'string'); x.style.setProperty('--cc', typeof S.pen === 'string' ? S.pen : ''); return; } x.classList.toggle('on', i === S.pen); x.style.background = dark ? PENS[i][2] : PENS[i][1]; });
     [].forEach.call($('optHead').children, function (x, i) { if (!HEADS[i]) { x.classList.toggle('on', typeof S.head === 'string'); x.style.setProperty('--cc', typeof S.head === 'string' ? S.head : ''); return; } x.classList.toggle('on', i === S.head); x.style.background = dark ? HEADS[i][2] : HEADS[i][1]; });
     if (typeof applyLang === 'function' && window.__langReady) applyLang();
-    $('optLarge').checked = !!S.large; $('optSound').checked = S.sound !== false; $('optNames').checked = !!S.autoNames;
+    $('optLarge').checked = !!S.large; $('optSound').checked = S.sound !== false; $('optVol').value = S.vol || 50; $('optVolTx').textContent = (S.vol || 50) + '%'; $('optVol').closest('.row').classList.toggle('off', S.sound === false); $('optNames').checked = !!S.autoNames;
     if (typeof renderDash === 'function' && DASH) renderDash();
   }
   // custom surfaces (Tersuai only): panel, page background, text -> the rest is mixed from them
@@ -4252,9 +4259,12 @@
   if (darkQuery && darkQuery.addEventListener) darkQuery.addEventListener('change', function () { if (S.theme === 'auto') applySettings(); });
   $('themeBtn').onclick = function () { S.theme = isDark() ? 'light' : 'dark'; saveSettings(); applySettings(); };
   $('optLarge').onchange = function () { S.large = this.checked; saveSettings(); applySettings(); };
-  $('optSound').onchange = function () { S.sound = this.checked; saveSettings(); if (S.sound) sfx('ok'); };
+  $('optSound').onchange = function () { S.sound = this.checked; saveSettings(); $('optVol').closest('.row').classList.toggle('off', !S.sound); if (S.sound) sfx('ok'); };
+  $('optVol').oninput = function () { S.vol = +this.value; $('optVolTx').textContent = S.vol + '%'; };
+  $('optVol').onchange = function () { S.vol = +this.value; saveSettings(); sfx('ok'); };   // play a sample at the new level
   // ---- button sounds (made with Web Audio, no files): soft tap on buttons, a chime when a save works, a low tone when it fails; off in silent mode ----
-  var SFX = null, SFX_NEXT = null, SFX_VOL = 1.5;   // overall loudness (1.5 = 50% louder than the first version)
+  var SFX = null, SFX_NEXT = null;
+  function sfxVol() { return 3 * (S.vol || 50) / 100; }   // slider 5–100%; 50% = 1.5× the first version, 100% = 3×
   function sfx(kind) {
     if (S.sound === false) return;
     try {
@@ -4270,7 +4280,7 @@
       notes.forEach(function (n) {
         var o = SFX.createOscillator(), g = SFX.createGain(); o.type = (kind === 'okWalk' && n[0] < 400) ? 'sine' : wave; o.frequency.setValueAtTime(n[0], t0 + n[1]);
         if (kind === 'tap') o.frequency.exponentialRampToValueAtTime(700, t0 + n[1] + n[2]);
-        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(SFX_VOL * (wave === 'square' || wave === 'sawtooth' ? n[3] * .45 : n[3]), t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(sfxVol() * (wave === 'square' || wave === 'sawtooth' ? n[3] * .45 : n[3]), t0 + n[1] + (kind === 'okSleep' ? .06 : .008)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
         o.connect(g); g.connect(SFX.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + .02);
       });
     } catch (e) {}
@@ -5239,7 +5249,7 @@
     'Streak terpanjang': 'Longest streak', 'streak semasa': 'current streak', 'streak terpanjang': 'longest streak',
     'Target default': 'Default target', 'Target tidur (jam)': 'Sleep target (hours)', 'Tarikh rehat': 'Rest date',
     'Tema': 'Theme', 'Terpanjang': 'Longest', 'Terpendek': 'Shortest', 'Tiada rekod dalam tempoh ini.': 'No records in this period.',
-    'Tidur': 'Sleep', 'Trend masa workout': 'Workout time trend', 'Tulisan besar': 'Large text', 'Bunyi butang': 'Button sounds', 'Bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap': 'Soft sounds when you tap buttons and when you save. Turn off for silent mode', 'Tutup': 'Close',
+    'Tidur': 'Sleep', 'Trend masa workout': 'Workout time trend', 'Tulisan besar': 'Large text', 'Bunyi butang': 'Button sounds', 'Kekuatan bunyi': 'Sound volume', 'Seret untuk kuatkan atau perlahankan': 'Drag to make it louder or softer', 'Bunyi lembut bila tekan butang dan bila simpan. Matikan untuk mod senyap': 'Soft sounds when you tap buttons and when you save. Turn off for silent mode', 'Tutup': 'Close',
     'Ulang nama workout terakhir': 'Repeat last workout names', 'Warna kad': 'Card colour', 'Warna tulisan': 'Pen colour',
     'Warna': 'Colour', 'Warna tersuai': 'Custom colour', 'Simpan warna ini': 'Save this colour',
     'hari / minggu': 'days / week', 'minit': 'minutes', 'tempoh tidur dikira automatik': 'sleep time is worked out automatically',
