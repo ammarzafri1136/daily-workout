@@ -457,6 +457,7 @@
   .tabs::before { content:''; position:absolute; z-index:0; top:5px; bottom:5px; left:5px; width:calc((100% - 10px) / 3); border-radius:999px;
     background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.55)); border:1px solid rgba(255,255,255,.9);
     box-shadow:inset 0 1px 0 #fff, 0 3px 10px rgba(0,0,0,.12); transition:transform .45s cubic-bezier(.32,1.25,.5,1); }
+  .tabs::before { box-sizing:border-box; }   /* border inside the width so 3 steps end exactly at the right edge */
   .tabs::before { transform:translateX(100%); } .tabs:has(#recBtn.on)::before { transform:translateX(0); } .tabs:has(#dashBtn.on)::before { transform:translateX(200%); }   /* order: Records · Home · Dashboard */
   .tabs button { position:relative; z-index:1; flex:1 1 0 !important; display:flex; flex-direction:column; align-items:center; gap:1px; padding:6px 0 5px !important; font-size:10.5px !important;
     font-weight:600 !important; background:none !important; color:var(--muted) !important; border-radius:999px !important; transition:color .25s, transform .2s; }
@@ -1555,7 +1556,7 @@
     border:1px solid color-mix(in srgb, var(--accent) 12%, rgba(255,255,255,.7)) !important; box-shadow:inset 0 1px 1px rgba(255,255,255,.7), 0 2px 8px rgba(0,0,0,.06) !important; }
   body.dark .htabs, body.dark .dtabs, body.dark.csurf .htabs, body.dark.csurf .dtabs, body.dark #dashView .dtabs.seg, body.dark.csurf #dashView .dtabs.seg { background:color-mix(in srgb, var(--accent) 6%, rgba(255,255,255,.05)) !important;
     border-color:color-mix(in srgb, var(--accent) 14%, rgba(255,255,255,.08)) !important; box-shadow:inset 0 1px 1px rgba(255,255,255,.05) !important; }
-  .htabs::before, .dtabs::before, body.csurf .htabs::before, body.csurf .dtabs::before { top:4px !important; bottom:4px !important; left:4px !important; width:calc((100% - 8px) / 3) !important; border-radius:999px !important;
+  .htabs::before, .dtabs::before, body.csurf .htabs::before, body.csurf .dtabs::before { box-sizing:border-box; top:4px !important; bottom:4px !important; left:4px !important; width:calc((100% - 8px) / 3) !important; border-radius:999px !important;
     background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 16%, rgba(255,255,255,.9)), color-mix(in srgb, var(--accent) 10%, rgba(255,255,255,.6))) !important;
     border:1px solid color-mix(in srgb, var(--accent) 30%, rgba(255,255,255,.8)); box-shadow:0 2px 8px color-mix(in srgb, var(--accent) 18%, transparent) !important; }
   body.dark .htabs::before, body.dark .dtabs::before, body.dark.csurf .htabs::before, body.dark.csurf .dtabs::before { background:color-mix(in srgb, var(--accent) 24%, transparent) !important; border-color:color-mix(in srgb, var(--accent) 40%, transparent); box-shadow:none !important; }
