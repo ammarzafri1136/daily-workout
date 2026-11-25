@@ -2901,7 +2901,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
-    ['2026-11-25', ['Swipe kiri/kanan dalam panel aktiviti (Utama & Dashboard) untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right inside an activity panel (Home & Dashboard) to switch Workout, Sleep and Walk.'], 'g-swipe'],
+    ['2026-11-25', ['Swipe kiri/kanan di mana-mana pada Utama & Dashboard untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right anywhere on Home & the Dashboard to switch Workout, Sleep and Walk.'], 'g-swipe'],
     ['2026-11-25', ['Pustaka latihan kini ada animasi form yang betul (main sendiri) untuk 20 latihan, dan artikel ada grafik dari data kau.', 'The exercise library now has auto-playing correct-form animations for 20 exercises, and articles have graphics from your own data.'], 'k-tech'],
     ['2026-11-25', ['Senarai Template ikut warna tema.', 'The template list follows your colour theme.'], 'g-tpl'],
     ['2026-11-25', ['Hari rehat kini berwarna kelabu lembut ikut tema (Graphite: kelabu), jadi lebih jelas beza dengan hari workout.', 'Rest days now use a soft grey that matches each colour combo (Graphite: grey), so they stand apart from workout days.'], 'g-rest'],
@@ -2955,8 +2955,8 @@
       T('Jumlah hari = nilai jam, atau langkah brisk jika lebih tinggi. Ia <b>tak dicampur</b> sebab jam dah kira langkah brisk walk.', 'The day’s total = the watch value, or brisk steps if higher. They are <b>not added</b> because the watch already counts the brisk-walk steps.'),
       T('Kalau sesi untuk tarikh tu dah ada, app tanya sama ada nak <b>tambah</b> (2 sesi) atau <b>ganti</b>.', 'If a session already exists for that date, the app asks whether to <b>add</b> it (2 sessions) or <b>replace</b> it.')]), ['k', T('Buka Walk', 'Open Walk')], 'steps langkah jam watch brisk');
     add('g-swipe', 'guide', T('Tukar tab dengan swipe', 'Switch tabs by swiping'), ul([
-      T('Dalam panel aktiviti di <b>Utama</b> atau <b>Dashboard</b>, swipe <b>ke kiri</b> untuk tab seterusnya (Workout → Tidur → Jalan) dan <b>ke kanan</b> untuk tab sebelumnya.', 'Inside an activity panel on <b>Home</b> or the <b>Dashboard</b>, swipe <b>left</b> for the next tab (Workout → Sleep → Walk) and <b>right</b> for the previous one.'),
-      T('Swipe yang bermula atas kotak isian, carta atau jadual yang boleh ditolak ke tepi tak tukar tab — supaya kau masih boleh menaip dan lihat carta.', 'A swipe that starts on an input box, a chart or a sideways-scrolling table does not change tabs — so typing and reading charts still work.'),
+      T('Di mana-mana pada <b>Utama</b> atau <b>Dashboard</b>, swipe <b>ke kiri</b> untuk tab seterusnya (Workout → Tidur → Jalan) dan <b>ke kanan</b> untuk tab sebelumnya.', 'Anywhere on <b>Home</b> or the <b>Dashboard</b>, swipe <b>left</b> for the next tab (Workout → Sleep → Walk) and <b>right</b> for the previous one.'),
+      T('Swipe yang bermula atas kotak isian, carta, kalendar minggu, jadual yang boleh ditolak ke tepi atau bar bawah tak tukar tab — supaya semua tu masih berfungsi biasa.', 'A swipe that starts on an input box, a chart, the week strip, a sideways-scrolling table or the bottom bar does not change tabs — so those still work as usual.'),
       T('Tab Home dan Dashboard sentiasa sama.', 'Home and Dashboard always stay on the same tab.')]), ['w', T('Cuba di Utama', 'Try it on Home')], 'swipe slide tab tukar');
     add('g-tpl', 'guide', T('Template latihan', 'Workout templates'), ul([
       T('Tekan butang <b>Template</b> untuk pilih set latihan yang selalu kau buat — nama latihan diisi terus.', 'Tap <b>Template</b> to pick a routine you do often — the exercise names are filled in.'),
@@ -4334,47 +4334,45 @@
     b.onclick = function () { var ch = DTAB !== b.dataset.t; DTAB = b.dataset.t; paintDTab(ch); setHTab(DTAB); };
   });
   paintDTab();
-  // swipe left / right inside an activity panel (Home cards and Dashboard panels) to change Workout / Sleep / Walk
+  // swipe left / right anywhere on Home or the Dashboard to change Workout / Sleep / Walk (the visible panel follows the finger)
   (function () {
-    var ORD = 'wsk', st = null;
-    function skip(t, root) {   // leave inputs, charts and anything that scrolls sideways alone
-      for (var e = t; e && e !== root; e = e.parentNode) {
+    var ORD = 'wsk', st = null, CARD = { w: 'wkCard', s: 'sleepCard', k: 'walkCard' }, DSH = { w: 'workDash', s: 'sleepDash', k: 'walkDash' };
+    function skip(t) {   // leave inputs, charts, sideways-scrolling things, sheets and the bottom bar alone
+      for (var e = t; e && e !== document.body; e = e.parentNode) {
         if (e.nodeType !== 1) continue;
         if (/^(INPUT|TEXTAREA|SELECT|CANVAS)$/.test(e.tagName) || e.tagName.toLowerCase() === 'svg' || e.isContentEditable) return true;
+        if (e.classList.contains('sheet') || e.classList.contains('sheet-bg') || e.classList.contains('tabs') || e.id === 'ovl' || e.id === 'ovlBox') return true;
         if (e.scrollWidth > e.clientWidth + 2) { var ox = getComputedStyle(e).overflowX; if (ox === 'auto' || ox === 'scroll') return true; }
       }
       return false;
     }
-    function bind(el, dash) {
-      el.addEventListener('touchstart', function (e) {
-        if (e.touches.length !== 1 || skip(e.target, el)) { st = null; return; }
-        st = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), el: el, dir: 0 };
-      }, { passive: true });
-      el.addEventListener('touchmove', function (e) {
-        if (!st || st.el !== el) return;
-        var dx = e.touches[0].clientX - st.x, dy = e.touches[0].clientY - st.y;
-        if (!st.dir && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) st.dir = Math.abs(dx) > Math.abs(dy) * 1.4 ? 1 : -1;
-        if (st.dir === 1) { var cur = dash ? DTAB : HTAB, i = ORD.indexOf(cur), edge = (dx > 0 && i === 0) || (dx < 0 && i === ORD.length - 1);
-          el.style.transition = 'none'; el.style.transform = 'translateX(' + (dx * (edge ? .12 : .3)).toFixed(1) + 'px)'; }
-      }, { passive: true });
-      function end(e) {
-        if (!st || st.el !== el) return;
-        var p = (e.changedTouches && e.changedTouches[0]) || { clientX: st.x, clientY: st.y }, dx = p.clientX - st.x, dy = p.clientY - st.y, fast = Date.now() - st.t < 700, horiz = st.dir === 1;
-        el.style.transition = 'transform .2s ease'; el.style.transform = '';
-        setTimeout(function () { el.style.transition = ''; }, 220);
-        st = null;
-        if (!horiz || Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4 || (!fast && Math.abs(dx) < 110)) return;
-        var cur = dash ? DTAB : HTAB, i = ORD.indexOf(cur) + (dx < 0 ? 1 : -1);
-        if (i < 0 || i >= ORD.length) return;
-        el.style.transform = '';
-        if (dash) { DTAB = ORD[i]; paintDTabDir(dx < 0); setHTab(DTAB); } else setHTab(ORD[i], true);
-        try { if (navigator.vibrate) navigator.vibrate(8); } catch (e2) {}
-      }
-      el.addEventListener('touchend', end, { passive: true });
-      el.addEventListener('touchcancel', function () { if (st && st.el === el) { el.style.transform = ''; st = null; } }, { passive: true });
-    }
-    ['wkCard', 'sleepCard', 'walkCard'].forEach(function (id) { bind($(id), false); });
-    ['workDash', 'sleepDash', 'walkDash'].forEach(function (id) { bind($(id), true); });
+    function anySheet() { return !!document.querySelector('.sheet.on, .sheet-bg.on, #ovl.on'); }
+    function isDash() { return $('dashView').style.display !== 'none'; }
+    function panel() { return $(isDash() ? DSH[DTAB] : CARD[HTAB]); }
+    document.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1 || anySheet() || skip(e.target)) { st = null; return; }
+      st = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), el: panel(), dash: isDash(), dir: 0 };
+    }, { passive: true });
+    document.addEventListener('touchmove', function (e) {
+      if (!st || !st.el) return;
+      var dx = e.touches[0].clientX - st.x, dy = e.touches[0].clientY - st.y;
+      if (!st.dir && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) st.dir = Math.abs(dx) > Math.abs(dy) * 1.4 ? 1 : -1;
+      if (st.dir === 1) { var i = ORD.indexOf(st.dash ? DTAB : HTAB), edge = (dx > 0 && i === 0) || (dx < 0 && i === ORD.length - 1);
+        st.el.style.transition = 'none'; st.el.style.transform = 'translateX(' + (dx * (edge ? .12 : .3)).toFixed(1) + 'px)'; }
+    }, { passive: true });
+    function reset(el) { if (!el) return; el.style.transition = 'transform .2s ease'; el.style.transform = ''; setTimeout(function () { el.style.transition = ''; }, 220); }
+    document.addEventListener('touchend', function (e) {
+      if (!st) return;
+      var s2 = st; st = null; reset(s2.el);
+      var p = (e.changedTouches && e.changedTouches[0]) || { clientX: s2.x, clientY: s2.y }, dx = p.clientX - s2.x, dy = p.clientY - s2.y, fast = Date.now() - s2.t < 700;
+      if (s2.dir !== 1 || Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4 || (!fast && Math.abs(dx) < 110)) return;
+      var i = ORD.indexOf(s2.dash ? DTAB : HTAB) + (dx < 0 ? 1 : -1);
+      if (i < 0 || i >= ORD.length) return;
+      s2.el.style.transform = '';
+      if (s2.dash) { DTAB = ORD[i]; paintDTabDir(dx < 0); setHTab(DTAB); } else setHTab(ORD[i], true);
+      try { if (navigator.vibrate) navigator.vibrate(8); } catch (e2) {}
+    }, { passive: true });
+    document.addEventListener('touchcancel', function () { if (st) { reset(st.el); st = null; } }, { passive: true });
   })();
   function paintDTabDir(fromRight) { paintDTab(false); var D = { w: 'workDash', s: 'sleepDash', k: 'walkDash' }; slideIn($(D[DTAB]), fromRight); }
 
