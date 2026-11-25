@@ -1488,7 +1488,27 @@
   .kc .kcl { display:flex; flex-direction:column; gap:6px; }
   .kc .kca { all:unset; box-sizing:border-box; cursor:pointer; display:flex; align-items:center; gap:8px; padding:12px !important; border-radius:12px !important; background:var(--tile) !important; font-size:14.5px; font-weight:700; color:var(--ink); height:auto !important; text-align:left; width:100%; }
   .kc .kca > span { flex:1; min-width:0; } .kc .kca small { display:block; font-size:12px; font-weight:500; color:var(--muted); margin-top:2px; }
-  .kc .kcn .kca { font-weight:600; font-size:13.5px; line-height:1.4; }
+  .kc .kcn { gap:6px; }
+  .kc .kcw { position:relative; transition:transform .25s ease, opacity .25s ease, height .25s ease, margin .25s ease; touch-action:pan-y; }
+  .kc .kcw.out { height:0 !important; opacity:0; margin-top:-6px; overflow:hidden; }
+  .kc .kcw.gone { opacity:.5; }
+  .kc .kcn .kca { font-weight:600; font-size:13px; line-height:1.4; padding:10px 40px 10px 12px !important; }
+  .kc .kcn .kca .kct { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .kc .kcn .kca small.kcd { display:block; margin:0 0 2px; font-size:11px; font-weight:800; letter-spacing:.3px; color:var(--accent); }
+  .kc .kcn .kcgo { display:none; }
+  .kc .kcx { all:unset; box-sizing:border-box; position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; }
+  .kc .kcx .ico { width:14px; height:14px; } .kc .kcx:active { background:color-mix(in srgb, var(--muted) 18%, transparent); }
+  .kc .kcne { font-size:13px; color:var(--muted); padding:10px 12px; border-radius:12px; background:var(--tile); }
+  .kc .grp.kch { display:flex; align-items:baseline; justify-content:space-between; gap:8px; } .kc .kchr { display:flex; gap:12px; }
+  .kc .kclk { all:unset; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:0; text-transform:none; color:var(--accent); }
+  .kc #kcMain > .grp { margin-top:18px; }
+  .kc .kctip { padding:10px 12px !important; font-size:13.5px; align-items:center; }
+  .kc .kcti { width:28px; height:28px; border-radius:9px; } .kc .kcti .ico { width:16px; height:16px; }
+  .kc .kcg { gap:8px; }
+  .kc .kcc { flex-direction:row !important; align-items:center; gap:10px !important; padding:10px !important; }
+  .kc .kcc .ki { flex:none; margin-bottom:0 !important; width:32px !important; height:32px !important; }
+  .kc .kcc .kcct { display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .kc .kcc b { font-size:13px !important; line-height:1.25; } .kc .kcc small { font-size:11px !important; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .kc .kcgo { width:15px; height:15px; color:var(--muted); flex:none; }
   .kc .kcimg { position:relative; border-radius:16px; overflow:hidden; margin:0 auto 8px; background:var(--tile); aspect-ratio:1 / 1; width:min(100%, 300px); }
   .kc .kcimg .kcf { position:absolute; inset:6% 6% 12%; background:var(--wk); -webkit-mask:var(--m) center / contain no-repeat; mask:var(--m) center / contain no-repeat; opacity:0; }
@@ -3183,6 +3203,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Knowledge Centre lebih kemas. Berita di "Apa yang baru" boleh dileret ke tepi (atau tekan ×) untuk buang, macam notifikasi. Tekan "Lihat semua" untuk senarai penuh.', 'The Knowledge Centre is tidier. Swipe a "What’s new" item sideways (or tap ×) to remove it, like a notification. Tap "See all" for the full list.'], 'g-kc'],
     ['2026-11-25', ['Tanda BARU di Personal Best hilang lepas kau buka rekod tu, dan titik merah pada butang trofi hilang bila semua rekod baru dah dibuka. Rekod baru seterusnya akan muncul semula.', 'The NEW tag in Personal Best goes away once you open that record, and the red dot on the trophy button clears when you’ve opened all new records. The next new record brings it back.'], 'g-pb'],
     ['2026-11-25', ['Nama hari kini sebaris di tengah dengan ikon kalendar dalam kotak tarikh, tanpa bertindih dengan tarikh.', 'The weekday name now lines up centred with the calendar icon in the date box, without overlapping the date.'], 'g-rec'],
     ['2026-11-25', ['Ringkasan & cadangan kini ada hari paling aktif, latihan paling kerap, tidur hujung minggu, rekod terbaik baru, amaran rekod tidur tak lengkap, dan trivia / info / kata semangat yang bertukar setiap kali kau pilih tempoh.', 'Summary & tips now shows your most active day, most frequent exercise, weekend sleep, new personal bests, an incomplete-sleep-log warning, and a fact / tip / line of encouragement that changes each time you pick a period.'], 'g-rec'],
@@ -3268,6 +3289,11 @@
     add('g-pb', 'guide', T('Personal Best & streak', 'Personal Best & streak'), ul([
       T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik merah = ada rekod baru (7 hari) yang belum kau buka. Tanda BARU hilang lepas kau buka rekod tu, dan titik hilang bila semua dah dibuka.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. Red dot = a new record (last 7 days) you haven’t opened yet. The NEW tag goes once you open that record, and the dot goes once you’ve opened them all.'),
       T('Cip <b>api</b> sebelahnya: streak workout semasa dan terbaik — tekan untuk detail.', 'The <b>flame</b> chip beside it: current and best workout streak — tap for details.')]), ['pb', T('Buka Personal Best', 'Open Personal Best')], 'pb trophy trofi streak');
+    add('g-kc', 'guide', T('Guna Knowledge Centre', 'Using the Knowledge Centre'), ul([
+      T('Tekan butang <b>?</b> di atas. Cari apa-apa (cth. tidur, plank) di kotak carian, atau pilih satu topik.', 'Tap the <b>?</b> button at the top. Search anything (e.g. sleep, plank) or pick a topic.'),
+      T('<b>Petua hari ini</b> berubah setiap hari ikut data kau.', 'The <b>tip of the day</b> changes daily based on your data.'),
+      T('<b>Apa yang baru</b>: 3 kemas kini terkini. Leret ke kiri atau kanan (atau tekan ×) untuk buang, macam notifikasi. <b>Buang semua</b> kosongkan semuanya.', '<b>What’s new</b>: the 3 latest updates. Swipe left or right (or tap ×) to remove one, like a notification. <b>Clear all</b> removes them all.'),
+      T('<b>Lihat semua</b> tunjuk senarai penuh termasuk yang dah dibuang (warna pudar). Buka yang pudar untuk bawa balik ke halaman utama.', '<b>See all</b> shows the full list, including removed ones (faded). Open a faded one to bring it back to the home page.')]), null, 'knowledge centre bantuan help berita news baru what new buang remove leret swipe');
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
       T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
       T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Slide your finger over a chart to see each day.'),
@@ -3652,8 +3678,12 @@
       var tip = kcTip();
       html = '<div class="kcs"><input type="search" id="kcQ" placeholder="' + T('Cari: tidur, langkah, plank…', 'Search: sleep, steps, plank…') + '" autocomplete="off"></div><div id="kcRes"></div><div id="kcMain">' +
         '<button type="button" class="kctip" data-a="' + tip[1] + '"><span class="kcti">' + ic('bulb') + '</span><span><small>' + T('PETUA HARI INI', 'TIP OF THE DAY') + '</small>' + tip[0] + '</span></button>' +
-        '<div class="grp">' + T('Apa yang baru', 'What’s new') + '</div><div class="kcl kcn">' + KC_NEWS.slice(0, 3).map(function (n) { return '<button type="button" class="kca" data-a="' + n[2] + '"><span>' + T(n[1][0], n[1][1]) + '<small>' + isoToDmy(n[0]) + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>' +
-        '<div class="grp">' + T('Topik', 'Topics') + '</div><div class="kcg">' + KC_CATS.map(function (c) { return '<button type="button" class="kcc" data-c="' + c[0] + '"><i class="ki">' + ic(c[1]) + '</i><b>' + T(c[2][0], c[2][1]) + '</b><small>' + T(c[3][0], c[3][1]) + '</small></button>'; }).join('') + '</div></div>';
+        kcNewsHtml(T) +
+        '<div class="grp">' + T('Topik', 'Topics') + '</div><div class="kcg">' + KC_CATS.map(function (c) { return '<button type="button" class="kcc" data-c="' + c[0] + '"><i class="ki">' + ic(c[1]) + '</i><span class="kcct"><b>' + T(c[2][0], c[2][1]) + '</b><small>' + T(c[3][0], c[3][1]) + '</small></span></button>'; }).join('') + '</div></div>';
+    } else if (view === 'news') {
+      DBACK = function () { kcOpen('home'); };
+      $('dTitle').textContent = T('Apa yang baru', 'What’s new');
+      html = '<p class="ttx">' + T('Semua kemas kini app. Leret ke kiri atau kanan untuk buang dari halaman utama Knowledge Centre.', 'Every app update. Swipe left or right to remove one from the Knowledge Centre home.') + '</p><div class="kcl kcn">' + KC_NEWS.map(function (n) { return kcNewsRow(n, T, true); }).join('') + '</div>';
     } else if (view === 'cat') {
       DBACK = function () { kcOpen('home'); };
       var C = KC_CATS.filter(function (c) { return c[0] === arg; })[0];
@@ -3695,6 +3725,7 @@
     var B = $('dBody');
     [].forEach.call(B.querySelectorAll('.kcimg img.kcprobe'), function (im) { im.onerror = function () { var w = im.closest('.kcimg'); if (!w || !w.parentNode) return; var an = w.parentNode.querySelector('.kcanw'); w.remove(); if (an) { an.hidden = false; kcAnimStart(B); } }; });
     kcAnimStart(B);
+    kcNewsWire(B, view);
     [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
     [].forEach.call(B.querySelectorAll('[data-c]'), function (b) { b.onclick = function () { kcOpen('cat', b.dataset.c); }; });
     [].forEach.call(B.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
@@ -3716,6 +3747,49 @@
     B.scrollTop = 0; try { $('detail').scrollTop = 0; } catch (e) {}
   }
   $('kcBtn').onclick = function () { kcOpen('home'); };
+  // What's new: rows can be swiped away (or removed with ×), like notifications. Removed ones stay hidden on the KC home but remain in the full list.
+  function kcNewsId(n) { return n[0] + '|' + n[2] + '|' + n[1][1].slice(0, 40); }
+  function kcNewsGone() { try { return JSON.parse(localStorage.getItem('dw-kcgone') || '{}') || {}; } catch (e) { return {}; } }
+  function kcNewsSet(m) { try { localStorage.setItem('dw-kcgone', JSON.stringify(m)); } catch (e) {} }
+  function kcNewsRow(n, T, all) {
+    var gone = all && kcNewsGone()[kcNewsId(n)];
+    return '<div class="kcw' + (gone ? ' gone' : '') + '" data-nid="' + esc(kcNewsId(n)) + '"><button type="button" class="kca" data-a="' + n[2] + '"><span><small class="kcd">' + isoToDmy(n[0]).slice(0, 5) + '</small><span class="kct">' + T(n[1][0], n[1][1]) + '</span></span>' + ic('right', 'kcgo') + '</button>' +
+      (all ? '' : '<button type="button" class="kcx" aria-label="' + T('Buang', 'Remove') + '">' + ic('x') + '</button>') + '</div>';
+  }
+  function kcNewsHtml(T) {
+    var G = kcNewsGone(), L = KC_NEWS.filter(function (n) { return !G[kcNewsId(n)]; }).slice(0, 3);
+    return '<div class="grp kch"><span>' + T('Apa yang baru', 'What’s new') + '</span><span class="kchr">' + (L.length ? '<button type="button" class="kclk" data-nclr="1">' + T('Buang semua', 'Clear all') + '</button>' : '') + '<button type="button" class="kclk" data-nall="1">' + T('Lihat semua', 'See all') + '</button></span></div>' +
+      '<div class="kcl kcn" id="kcNews">' + (L.length ? L.map(function (n) { return kcNewsRow(n, T, false); }).join('') : '<div class="kcne">' + T('Tiada berita baru. Semua dah dibaca.', 'No new updates. You’re all caught up.') + '</div>') + '</div>';
+  }
+  function kcNewsRemove(row, view) {
+    var m = kcNewsGone(); m[row.dataset.nid] = 1; kcNewsSet(m);
+    if (view === 'news') { row.style.transform = ''; row.classList.add('gone'); return; }
+    row.style.height = row.offsetHeight + 'px'; row.offsetHeight; row.classList.add('out');
+    setTimeout(function () { var y = $('dBody').scrollTop; kcOpen('home'); $('dBody').scrollTop = y; }, 260);
+  }
+  function kcNewsWire(B, view) {
+    var all = B.querySelector('[data-nall]'); if (all) all.onclick = function () { kcOpen('news'); };
+    var clr = B.querySelector('[data-nclr]'); if (clr) clr.onclick = function () { var m = kcNewsGone(); KC_NEWS.forEach(function (n) { m[kcNewsId(n)] = 1; }); kcNewsSet(m); kcOpen('home'); };
+    [].forEach.call(B.querySelectorAll('.kcw'), function (row) {
+      var x = row.querySelector('.kcx'), btn = row.querySelector('.kca'), sx = 0, sy = 0, dx = 0, drag = false, lock = false;
+      if (x) x.onclick = function (e) { e.stopPropagation(); kcNewsRemove(row, view); };
+      if (row.classList.contains('gone')) { btn.addEventListener('click', function () { var m = kcNewsGone(); delete m[row.dataset.nid]; kcNewsSet(m); }, true); return; }   // opening a removed one brings it back
+      row.addEventListener('touchstart', function (e) { var t = e.touches[0]; sx = t.clientX; sy = t.clientY; dx = 0; drag = false; lock = false; row.style.transition = 'none'; }, { passive: true });
+      row.addEventListener('touchmove', function (e) {
+        var t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
+        if (!drag && !lock) { if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) lock = true; else if (Math.abs(mx) > 10) drag = true; }
+        if (!drag) return; e.preventDefault(); e.stopPropagation(); dx = mx;
+        row.style.transform = 'translateX(' + dx + 'px)'; row.style.opacity = String(Math.max(.2, 1 - Math.abs(dx) / row.offsetWidth));
+      }, { passive: false });
+      row.addEventListener('touchend', function () {
+        row.style.transition = '';
+        if (drag && Math.abs(dx) > row.offsetWidth * .3) { row.style.transform = 'translateX(' + (dx > 0 ? 110 : -110) + '%)'; row.style.opacity = '0'; kcNewsRemove(row, view); }
+        else { row.style.transform = ''; row.style.opacity = ''; }
+        if (drag) { btn.dataset.sw = '1'; setTimeout(function () { delete btn.dataset.sw; }, 350); }
+      });
+      btn.addEventListener('click', function (e) { if (btn.dataset.sw) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+    });
+  }
   function renderDash() {
     if (!DASH) return;
     paintFilter();
