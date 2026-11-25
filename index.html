@@ -250,7 +250,7 @@
   .k { -webkit-user-select:none; user-select:none; }
   .mm .u { margin-right:6px; }
   .dur .f { cursor:text; }
-  .top input, #sleepDate { flex:1; min-width:0; border:0; font:inherit; font-size:16px;
+  .top input, #sleepDate, #walkDate { flex:1; min-width:0; border:0; font:inherit; font-size:16px;
     font-weight:700; padding:4px 2px; background:transparent; color:var(--pen); outline:none; }
 
   /* Compact: date + time boxes side by side */
@@ -280,7 +280,7 @@
   .hint { font-size:12px; margin:6px 2px 0; }
   .msg { margin-top:8px; padding:8px 10px; }
   .recent { padding:10px; } .streak b { font-size:20px; } .streak div { padding:6px; }
-  .trio #sleepDate { font-size:15px; font-weight:800; padding:0; }
+  .trio #sleepDate, .trio #walkDate { font-size:15px; font-weight:800; padding:0; }
   .actions button { white-space:nowrap; font-size:15px; }
   th { font-size:clamp(9px,2.5vw,13px); line-height:1.15; }
   @media (max-width:370px) { .actions button { font-size:13px; padding:10px 8px; } }
@@ -530,7 +530,7 @@
   .ovlbox { border-radius:20px !important; background:color-mix(in srgb, var(--paper) 88%, transparent) !important; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
   .ovlbox .ic .ico { width:28px; height:28px; }
   .dh { font-size:0 !important; margin-bottom:8px !important; } .dh #dLabel { font-size:13px; }
-  .trio .dwrap input.dmy, .trio #sleepDate { font-size:14px !important; letter-spacing:-.02em; }
+  .trio .dwrap input.dmy, .trio #sleepDate, .trio #walkDate { font-size:14px !important; letter-spacing:-.02em; }
   th { font-size:10px !important; letter-spacing:0 !important; }
   .cph .ib, .sheet .ib { background:var(--tile) !important; }
   .ti { color:var(--headbg); font-size:.9em; margin-right:2px; }
