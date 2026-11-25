@@ -902,8 +902,8 @@
     display:flex; align-items:center; justify-content:center; opacity:.75; }
   .hst-g i.has { opacity:1; cursor:pointer; font-weight:700; }
   .hst-g i.o { background:none; }
-  .hst-g i.ring { box-shadow:inset 0 0 0 2px var(--ink), inset 0 0 0 3.5px var(--paper); }   /* brisk-walk day: outlined square (cell keeps its shape) */
-  .hml span.hring:before { background:transparent; box-shadow:inset 0 0 0 2px var(--ink); }
+  .hst-g i.ring { box-shadow:inset 0 0 0 2.5px var(--brk, #f59e0b), inset 0 0 0 4px var(--paper); }   /* brisk-walk day: outlined square (cell keeps its shape) */
+  .hml span.hring:before { background:transparent; box-shadow:inset 0 0 0 2.5px var(--brk, #f59e0b); }
 
   /* home cards: inner tiles a step lighter than the card */
   .box, .panel, textarea { background:var(--tile) !important; }
@@ -3242,6 +3242,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Garis kotak brisk walk dalam heatmap Walk history kini guna warna kontra dengan warna Walk, jadi jelas dalam mod gelap dan semua gabungan warna.', 'The brisk-walk outline in the Walk history heatmap now uses a colour that contrasts with your Walk colour, so it is clear in dark mode and every colour combo.'], 'm-steps'],
     ['2026-11-25', ['Laporan minggu lepas: setiap Ahad dan Isnin, satu kad ringkas di Home (workout, tidur, langkah, PB + satu cadangan). Tekan × untuk tutup sampai minggu depan. Ringkasan & cadangan juga kini tunjuk kaitan tidur dengan reps kau.', 'Last-week report: every Sunday and Monday, one short card on Home (workouts, sleep, steps, PBs + one tip). Tap × to hide it until next week. Summary & tips now also shows how sleep relates to your reps.'], 'g-rec'],
     ['2026-11-25', ['Jadual Rekod ada lajur Workout sendiri (reps dan bilangan latihan), dan ikon di kepala jadual kini di tengah lajur.', 'The Records table has its own Workout column (reps and number of exercises), and the header icons now sit centred in each column.'], 'g-rec'],
     ['2026-11-25', ['Tempoh tidur dalam jadual Rekod kini ikut bahasa: 5h 4m dalam English, 5j 4m dalam BM.', 'Sleep length in the Records table now follows your language: 5h 4m in English, 5j 4m in BM.'], 'g-rec'],
@@ -4044,6 +4045,7 @@
     // data colours (fixed, all different): workout = purple, rest = amber; sleep uses red / green / blue
     var pl = palNow(dark);
     b.setProperty('--wk', pl.wk); b.setProperty('--walk', pl.walk); b.setProperty('--sleepc', pl.sleep); b.setProperty('--rest', pl.rest); b.setProperty('--rest-tx', pl.restTx); b.setProperty('--accent', pl.acc);
+    try { b.setProperty('--brk', briskRing(pl.walk, dark)); } catch (e) {}
     applySurfaces();
     paintPal(dark);
     setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 0); setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
@@ -4176,6 +4178,13 @@
     var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l);
     var f = function (n) { return Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))))); };
     return [f(0), f(8), f(4)];
+  }
+  // brisk-walk outline colour: the opposite hue of the walk colour, so it stands out on every combo (light & dark)
+  function briskRing(col, dark) {
+    var c = parseCss(col), r = c.r / 255, g = c.g / 255, bl = c.b / 255, mx = Math.max(r, g, bl), mn = Math.min(r, g, bl), h = 0, d = mx - mn;
+    if (d) h = mx === r ? ((g - bl) / d) % 6 : mx === g ? (bl - r) / d + 2 : (r - g) / d + 4;
+    var hh = (Math.round(h * 60) + 360 + 180) % 360, o = hsl2rgb(hh, 90, dark ? 66 : 46);
+    return '#' + hex2(o[0]) + hex2(o[1]) + hex2(o[2]);
   }
   function hex2(v) { return ('0' + v.toString(16)).slice(-2); }
   function cssOf(c) { return c.a >= 1 ? '#' + hex2(c.r) + hex2(c.g) + hex2(c.b) : 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + Math.round(c.a * 100) / 100 + ')'; }
