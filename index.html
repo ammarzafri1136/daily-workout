@@ -1541,6 +1541,8 @@
   .kc .kcc .kcct { display:flex; flex-direction:column; gap:1px; min-width:0; }
   .kc .kcc b { font-size:13px !important; line-height:1.25; } .kc .kcc small { font-size:11px !important; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .kc .kcgo { width:15px; height:15px; color:var(--muted); flex:none; }
+  /* Knowledge Centre keeps one fixed height whatever page is open, so the sheet never jumps */
+  #detail:has(#dBody > .kc) { height:88vh; height:88dvh; max-height:88dvh; }
   /* articles inside a topic open in place (dropdown) */
   .kc .kcq { border-radius:12px; background:var(--tile); }
   .kc .kcq > .kca { background:none !important; }
@@ -3301,6 +3303,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Knowledge Centre kini sentiasa sama tinggi — tak lagi naik turun bila tukar topik, artikel atau Apa yang baru.', 'The Knowledge Centre now keeps the same height — it no longer jumps when you switch topics, articles or What’s new.'], 'g-kc'],
     ['2026-11-25', ['Pustaka latihan pun kini guna dropdown: tekan nama latihan untuk buka panduan (gambar, cara buat, kesilapan biasa, PB kau) di tempat yang sama.', 'The exercise library now uses dropdowns too: tap an exercise to open its guide (picture, how-to, common mistakes, your PB) in place.'], 'g-kc'],
     ['2026-11-25', ['Dalam Knowledge Centre, artikel dalam setiap topik kini terbuka di tempat yang sama macam dropdown — tak perlu tukar halaman.', 'In the Knowledge Centre, articles inside each topic now open in place like a dropdown — no page change.'], 'g-kc'],
     ['2026-11-25', ['Setiap carta di Dashboard kini tertutup — tekan tajuk untuk buka, tekan lagi untuk tutup. App ingat mana yang kau biar terbuka.', 'Every chart on the Dashboard is now folded — tap its title to open, tap again to close. The app remembers which ones you leave open.'], 'g-rec'],
