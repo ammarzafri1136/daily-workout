@@ -996,31 +996,26 @@
   .rsum span b { color:var(--ink); font-weight:700; }
   .day .s { font-weight:800; color:var(--ink); }
   /* Records list: a compact table */
-  #days .dth, #days .day.dt { display:grid !important; grid-template-columns:46px minmax(0,1fr) 50px 52px 38px 14px; column-gap:6px; align-items:center; }
-  #days .dth { padding:0 2px 6px; font-size:10.5px; font-weight:800; letter-spacing:.2px; text-transform:uppercase; color:var(--muted); }
-  #days .dth span:nth-child(n+3) { text-align:right; } #days .dth .ico { width:14px; height:14px; vertical-align:-2px; }
-  #days .dth span:nth-child(3) .ico { color:var(--sleepc); } #days .dth span:nth-child(4) .ico { color:var(--walk); }
-  #days .day.dt { padding:9px 2px !important; font-size:13.5px; font-variant-numeric:tabular-nums; }
-  #days .dtd { display:flex; flex-direction:column; line-height:1.15; } #days .dtd b { font-weight:800; color:var(--ink); font-size:14px; } #days .dtd small { font-size:11px; font-weight:600; color:var(--muted); }
-  #days .dta { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; }
-  #days .dta em { font-style:normal; font-size:11.5px; font-weight:800; padding:2px 8px; border-radius:999px; white-space:nowrap; background:color-mix(in srgb, currentColor 13%, transparent); }
-  #days .dta em.w { color:var(--wk); } #days .dta em.r { color:var(--rest-tx, var(--rest)); } #days .dta em.k { color:var(--walk); } #days .dta em.s { color:var(--sleepc); }
-  #days .dta small { font-size:11px; font-weight:600; color:var(--muted); line-height:1.25; } #days .dta small.flag { color:#d97706; font-weight:800; }
-  #days .dts, #days .dtk, #days .dtb { text-align:right; font-weight:700; white-space:nowrap; }
-  #days .dts { color:var(--ink); } #days .dtk, #days .dtb { color:var(--walk); } #days .dtn { font-style:normal; color:var(--muted); opacity:.5; font-weight:500; }
-  #days .day.dt > .go { margin-left:0; display:flex; justify-content:flex-end; } #days .day.dt > .go .ico { width:14px; height:14px; }
-  /* faint separators: dotted lines between rows and columns */
+  /* Records list: a compact table — Date | Activity | Workout | Sleep | Steps | Brisk; faint dotted separators; numbers and header icons centred */
   #days { --dtl:color-mix(in srgb, var(--muted) 28%, transparent); }
-  #days .day.dt { border-top:1px dotted var(--dtl) !important; align-items:stretch; column-gap:0; }
-  #days .dth { column-gap:0; border-bottom:1px solid var(--dtl); }
-  #days .day.dt > span, #days .dth > span { display:flex; align-items:center; padding:0 6px; }
-  #days .day.dt > .dtd, #days .day.dt > .dta { flex-direction:column; align-items:flex-start; justify-content:center; }
-  #days .day.dt > .dts, #days .day.dt > .dtk, #days .day.dt > .dtb, #days .dth > span:nth-child(n+3) { justify-content:flex-end; }
-  #days .day.dt > span:nth-child(n+2):nth-child(-n+5), #days .dth > span:nth-child(n+2):nth-child(-n+5) { border-left:1px dotted var(--dtl); }
-  #days .day.dt > span:first-child, #days .dth > span:first-child { padding-left:2px; }
-  #days .day.dt > .go { padding:0 0 0 4px; }
-  #days .dth, #days .day.dt { grid-template-columns:50px minmax(0,1fr) 54px 58px 44px 18px !important; }
-  @media (max-width:380px) { #days .dth, #days .day.dt { grid-template-columns:46px minmax(0,1fr) 50px 54px 40px 14px !important; } #days .day.dt > span, #days .dth > span { padding:0 4px; } #days .dta em { padding:2px 6px; font-size:11px; } }
+  #days .dth, #days .day.dt { display:grid !important; grid-template-columns:44px minmax(0,1fr) 46px 50px 54px 40px; column-gap:0; }
+  #days .dth { padding:0 0 6px; font-size:10.5px; font-weight:800; letter-spacing:.2px; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--dtl); }
+  #days .dth .ico { width:15px; height:15px; display:block; }
+  #days .dth .th-w .ico { color:var(--wk); } #days .dth .th-s .ico { color:var(--sleepc); } #days .dth .th-k .ico { color:var(--walk); }
+  #days .day.dt { padding:9px 0 !important; font-size:13px; font-variant-numeric:tabular-nums; border-top:1px dotted var(--dtl) !important; align-items:stretch; }
+  #days .day.dt > span, #days .dth > span { display:flex; align-items:center; justify-content:center; text-align:center; padding:0 4px; min-width:0; }
+  #days .day.dt > span:nth-child(n+2), #days .dth > span:nth-child(n+2) { border-left:1px dotted var(--dtl); }
+  #days .day.dt > span:first-child, #days .dth > span:first-child { padding-left:2px; justify-content:flex-start; text-align:left; }
+  #days .dth > span:nth-child(2) { justify-content:flex-start; padding-left:6px; }
+  #days .dtd { flex-direction:column; align-items:flex-start !important; line-height:1.15; } #days .dtd b { font-weight:800; color:var(--ink); font-size:14px; } #days .dtd small { font-size:11px; font-weight:600; color:var(--muted); }
+  #days .day.dt > .dta { flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; padding-left:6px; }
+  #days .dta em { font-style:normal; font-size:11px; font-weight:800; padding:2px 7px; border-radius:999px; white-space:nowrap; background:color-mix(in srgb, currentColor 13%, transparent); }
+  #days .dta em.w { color:var(--wk); } #days .dta em.r { color:var(--rest-tx, var(--rest)); } #days .dta em.k { color:var(--walk); } #days .dta em.s { color:var(--sleepc); }
+  #days .dta small.flag { font-size:11px; color:#d97706; font-weight:800; }
+  #days .day.dt > .dtw { flex-direction:column; line-height:1.15; } #days .dtw b { font-weight:800; color:var(--wk); } #days .dtw small { font-size:10.5px; font-weight:600; color:var(--muted); }
+  #days .dts, #days .dtk, #days .dtb { font-weight:700; white-space:nowrap; }
+  #days .dts { color:var(--ink); } #days .dtk, #days .dtb { color:var(--walk); } #days .dtn { font-style:normal; color:var(--muted); opacity:.5; font-weight:500; }
+  @media (min-width:390px) { #days .dth, #days .day.dt { grid-template-columns:48px minmax(0,1fr) 50px 54px 58px 44px; } }
 
   /* period picker: one segmented row (Today · This week · 7D · 14D · 30D · 90D · Custom) */
   .flt.seg2 { display:flex !important; flex-wrap:nowrap; gap:2px; overflow-x:auto; scrollbar-width:none; background:var(--tile); border-radius:12px; padding:3px; margin:0 0 10px; }
@@ -1996,25 +1991,24 @@
       var box = $('days'); box.innerHTML = '';
       if (!list.length) { box.innerHTML = '<div class="day"><small>' + (REC.length ? 'Tiada rekod dalam tempoh ini.' : 'Belum ada rekod.') + '</small></div>'; return; }
       var en = S.lang === 'en';
-      // table: Date | Activity | Sleep | Steps | Brisk — one tidy row per day, values line up in columns
+      // table: Date | Activity | Workout (reps, exercises) | Sleep | Steps | Brisk — one tidy row per day, values line up in columns
       var hd = document.createElement('div'); hd.className = 'dth';
-      hd.innerHTML = '<span>' + (en ? 'Date' : 'Tarikh') + '</span><span>' + (en ? 'Activity' : 'Aktiviti') + '</span><span>' + ic('moon') + '</span><span>' + ic('walk') + '</span><span>Brisk</span><span></span>';
+      hd.innerHTML = '<span>' + (en ? 'Date' : 'Tarikh') + '</span><span>' + (en ? 'Activity' : 'Aktiviti') + '</span><span class="th-w" title="Workout">' + ic('dumbbell') + '</span><span class="th-s" title="' + (en ? 'Sleep' : 'Tidur') + '">' + ic('moon') + '</span><span class="th-k" title="' + (en ? 'Steps' : 'Langkah') + '">' + ic('walk') + '</span><span>Brisk</span>';
       box.appendChild(hd);
       list.forEach(function (x) {
         var row = document.createElement('div'); row.className = 'day dt'; row.setAttribute('role', 'button'); row.tabIndex = 0;
         row.onclick = function () { openDetail(x.date); };
         var p = x.date.split('-'), cls = x.activity === 'Workout' ? 'w' : (x.activity === 'Sleep' ? 's' : (x.activity === 'Walk' ? 'k' : 'r'));
-        var act = x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? (en ? 'Sleep' : 'Tidur') : (x.activity === 'Walk' ? (x.brisk ? 'Brisk walk' : (en ? 'Steps' : 'Langkah')) : (en ? 'Rest' : 'Rehat')));
-        var sub = x.activity === 'Workout' ? x.exercises + (en ? ' ex · ' : ' latihan · ') + x.reps + ' reps' : '';
+        var act = x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? (en ? 'Sleep' : 'Tidur') : (x.activity === 'Walk' ? (x.brisk ? 'Brisk' : (en ? 'Steps' : 'Langkah')) : (en ? 'Rest' : 'Rehat')));
         var wk = WD[x.date] && !shown[x.date] ? WD[x.date] : null; if (wk) shown[x.date] = 1;
         var slm = sleepStrMin(x.sleep), sl = slm ? Math.floor(slm / 60) + (en ? 'h' : 'j') + (slm % 60) + 'm' : (x.sleep ? String(x.sleep).replace(/\s+/g, '') : '');
         var dash = '<i class="dtn">–</i>';
         row.innerHTML = '<span class="dtd"><b>' + p[2] + '/' + p[1] + '</b><small>' + (en ? esc(shortDay(x.date)) : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'][new Date(x.date + 'T00:00:00').getDay()]) + '</small></span>' +
-          '<span class="dta"><em class="' + cls + '">' + act + '</em>' + (sub ? '<small>' + sub + '</small>' : '') + (x.review === 'Needs Review' ? '<small class="flag">⚠ ' + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
+          '<span class="dta"><em class="' + cls + '">' + act + '</em>' + (x.review === 'Needs Review' ? '<small class="flag">⚠ ' + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
+          '<span class="dtw">' + (x.activity === 'Workout' ? '<b>' + x.reps + '</b><small>' + x.exercises + (en ? ' ex' : ' lat.') + '</small>' : dash) + '</span>' +
           '<span class="dts">' + (sl ? esc(sl) : dash) + '</span>' +
           '<span class="dtk">' + (wk ? fmtN(wTot(wk)) : dash) + '</span>' +
-          '<span class="dtb">' + (wk && isBrisk(wk) ? wk.min + 'm' : dash) + '</span>' +
-          '<span class="go">' + ic('right') + '</span>';
+          '<span class="dtb">' + (wk && isBrisk(wk) ? wk.min + 'm' : dash) + '</span>';
         box.appendChild(row);
       });
   }
@@ -3230,6 +3224,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Jadual Rekod ada lajur Workout sendiri (reps dan bilangan latihan), dan ikon di kepala jadual kini di tengah lajur.', 'The Records table has its own Workout column (reps and number of exercises), and the header icons now sit centred in each column.'], 'g-rec'],
     ['2026-11-25', ['Tempoh tidur dalam jadual Rekod kini ikut bahasa: 5h 4m dalam English, 5j 4m dalam BM.', 'Sleep length in the Records table now follows your language: 5h 4m in English, 5j 4m in BM.'], 'g-rec'],
     ['2026-11-25', ['Jadual Rekod kini ada garis titik halus antara baris dan lajur supaya lebih senang dibaca.', 'The Records table now has faint dotted lines between rows and columns so it is easier to read.'], 'g-rec'],
     ['2026-11-25', ['Senarai Rekod kini dalam bentuk jadual: Tarikh · Aktiviti · Tidur · Langkah · Brisk. Setiap hari satu baris dan nombor tersusun dalam lajur.', 'The Records list is now a table: Date · Activity · Sleep · Steps · Brisk. One row per day with numbers lined up in columns.'], 'g-rec'],
