@@ -2007,7 +2007,7 @@
         var act = x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? (en ? 'Sleep' : 'Tidur') : (x.activity === 'Walk' ? (x.brisk ? 'Brisk walk' : (en ? 'Steps' : 'Langkah')) : (en ? 'Rest' : 'Rehat')));
         var sub = x.activity === 'Workout' ? x.exercises + (en ? ' ex · ' : ' latihan · ') + x.reps + ' reps' : '';
         var wk = WD[x.date] && !shown[x.date] ? WD[x.date] : null; if (wk) shown[x.date] = 1;
-        var sl = x.sleep ? String(x.sleep).replace(/\s+/g, '') : '';
+        var slm = sleepStrMin(x.sleep), sl = slm ? Math.floor(slm / 60) + (en ? 'h' : 'j') + (slm % 60) + 'm' : (x.sleep ? String(x.sleep).replace(/\s+/g, '') : '');
         var dash = '<i class="dtn">–</i>';
         row.innerHTML = '<span class="dtd"><b>' + p[2] + '/' + p[1] + '</b><small>' + (en ? esc(shortDay(x.date)) : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'][new Date(x.date + 'T00:00:00').getDay()]) + '</small></span>' +
           '<span class="dta"><em class="' + cls + '">' + act + '</em>' + (sub ? '<small>' + sub + '</small>' : '') + (x.review === 'Needs Review' ? '<small class="flag">⚠ ' + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
@@ -3230,6 +3230,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Tempoh tidur dalam jadual Rekod kini ikut bahasa: 5h 4m dalam English, 5j 4m dalam BM.', 'Sleep length in the Records table now follows your language: 5h 4m in English, 5j 4m in BM.'], 'g-rec'],
     ['2026-11-25', ['Jadual Rekod kini ada garis titik halus antara baris dan lajur supaya lebih senang dibaca.', 'The Records table now has faint dotted lines between rows and columns so it is easier to read.'], 'g-rec'],
     ['2026-11-25', ['Senarai Rekod kini dalam bentuk jadual: Tarikh · Aktiviti · Tidur · Langkah · Brisk. Setiap hari satu baris dan nombor tersusun dalam lajur.', 'The Records list is now a table: Date · Activity · Sleep · Steps · Brisk. One row per day with numbers lined up in columns.'], 'g-rec'],
     ['2026-11-25', ['Knowledge Centre lebih kemas. Berita di "Apa yang baru" boleh dileret ke tepi (atau tekan ×) untuk buang, macam notifikasi. Tekan "Lihat semua" untuk senarai penuh.', 'The Knowledge Centre is tidier. Swipe a "What’s new" item sideways (or tap ×) to remove it, like a notification. Tap "See all" for the full list.'], 'g-kc'],
@@ -3875,7 +3876,9 @@
   }
   // ---- tap a KPI tile -> list of the matching records ----
   var LAST_KPI = null;
-  function fmtMin(m) { m = Math.round(m); return Math.floor(m / 60) + 'j ' + (m % 60) + 'm'; }
+  function fmtMin(m) { m = Math.round(m); return Math.floor(m / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (m % 60) + 'm'; }
+  // sleep text from the sheet ("5j 4m", "5h 4m", "5:04") → minutes, so it can be shown in the current language
+  function sleepStrMin(v) { v = String(v || '').trim(); if (!v) return 0; var m = v.match(/^(\d+):(\d{1,2})$/); if (m) return +m[1] * 60 + +m[2]; var h = /(\d+)\s*[jh]/i.exec(v), mm = /(\d+)\s*m/i.exec(v); return (h ? +h[1] * 60 : 0) + (mm ? +mm[1] : 0); }
   function streakRuns() {
     var u = {}; DASH.days.forEach(function (x) { if (x.a === 'Workout') u[x.d] = 1; });
     var ks = Object.keys(u).sort(), runs = [], cur = null;
