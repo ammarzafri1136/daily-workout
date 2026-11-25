@@ -2683,7 +2683,9 @@
     ['#tplIco .ih-pen', 'puvaffet', 'button'],          // 245-edit-document-outline
     ['.clear .ih-refresh', 'akuwjdzh', 'button']        // 18-autorenew-outline
   ];
-  function lordColor(el) { return getComputedStyle(el).color; }
+  function lordColor(el) {   // read the final colour, not a mid-transition one (theme / palette changes animate `color`)
+    var t = el.style.transition; el.style.transition = 'none'; var c = getComputedStyle(el).color; el.offsetWidth; el.style.transition = t; return c;
+  }
   function toHex(c) { var q = parseCss(c); return '#' + [q.r, q.g, q.b].map(function (v) { return ('0' + v.toString(16)).slice(-2); }).join(''); }
   function lordSwap() {
     if (!window.customElements || !customElements.get('lord-icon')) return;
@@ -3111,8 +3113,8 @@
   function cssOf(c) { return c.a >= 1 ? '#' + hex2(c.r) + hex2(c.g) + hex2(c.b) : 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + Math.round(c.a * 100) / 100 + ')'; }
   function parseCss(s) {
     var d = document.createElement('i'); d.style.color = s; document.body.appendChild(d);
-    var m = getComputedStyle(d).color.match(/[\d.]+/g) || [0, 0, 0]; d.remove();
-    return { r: +m[0], g: +m[1], b: +m[2], a: m[3] === undefined ? 1 : +m[3] };
+    var cs = getComputedStyle(d).color, m = cs.match(/[\d.]+/g) || [0, 0, 0], k = /^color\(/.test(cs) ? 255 : 1; d.remove();   // color-mix() computes to color(srgb 0-1 …)
+    return { r: Math.round(m[0] * k), g: Math.round(m[1] * k), b: Math.round(m[2] * k), a: m[3] === undefined ? 1 : +m[3] };
   }
   function lum(s) { var c = parseCss(s); return (0.299 * c.r + 0.587 * c.g + 0.114 * c.b) / 255; }
   var CP_GRID = (function () {
