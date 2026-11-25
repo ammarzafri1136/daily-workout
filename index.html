@@ -1531,7 +1531,10 @@
   .kc .kcx .ico { width:14px; height:14px; } .kc .kcx:active { background:color-mix(in srgb, var(--muted) 18%, transparent); }
   .kc .kcne { font-size:13px; color:var(--muted); padding:10px 12px; border-radius:12px; background:var(--tile); }
   .kc .grp.kch { display:flex; align-items:baseline; justify-content:space-between; gap:8px; } .kc .kchr { display:flex; gap:12px; }
-  .kc .kclk { all:unset; cursor:pointer; font-size:12px; font-weight:700; letter-spacing:0; text-transform:none; color:var(--accent); }
+  .kc .kclk { all:unset; cursor:pointer; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
+  .kc .kclk .ico { width:16px; height:16px; } .kc .kclk[data-nclr] { color:#ef4444; background:rgba(239,68,68,.12); }
+  .kc .grp.kch { align-items:center !important; } .kc .kchr { gap:8px !important; }
+  .ih.go .rl1, .ih.go .rl2 { animation:ihGrowX .4s ease-out; transform-origin:left center; transform-box:fill-box; } .ih.go .rl2 { animation-delay:.1s; }
   .kc #kcMain > .grp { margin-top:18px; }
   .kc .kctip { padding:10px 12px !important; font-size:13.5px; align-items:center; }
   .kc .kcti { width:28px; height:28px; border-radius:9px; } .kc .kcti .ico { width:16px; height:16px; }
@@ -3303,6 +3306,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Butang Buang semua dan Lihat semua di Apa yang baru kini ikon beranimasi (tong sampah dan senarai).', 'The Clear all and See all buttons in What’s new are now animated icons (bin and list).'], 'g-kc'],
     ['2026-11-25', ['Butang back dalam Knowledge Centre kini kembali ke tempat kau datang (contohnya Apa yang baru atau halaman utama Knowledge Centre), bukan ke topik artikel.', 'The back button in the Knowledge Centre now returns to where you came from (e.g. What’s new or the Knowledge Centre home), not the article’s topic.'], 'g-kc'],
     ['2026-11-25', ['Knowledge Centre kini sentiasa sama tinggi — tak lagi naik turun bila tukar topik, artikel atau Apa yang baru.', 'The Knowledge Centre now keeps the same height — it no longer jumps when you switch topics, articles or What’s new.'], 'g-kc'],
     ['2026-11-25', ['Pustaka latihan pun kini guna dropdown: tekan nama latihan untuk buka panduan (gambar, cara buat, kesilapan biasa, PB kau) di tempat yang sama.', 'The exercise library now uses dropdowns too: tap an exercise to open its guide (picture, how-to, common mistakes, your PB) in place.'], 'g-kc'],
@@ -3405,8 +3409,8 @@
     add('g-kc', 'guide', T('Guna Knowledge Centre', 'Using the Knowledge Centre'), ul([
       T('Tekan butang <b>?</b> di atas. Cari apa-apa (cth. tidur, plank) di kotak carian, atau pilih satu topik. Dalam topik, tekan tajuk artikel untuk buka di situ (dropdown); tekan lagi untuk tutup.', 'Tap the <b>?</b> button at the top. Search anything (e.g. sleep, plank) or pick a topic. Inside a topic, tap an article title to open it in place (dropdown); tap again to close.'),
       T('<b>Petua hari ini</b> berubah setiap hari ikut data kau.', 'The <b>tip of the day</b> changes daily based on your data.'),
-      T('<b>Apa yang baru</b>: 3 kemas kini terkini. Leret ke kiri atau kanan (atau tekan ×) untuk buang, macam notifikasi. <b>Buang semua</b> kosongkan semuanya.', '<b>What’s new</b>: the 3 latest updates. Swipe left or right (or tap ×) to remove one, like a notification. <b>Clear all</b> removes them all.'),
-      T('<b>Lihat semua</b> tunjuk senarai penuh termasuk yang dah dibuang (warna pudar). Buka yang pudar untuk bawa balik ke halaman utama.', '<b>See all</b> shows the full list, including removed ones (faded). Open a faded one to bring it back to the home page.')]), null, 'knowledge centre bantuan help berita news baru what new buang remove leret swipe');
+      T('<b>Apa yang baru</b>: 3 kemas kini terkini. Leret ke kiri atau kanan (atau tekan ×) untuk buang, macam notifikasi. Ikon <b>tong sampah</b> buang semuanya.', '<b>What’s new</b>: the 3 latest updates. Swipe left or right (or tap ×) to remove one, like a notification. The <b>bin</b> icon clears them all.'),
+      T('Ikon <b>senarai</b> tunjuk senarai penuh termasuk yang dah dibuang (warna pudar). Buka yang pudar untuk bawa balik ke halaman utama.', 'The <b>list</b> icon shows the full list, including removed ones (faded). Open a faded one to bring it back to the home page.')]), null, 'knowledge centre bantuan help berita news baru what new buang remove leret swipe');
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
       T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
       T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Setiap carta tertutup — tekan tajuknya untuk buka. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Each chart is folded — tap its title to open it. Slide your finger over a chart to see each day.'),
@@ -3898,7 +3902,7 @@
   }
   function kcNewsHtml(T) {
     var G = kcNewsGone(), L = KC_NEWS.filter(function (n) { return !G[kcNewsId(n)]; }).slice(0, 3);
-    return '<div class="grp kch"><span>' + T('Apa yang baru', 'What’s new') + '</span><span class="kchr">' + (L.length ? '<button type="button" class="kclk" data-nclr="1">' + T('Buang semua', 'Clear all') + '</button>' : '') + '<button type="button" class="kclk" data-nall="1">' + T('Lihat semua', 'See all') + '</button></span></div>' +
+    return '<div class="grp kch"><span>' + T('Apa yang baru', 'What’s new') + '</span><span class="kchr">' + (L.length ? '<button type="button" class="kclk" data-nclr="1" title="' + T('Buang semua', 'Clear all') + '" aria-label="' + T('Buang semua', 'Clear all') + '">' + ic('trash') + '</button>' : '') + '<button type="button" class="kclk" data-nall="1" title="' + T('Lihat semua', 'See all') + '" aria-label="' + T('Lihat semua', 'See all') + '">' + ic('rec') + '</button></span></div>' +
       '<div class="kcl kcn" id="kcNews">' + (L.length ? L.map(function (n) { return kcNewsRow(n, T, false); }).join('') : '<div class="kcne">' + T('Tiada berita baru. Semua dah dibaca.', 'No new updates. You’re all caught up.') + '</div>') + '</div>';
   }
   function kcNewsRemove(row, view) {
