@@ -3303,6 +3303,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Butang back dalam Knowledge Centre kini kembali ke tempat kau datang (contohnya Apa yang baru atau halaman utama Knowledge Centre), bukan ke topik artikel.', 'The back button in the Knowledge Centre now returns to where you came from (e.g. What’s new or the Knowledge Centre home), not the article’s topic.'], 'g-kc'],
     ['2026-11-25', ['Knowledge Centre kini sentiasa sama tinggi — tak lagi naik turun bila tukar topik, artikel atau Apa yang baru.', 'The Knowledge Centre now keeps the same height — it no longer jumps when you switch topics, articles or What’s new.'], 'g-kc'],
     ['2026-11-25', ['Pustaka latihan pun kini guna dropdown: tekan nama latihan untuk buka panduan (gambar, cara buat, kesilapan biasa, PB kau) di tempat yang sama.', 'The exercise library now uses dropdowns too: tap an exercise to open its guide (picture, how-to, common mistakes, your PB) in place.'], 'g-kc'],
     ['2026-11-25', ['Dalam Knowledge Centre, artikel dalam setiap topik kini terbuka di tempat yang sama macam dropdown — tak perlu tukar halaman.', 'In the Knowledge Centre, articles inside each topic now open in place like a dropdown — no page change.'], 'g-kc'],
@@ -3831,7 +3832,8 @@
       } else html = '<div class="kcl kcacc">' + A.filter(function (a) { return a.c === arg; }).map(function (a) { return '<div class="kcq" data-q="' + a.id + '"><button type="button" class="kca" aria-expanded="false"><span>' + a.t + '</span>' + ic('down', 'kcgo') + '</button><div class="kcqw"><div></div></div></div>'; }).join('') + '</div>';   // articles open in place, like a dropdown
     } else if (view === 'art') {
       var a = byId[arg]; if (!a) return kcOpen('home');
-      DBACK = function () { kcOpen('cat', a.c); };
+      var fr = kcOpen.from; kcOpen.from = null;   // back returns to where the article was opened from (KC home, What's new, a topic)
+      DBACK = fr ? function () { kcOpen(fr[0], fr[1]); } : function () { kcOpen('cat', a.c); };
       $('dTitle').textContent = a.t;
       var rel = A.filter(function (b) { return b.c === a.c && b.id !== a.id; }).slice(0, 3);
       html = (a.id === 'k-tech' ? '<div class="kcanw">' + kcAnimSvg('walk') + '</div>' : kcFig(a.id)) + '<div class="kcb">' + (a.b.charAt(0) === '<' ? a.b : '<p>' + a.b + '</p>') + '</div>' + (a.go ? '<button type="button" class="kcgo2" data-go="' + a.go[0] + '">' + a.go[1] + ic('right') + '</button>' : '') +
@@ -3864,7 +3866,7 @@
         if (on) { kcAnimStart(q); setTimeout(function () { var r = q.getBoundingClientRect(), d = $('detail').getBoundingClientRect(); if (r.bottom > d.bottom) q.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 300); }
       };
     });
-    [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
+    [].forEach.call(B.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen.from = view === 'art' ? null : [view, arg]; kcOpen('art', b.dataset.a); }; });
     [].forEach.call(B.querySelectorAll('[data-c]'), function (b) { b.onclick = function () { kcOpen('cat', b.dataset.c); }; });
     [].forEach.call(B.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
     [].forEach.call(B.querySelectorAll('[data-go]'), function (b) { b.onclick = function () { kcGo(b.dataset.go); }; });
@@ -3878,7 +3880,7 @@
       var hitE = KC_EX.filter(function (e) { return (e[0] + ' ' + e[1] + ' ' + e[2].join(' ') + ' ' + e[3].join(' ')).toLowerCase().indexOf(v) >= 0; });
       res.innerHTML = (hitA.length + hitE.length) ? '<div class="kcl">' + hitA.map(card).join('') + hitE.map(function (e) { return '<button type="button" class="kca" data-x="' + esc(e[0]) + '"><span>' + T(e[0], e[1]) + '<small>' + T('Pustaka latihan', 'Exercise library') + '</small></span>' + ic('right', 'kcgo') + '</button>'; }).join('') + '</div>'
         : '<div class="empty">' + T('Tiada hasil untuk “', 'No results for “') + esc(q.value) + '”.</div>';
-      [].forEach.call(res.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen('art', b.dataset.a); }; });
+      [].forEach.call(res.querySelectorAll('[data-a]'), function (b) { b.onclick = function () { kcOpen.from = ['home']; kcOpen('art', b.dataset.a); }; });
       [].forEach.call(res.querySelectorAll('[data-x]'), function (b) { b.onclick = function () { kcOpen('ex', b.dataset.x); }; });
     };
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
