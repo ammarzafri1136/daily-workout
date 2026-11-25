@@ -1136,7 +1136,8 @@
   /* compact Workout card */
   .box.date .k { display:flex; align-items:baseline; justify-content:space-between; gap:6px; white-space:nowrap; min-width:0; }   /* day sits at the right end of the label row */
   #sleepCard .trio { grid-template-columns:2fr 1fr 1fr !important; }
-  @media (max-width:380px) { #walkCard .trio { grid-template-columns:1.45fr 1fr 1fr !important; } #walkCard .trio .box:not(.date) .k { font-size:10px !important; letter-spacing:-.02em; white-space:normal; line-height:1.15; } #walkCard .trio .box { display:flex !important; flex-direction:column; } #walkCard .trio .box > .dv, #walkCard .trio .box > .dwrap { margin-top:auto !important; } #walkDate, #sleepDate { font-size:15px !important; letter-spacing:-.3px; } }
+  #wkCard.cmp .top.trio, #walkCard .trio { grid-template-columns:1.6fr 1fr 1fr !important; }
+  @media (max-width:380px) { #walkCard .trio { grid-template-columns:1.75fr 1fr 1fr !important; } #walkCard .trio .box:not(.date) .k { font-size:10px !important; letter-spacing:-.02em; white-space:normal; line-height:1.15; } #walkCard .trio .box { display:flex !important; flex-direction:column; } #walkCard .trio .box > .dv, #walkCard .trio .box > .dwrap { margin-top:auto !important; } #walkDate, #sleepDate { font-size:15px !important; letter-spacing:-.3px; } }
   #sleepCard .box.date .k { letter-spacing:-.01em; }
   @media (max-width:380px) { #sleepCard .box.date .k { font-size:10px !important; gap:4px; letter-spacing:-.02em; } }
   .box.date .k .dayname { display:inline !important; margin:0 !important; padding:0 !important; font-size:inherit !important; line-height:inherit !important; letter-spacing:.04em; color:#4169e1 !important; font-weight:800 !important; text-transform:uppercase; }
@@ -1186,7 +1187,7 @@
   #wkCard.cmp .actions .rest { flex:0 1 auto !important; min-width:0; padding-left:12px !important; padding-right:12px !important; }
   #wkCard.cmp .actions .clear { width:44px !important; min-width:44px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; flex:none !important; }
   #wkCard.cmp thead th { white-space:nowrap; font-size:10.5px !important; letter-spacing:0 !important; padding-left:2px !important; padding-right:2px !important; }
-  @media (max-width:380px) { #wkCard.cmp .top input.dmy { font-size:15px !important; letter-spacing:-.3px; } #wkCard.cmp .top.trio { grid-template-columns:1.55fr 1fr 1fr; } #wkCard.cmp .actions .save { font-size:14px !important; } #wkCard.cmp .actions .rest { font-size:0 !important; width:48px; flex:none !important; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; } #wkCard.cmp .actions .rest .ico { width:20px; height:20px; margin:0 !important; } #wkCard.cmp thead th { white-space:normal; font-size:9.5px !important; } }
+  @media (max-width:380px) { #wkCard.cmp .top input.dmy { font-size:15px !important; letter-spacing:-.3px; } #wkCard.cmp .top.trio { grid-template-columns:1.75fr 1fr 1fr !important; } #wkCard.cmp .actions .save { font-size:14px !important; } #wkCard.cmp .actions .rest { font-size:0 !important; width:48px; flex:none !important; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; } #wkCard.cmp .actions .rest .ico { width:20px; height:20px; margin:0 !important; } #wkCard.cmp thead th { white-space:normal; font-size:9.5px !important; } }
   /* on short screens the save row stays in reach above the bottom bar */
   #wkCard.cmp .actions { position:sticky; bottom:calc(92px + env(safe-area-inset-bottom)); z-index:6; background:inherit; padding:6px 0; margin-left:-2px; margin-right:-2px; }
 
@@ -1993,7 +1994,32 @@
     b.setAttribute('aria-label', (en ? 'Last workout: ' : 'Workout terakhir: ') + bits.join(', '));
     b.hidden = false; b.onclick = function () { openDetail(w.date); };
   }
+  var TIPS_TV = { key: '', i: -1 };
   var TIPS_F = 'all', TIPS_X = {}, TIPS_OPEN = true; try { TIPS_OPEN = localStorage.getItem('dw-tips') !== '0'; } catch (e) {}
+  // rotating line for Summary & tips: a fact, a useful tip or a short line of encouragement (changes when you pick a period)
+  function kcTrivia() {
+    var F = ['Tahukah kau?', 'Did you know?'], U = ['Info berguna', 'Useful tip'], M = ['Kata semangat', 'Motivation'];
+    return [
+      ['bulb', F, ['Jantung berdegup lebih kurang <b>100,000 kali</b> sehari.', 'Your heart beats roughly <b>100,000 times</b> a day.']],
+      ['bulb', F, ['Badan manusia ada <b>lebih 600 otot</b> rangka.', 'The human body has <b>over 600</b> skeletal muscles.']],
+      ['bulb', F, ['Otot paling besar dalam badan ialah <b>gluteus maximus</b> — otot punggung. Squat dan glute bridge melatihnya.', 'The largest muscle in the body is the <b>gluteus maximus</b> — your glutes. Squats and glute bridges train it.']],
+      ['bed', F, ['Tidur berlaku dalam kitaran lebih kurang <b>90 minit</b>, berulang beberapa kali setiap malam.', 'Sleep runs in cycles of about <b>90 minutes</b>, repeating several times a night.']],
+      ['walk', F, ['<b>10,000 langkah</b> lebih kurang 7–8 km bagi kebanyakan orang.', '<b>10,000 steps</b> is roughly 7–8 km for most people.']],
+      ['dumbbell', F, ['Otot jadi kuat semasa <b>rehat</b>: latihan memberi rangsangan, tidur dan rehat membina semula.', 'Muscles get stronger during <b>rest</b>: training is the signal, sleep and rest do the rebuilding.']],
+      ['bulb', U, ['Kurang air walaupun sedikit boleh buat workout terasa lebih berat. Minum air sebelum dan selepas berlatih.', 'Even mild dehydration can make a workout feel harder. Drink water before and after training.']],
+      ['bulb', U, ['Sebelum workout, panaskan badan dengan pergerakan aktif. Regangan statik lebih sesuai selepas workout.', 'Before training, warm up with active movement. Save static stretches for after.']],
+      ['clock', U, ['Kesan kafein boleh kekal beberapa jam. Elak kopi lewat petang kalau susah nak tidur.', 'Caffeine can stay active for hours. Skip late-afternoon coffee if sleep is hard.']],
+      ['walk', U, ['Jalan 10 minit selepas makan membantu tambah langkah dan baik untuk penghadaman.', 'A 10-minute walk after a meal adds steps and is good for digestion.']],
+      ['bed', U, ['Cahaya pagi membantu menetapkan jam badan, jadi lebih mudah mengantuk pada waktu malam.', 'Morning light helps set your body clock, making it easier to feel sleepy at night.']],
+      ['dumbbell', U, ['Makanan berprotein selepas workout — telur, ayam, ikan, tempe — membantu otot pulih.', 'Protein after training — eggs, chicken, fish, tempeh — helps muscles recover.']],
+      ['flame', M, ['Sedikit setiap hari lebih baik daripada banyak sekali-sekala.', 'A little every day beats a lot once in a while.']],
+      ['flame', M, ['Konsisten dulu, intensiti kemudian.', 'Consistency first, intensity later.']],
+      ['flame', M, ['Bandingkan diri kau dengan minggu lepas, bukan dengan orang lain.', 'Compare yourself with last week, not with anyone else.']],
+      ['flame', M, ['Hari malas pun dikira — 10 minit tetap lebih baik dari kosong.', 'Lazy days count too — 10 minutes beats zero.']],
+      ['flame', M, ['<i>Sedikit-sedikit, lama-lama jadi bukit.</i> (peribahasa Melayu)', '<i>Little by little, it becomes a hill.</i> (Malay proverb)']],
+      ['bed', M, ['Rehat itu sebahagian daripada latihan.', 'Rest is part of training.']]
+    ];
+  }
   function renderRecSummary(list, rg) {
     var el = $('rSum'); if (!el) return;
     var en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
@@ -2082,6 +2108,43 @@
       }
       if (c.cad && c.cad < 100) add('watch', 'clock', 'Rentak berjalan', 'Walking pace', 'Rentak purata <b>' + c.cad + ' langkah/min</b> — bawah 100. Percepatkan sedikit supaya dikira brisk walk.', 'Average pace <b>' + c.cad + ' steps/min</b> — under 100. Speed up a little so it counts as brisk.', 'k-brisk');
     } else if (c.kn && span >= 3) add('info', 'walk', 'Brisk walk', 'Brisk walk', 'Belum ada sesi brisk walk dalam tempoh ni. Cuba <b>' + gMin + ' minit</b> berjalan laju hari ini.', 'No brisk-walk sessions in this period. Try a <b>' + gMin + '-minute</b> brisk walk today.', 'k-brisk');
+    // ---- more insights from your own data ----
+    var DN = en ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] : ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+    var dow = function (k) { var q = k.split('-'); return new Date(Date.UTC(+q[0], +q[1] - 1, +q[2])).getUTCDay(); };
+    // incomplete sleep records (Needs action → Watch): nights in the period with no sleep logged
+    if ((SLEEP_ALL || []).length && span >= 3) {
+      var logged = {}; (SLEEP_ALL || []).forEach(function (x) { if (x.d >= from && x.d <= to) logged[x.d] = 1; });
+      var miss = 0; for (var dd = from; dd <= to; dd = addDays(dd, 1)) if (!logged[dd]) miss++;
+      if (miss >= 2) add('watch', 'alert', 'Rekod tidur tak lengkap', 'Sleep log incomplete', '<b>' + miss + ' malam</b> dalam tempoh ni tak direkod tidur, jadi purata tidur mungkin tak tepat. Isi malam yang tertinggal dalam tab Tidur.', '<b>' + miss + ' night' + (miss === 1 ? '' : 's') + '</b> in this period have no sleep logged, so the sleep average may be off. Fill in the missing nights in the Sleep tab.', 'go:s');
+    }
+    // most active weekday
+    var wds = Object.keys(c.wd); if (wds.length >= 3) {
+      var cntD = [0, 0, 0, 0, 0, 0, 0]; wds.forEach(function (k) { cntD[dow(k)]++; });
+      var mx = Math.max.apply(null, cntD), tops = []; cntD.forEach(function (v, i) { if (v === mx) tops.push(DN[i]); });
+      if (mx >= 2 || tops.length === 1) add('info', 'cal', 'Hari paling aktif', 'Most active day', 'Kau paling kerap workout pada hari <b>' + tops.join(' & ') + '</b> (' + mx + ' kali dalam tempoh ni).', 'You train most often on <b>' + tops.join(' & ') + '</b> (' + mx + ' time' + (mx === 1 ? '' : 's') + ' in this period).', 'cons');
+    }
+    // most frequent exercise
+    var exs = ((DASH && DASH.ex) || EXH || []).filter(function (x) { return x.d >= from && x.d <= to && x.n; }), exc = {}, exName = {};
+    exs.forEach(function (x) { var k = x.n.trim().toLowerCase(); exc[k] = (exc[k] || 0) + 1; exName[k] = x.n.trim(); });
+    var topEx = Object.keys(exc).sort(function (a, b) { return exc[b] - exc[a]; })[0];
+    if (topEx && exc[topEx] >= 2) add('info', 'dumbbell', 'Latihan paling kerap', 'Most frequent exercise', '<b>' + esc(exName[topEx]) + '</b> dibuat ' + exc[topEx] + ' kali dalam tempoh ni.', '<b>' + esc(exName[topEx]) + '</b> was done ' + exc[topEx] + ' times in this period.', 'ex:' + exName[topEx]);
+    // weekend vs weekday sleep (by wake-up date: Saturday & Sunday mornings)
+    var nsP = (SLEEP_ALL || []).filter(function (x) { return x.d >= from && x.d <= to; }), we = [], wk2 = [];
+    nsP.forEach(function (x) { (dow(x.d) === 0 || dow(x.d) === 6 ? we : wk2).push(x.h); });
+    if (we.length && wk2.length) {
+      var av = function (a) { return a.reduce(function (q, v) { return q + v; }, 0) / a.length; }, dif = av(we) - av(wk2), am = Math.round(Math.abs(dif) * 60);
+      if (am >= 10) add('info', 'bed', 'Tidur hujung minggu', 'Weekend sleep', 'Hujung minggu kau tidur <b>' + hm(am) + ' ' + (dif > 0 ? 'lebih lama' : 'lebih sekejap') + '</b> berbanding hari kerja (' + hm(av(we) * 60) + ' lawan ' + hm(av(wk2) * 60) + ').', 'On weekends you sleep <b>' + hm(am) + ' ' + (dif > 0 ? 'longer' : 'less') + '</b> than on weekdays (' + hm(av(we) * 60) + ' vs ' + hm(av(wk2) * 60) + ').', 'sleep');
+    }
+    // new personal bests in this period
+    try {
+      var nPB = pbList().filter(function (o) { return o.bd >= from && o.bd <= to; }).length + walkPBs().filter(function (o) { return o.id !== 'week' && o.d >= from && o.d <= to; }).length;
+      if (nPB) add('info', 'trophy', 'Rekod terbaik baru', 'New personal bests', '<b>' + nPB + ' rekod terbaik</b> baru dalam tempoh ni. Tahniah!', '<b>' + nPB + ' new personal best' + (nPB === 1 ? '' : 's') + '</b> in this period. Well done!', 'pb');
+    } catch (e) {}
+    // trivia / useful fact / short line — changes whenever you pick a period
+    var TV = kcTrivia(), rk = from + '|' + to;
+    if (TIPS_TV.key !== rk) { var ni; do { ni = Math.floor(Math.random() * TV.length); } while (TV.length > 1 && ni === TIPS_TV.i); TIPS_TV = { key: rk, i: ni }; }
+    var tv = TV[TIPS_TV.i % TV.length];
+    add('info', tv[0], tv[1][0], tv[1][1], tv[2][0], tv[2][1], 'trivia');
     if (!R.length) add('info', 'bulb', 'Mula rekod', 'Get started', 'Rekod workout atau rehat untuk dapat analisis tempoh ni.', 'Log a workout or rest day to get insights for this period.', 'info');
     var TC = { act: '#ef4444', watch: '#f59e0b', good: '#22c55e', info: '#3b82f6' }, TL = { act: T('Tindakan', 'Action'), watch: T('Pantau', 'Watch'), good: T('Bagus', 'Good'), info: 'Info' };
     var cnt = { act: 0, watch: 0, good: 0, info: 0 }; R.forEach(function (r) { cnt[r.tone]++; });
@@ -2090,7 +2153,7 @@
     var badges = ['act', 'watch', 'good', 'info'].filter(function (q) { return cnt[q]; }).map(function (q) { return '<i style="background:' + TC[q] + '">' + cnt[q] + '</i>'; }).join('');
     var items = R.map(function (r, i) {
       return '<li class="tpi' + (TIPS_X[KIND[i] + i] ? ' x' : '') + '" data-i="' + i + '" data-t="' + r.tone + '"><div class="tpr" role="button" tabindex="0"><i class="ki" style="--kc:' + TC[r.tone] + '">' + ic(r.icon) + '</i><span class="tpn">' + r.t + '</span><em class="tpl" style="--kc:' + TC[r.tone] + '">' + TL[r.tone] + '</em>' + ic('down', 'tpv') + '</div>' +
-        '<div class="tpx"><div><p>' + r.x + '</p><button type="button" class="tpm">' + T('Lihat data penuh', 'See full data') + ic('right') + '</button></div></div></li>';
+        '<div class="tpx"><div><p>' + r.x + '</p>' + (KIND[i] === 'trivia' ? '' : '<button type="button" class="tpm">' + (KIND[i] === 'pb' ? T('Buka rekod terbaik', 'Open personal bests') : KIND[i].indexOf('ex:') === 0 ? T('Lihat panduan latihan', 'See exercise guide') : KIND[i].indexOf('go:') === 0 ? T('Isi sekarang', 'Fill in now') : T('Lihat data penuh', 'See full data')) + ic('right') + '</button>') + '</div></div></li>';
     }).join('');
     el.innerHTML = head + grid + '<div class="tps' + (TIPS_OPEN ? ' on' : '') + '"><button type="button" class="tph" aria-expanded="' + TIPS_OPEN + '"><span class="tpt">' + T('Ringkasan & cadangan', 'Summary & tips') + '<small> · ' + R.length + '</small></span><span class="tpb">' + badges + '</span>' + ic('down', 'tpv') + '</button>' +
       '<div class="tpw"><div><div class="tpf">' + chip('all', T('Semua', 'All'), R.length) + chip('need', T('Perlu tindakan', 'Needs action'), cnt.act + cnt.watch) + chip('good', T('Bagus', 'Good'), cnt.good) + chip('info', 'Info', cnt.info) + '</div><ul class="kr tpl-list">' + items + '</ul></div></div></div>';
@@ -2109,7 +2172,13 @@
       var i = +li.dataset.i, key = KIND[i] + i, rw = li.querySelector('.tpr');
       rw.onclick = function () { var on = !li.classList.contains('x'); li.classList.toggle('x', on); if (on) TIPS_X[key] = 1; else delete TIPS_X[key]; };
       rw.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); rw.onclick(); } };
-      li.querySelector('.tpm').onclick = function () { openTip(KIND[i], ctx); };
+      var tb = li.querySelector('.tpm'); if (tb) tb.onclick = function () {
+        var kd = KIND[i];
+        if (kd === 'pb') openPBList();
+        else if (kd.indexOf('ex:') === 0) kcOpen('ex', kd.slice(3));
+        else if (kd.indexOf('go:') === 0) { setView('home'); setHTab(kd.slice(3), true); }
+        else openTip(kd, ctx);
+      };
     });
     if (typeof LANG_OBS !== 'undefined' && LANG_OBS) flushLang();
   }
@@ -3049,30 +3118,34 @@
     [].forEach.call($('dBody').querySelectorAll('.day[data-d]'), function (d2) { d2.onclick = function () { DBACK = function () { openWalkPB(o); }; openDetail(d2.dataset.d, true); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
+  // PBs you have already opened — NEW badge and the red dot only show for PBs you haven't looked at yet (a new record changes the key, so it shows again)
+  function pbSeen() { try { return JSON.parse(localStorage.getItem('dw-pbseen') || '{}') || {}; } catch (e) { return {}; } }
+  function pbKey(o) { return o.id ? 'k:' + o.id + '|' + o.v + '|' + o.d : 'w:' + o.n + '|' + o.best + '|' + o.bd; }
+  function pbMarkSeen(o) { var m = pbSeen(); m[pbKey(o)] = 1; try { localStorage.setItem('dw-pbseen', JSON.stringify(m)); } catch (e) {} try { paintPBBtn(); } catch (e) {} }
   function openPBList() {
-    DBACK = openPBList;
+    DBACK = openPBList; var SEEN = pbSeen();
     var en = S.lang === 'en', L = pbList(), t = REC_TODAY || todayKey();
     $('detailBack').style.display = 'none';
     $('dTitle').textContent = 'Personal Best';
     var WP = walkPBs(), wt = REC_TODAY || todayKey();
     var walkHtml = WP.length ? '<div class="grp pbg">' + ic('walk') + (en ? 'Brisk walk & steps' : 'Brisk walk & langkah') + '</div><div class="pbl">' + WP.map(function (o, i) {
-        var fresh = (o.last || o.d) >= addDays(wt, -6) && o.id !== 'week';
+        var fresh = (o.last || o.d) >= addDays(wt, -6) && o.id !== 'week' && !SEEN[pbKey(o)];
         return '<button type="button" class="pbr pbw" data-w="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span><span class="pbv"><b>' + o.fmt(o.v) + '</b><small> · ' + o.d.slice(8) + '/' + o.d.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
       }).join('') + '</div>' : '';
     var body = !L.length ? (walkHtml ? '' : '<div class="empty">' + (en ? 'Save a workout to start your records.' : 'Simpan workout untuk mula rekod terbaik.') + '</div>')
-      : '<div class="grp pbg">' + ic('dumbbell') + 'Workout</div><p class="ttx">' + (en ? 'Your best single set for each exercise, from all your records. NEW = beaten in the last 7 days.' : 'Set terbaik kau untuk setiap latihan, dari semua rekod. BARU = dipecahkan dalam 7 hari terakhir.') + '</p><div class="pbl">' + L.map(function (o, i) {
-        var fresh = o.bd >= addDays(t, -6);
+      : '<div class="grp pbg">' + ic('dumbbell') + 'Workout</div><p class="ttx">' + (en ? 'Your best single set for each exercise, from all your records. NEW = beaten in the last 7 days and not opened yet.' : 'Set terbaik kau untuk setiap latihan, dari semua rekod. BARU = dipecahkan dalam 7 hari terakhir dan belum dibuka.') + '</p><div class="pbl">' + L.map(function (o, i) {
+        var fresh = o.bd >= addDays(t, -6) && !SEEN[pbKey(o)];
         return '<button type="button" class="pbr" data-i="' + i + '"><span class="pbn">' + esc(o.n) + (fresh ? '<em>' + (en ? 'NEW' : 'BARU') + '</em>' : '') + '</span>' +
           '<span class="pbv"><b>' + fmtV(o.best, o.sec) + '</b><small>' + (o.sec ? '' : ' reps') + (o.kg ? ' · ' + o.kg + 'kg' : '') + ' · ' + o.bd.slice(8) + '/' + o.bd.slice(5, 7) + '</small></span>' + ic('right', 'pbgo') + '</button>';
       }).join('') + '</div>';
     $('dBody').innerHTML = '<div class="kl tip">' + body + walkHtml + '</div>';
-    [].forEach.call($('dBody').querySelectorAll('.pbr[data-i]'), function (b) { b.onclick = function () { openPB(L[+b.dataset.i], true); }; });
-    [].forEach.call($('dBody').querySelectorAll('.pbr[data-w]'), function (b) { b.onclick = function () { openWalkPB(WP[+b.dataset.w]); }; });
+    [].forEach.call($('dBody').querySelectorAll('.pbr[data-i]'), function (b) { b.onclick = function () { pbMarkSeen(L[+b.dataset.i]); openPB(L[+b.dataset.i], true); }; });
+    [].forEach.call($('dBody').querySelectorAll('.pbr[data-w]'), function (b) { b.onclick = function () { pbMarkSeen(WP[+b.dataset.w]); openWalkPB(WP[+b.dataset.w]); }; });
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
   }
   function paintPBBtn() {
     var b = $('pbBtn'); if (!b) return;
-    var L = pbList(), t = REC_TODAY || todayKey(), fresh = L.some(function (o) { return o.bd >= addDays(t, -6); }) || walkPBs().some(function (o) { return o.id !== 'week' && o.d >= addDays(t, -6); });
+    var L = pbList(), t = REC_TODAY || todayKey(), SEEN = pbSeen(), fresh = L.some(function (o) { return o.bd >= addDays(t, -6) && !SEEN[pbKey(o)]; }) || walkPBs().some(function (o) { return o.id !== 'week' && (o.last || o.d) >= addDays(t, -6) && !SEEN[pbKey(o)]; });
     b.innerHTML = ic('trophy') + (fresh ? '<i class="pbdot"></i>' : '');
   }
   $('pbBtn').onclick = openPBList;
@@ -3110,6 +3183,9 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Tanda BARU di Personal Best hilang lepas kau buka rekod tu, dan titik merah pada butang trofi hilang bila semua rekod baru dah dibuka. Rekod baru seterusnya akan muncul semula.', 'The NEW tag in Personal Best goes away once you open that record, and the red dot on the trophy button clears when you’ve opened all new records. The next new record brings it back.'], 'g-pb'],
+    ['2026-11-25', ['Nama hari kini sebaris di tengah dengan ikon kalendar dalam kotak tarikh, tanpa bertindih dengan tarikh.', 'The weekday name now lines up centred with the calendar icon in the date box, without overlapping the date.'], 'g-rec'],
+    ['2026-11-25', ['Ringkasan & cadangan kini ada hari paling aktif, latihan paling kerap, tidur hujung minggu, rekod terbaik baru, amaran rekod tidur tak lengkap, dan trivia / info / kata semangat yang bertukar setiap kali kau pilih tempoh.', 'Summary & tips now shows your most active day, most frequent exercise, weekend sleep, new personal bests, an incomplete-sleep-log warning, and a fact / tip / line of encouragement that changes each time you pick a period.'], 'g-rec'],
     ['2026-11-25', ['Pilihan tempoh "Semalam" ditukar kepada "Minggu ini" (Ahad hingga hari ini) di Rekod dan Dashboard.', 'The "Yesterday" period is now "This week" (Sunday to today) in Records and the Dashboard.'], 'g-rec'],
     ['2026-11-25', ['Heatmap Walk history kini bergaris keliling pada hari kau buat brisk walk.', 'The Walk history heatmap now outlines the days you did a brisk walk.'], 'm-steps'],
     ['2026-11-25', ['Nota (ikon pen), Hari Rehat dan cara isi (ikon ⓘ) kini dibuka dalam tetingkap pop-up — kad Workout tak berubah saiz.', 'Notes (pen icon), Rest Day and the fill-in tips (ⓘ icon) now open in a pop-up window — the Workout card never changes size.'], 'g-rest'],
@@ -3190,7 +3266,7 @@
       T('Bila berhenti, tekan butang isi untuk masukkan masa ke ruang <b>SEBENAR</b>.', 'When paused, tap the fill button to put the time into the <b>ACTUAL</b> field.'),
       T('Masa SEBENAR digunakan untuk “Masa workout” dalam Records dan Dashboard.', 'ACTUAL time feeds “Workout time” in Records and the Dashboard.')]), ['timer', T('Pergi ke timer', 'Go to timer')], 'timer masa actual sebenar');
     add('g-pb', 'guide', T('Personal Best & streak', 'Personal Best & streak'), ul([
-      T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik kecil = rekod baru dalam 7 hari.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. A small dot = a new record in the last 7 days.'),
+      T('Butang <b>trofi</b> di atas: rekod terbaik setiap latihan dan rekod brisk walk. Titik merah = ada rekod baru (7 hari) yang belum kau buka. Tanda BARU hilang lepas kau buka rekod tu, dan titik hilang bila semua dah dibuka.', 'The <b>trophy</b> button at the top: your best for each exercise and your brisk-walk records. Red dot = a new record (last 7 days) you haven’t opened yet. The NEW tag goes once you open that record, and the dot goes once you’ve opened them all.'),
       T('Cip <b>api</b> sebelahnya: streak workout semasa dan terbaik — tekan untuk detail.', 'The <b>flame</b> chip beside it: current and best workout streak — tap for details.')]), ['pb', T('Buka Personal Best', 'Open Personal Best')], 'pb trophy trofi streak');
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
       T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
@@ -4466,16 +4542,23 @@
     return (typeof S !== 'undefined' && S && S.lang === 'en' ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'])[wd];   // BM in full, English short
   }
   // wake-up date (Sleep) and brisk-walk date (Walk) get the same short day beside their label
-  // line each weekday up with the calendar icon below it: its right edge meets the icon's right edge (never tight against the box edge)
-  function alignDays() {
+  function alignDays() {   // weekday and calendar icon share one centre line; long names nudge the icon left instead of hugging the box edge
     [].forEach.call(document.querySelectorAll('.box.date'), function (b) {
       var d = b.querySelector('.k .dayname'), c = b.querySelector('.cal'), k = b.querySelector('.k');
-      if (!d || !c || !k || !d.textContent || !b.offsetParent) return;
-      d.style.setProperty('margin-right', '0px', 'important');
+      if (!d || !c || !k || !b.offsetParent) return;
+      c.style.transform = ''; d.style.setProperty('margin-right', '0px', 'important');
+      if (!d.textContent) return;
       var ic2 = c.querySelector('lord-icon, svg:not([style*="none"])') || c, kr = k.getBoundingClientRect().right, cr = ic2.getBoundingClientRect(), w = d.getBoundingClientRect().width;
-      var want = (cr.left + cr.right) / 2 + w / 2;                       // right edge if centred on the icon
-      var right = Math.min(want, cr.right);                              // long names: right edge meets the icon's right edge (keeps a gap from the box edge)
-      d.style.setProperty('margin-right', Math.max(0, Math.round(kr - right)) + 'px', 'important');
+      var iconC = (cr.left + cr.right) / 2, P = Math.min(iconC, kr - 4 - w / 2);     // shared centre, keeping a 4px gap from the edge
+      var inp = b.querySelector('input.dmy');
+      if (inp && inp.value) {   // never slide the icon onto the date text
+        var cs = getComputedStyle(inp), cv = alignDays.cv || (alignDays.cv = document.createElement('canvas').getContext('2d'));
+        cv.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+        var textR = inp.getBoundingClientRect().left + parseFloat(cs.paddingLeft) + cv.measureText(inp.value).width + (parseFloat(cs.letterSpacing) || 0) * inp.value.length;
+        P = Math.max(P, Math.min(iconC, textR + 6 + (cr.right - cr.left) / 2));
+      }
+      d.style.setProperty('margin-right', Math.max(0, Math.round(kr - (P + w / 2))) + 'px', 'important');
+      if (Math.abs(P - iconC) > .5) c.style.transform = 'translateX(' + (P - iconC).toFixed(1) + 'px)';
     });
   }
   window.addEventListener('resize', function () { setTimeout(alignDays, 60); });
