@@ -1112,6 +1112,15 @@
   .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
   /* compact Workout card */
+  #wkCard.cmp.tight .title { margin-bottom:6px !important; }
+  #wkCard.cmp.tight .top.trio .box { padding-top:6px !important; padding-bottom:6px !important; }
+  #wkCard.cmp.tight .dayname { display:none !important; }
+  #wkCard.cmp.tight .tplbar { margin-bottom:6px !important; } #wkCard.cmp.tight .tplbar .tplbtn { padding-top:6px !important; padding-bottom:6px !important; }
+  #wkCard.cmp.tight thead th { padding-top:5px !important; padding-bottom:5px !important; }
+
+  #wkCard.cmp #rows td input { height:var(--rowh, 40px) !important; }
+  #wkCard.cmp .actions { bottom:var(--navgap, calc(92px + env(safe-area-inset-bottom))) !important; }
+
   #wkCard.cmp .title { flex-wrap:wrap; gap:6px 8px; margin:0 0 10px !important; }
   #wkCard.cmp .title h1 { flex:1 1 auto; min-width:0; }
   #wkCard.cmp .title #sw.sw { margin:0 0 0 auto; }
@@ -2522,6 +2531,26 @@
     Object.defineProperty(notes, 'value', { get: function () { return desc.get.call(this); }, set: function (v) { desc.set.call(this, v); setTimeout(paintNote, 0); }, configurable: true });
     paintNote();
   })();
+  // fit the Workout card to the screen: the gap above the bottom bar matches the 12px gap under the Workout / Sleep / Walk tabs.
+  // Table rows shrink (to 30px) or grow (to 56px) to fill the room; on very short screens the Save row stays sticky instead.
+  function fitWkCard() {
+    var card = $('wkCard'), nav = document.querySelector('.tabs');
+    if (!card || !nav || curView() !== 'home' || HTAB !== 'w' || !card.offsetParent) return;
+    var gap = 12, navTop = nav.getBoundingClientRect().top;
+    document.documentElement.style.setProperty('--navgap', (innerHeight - navTop + gap) + 'px');
+    var rows = document.querySelectorAll('#rows tr'); if (!rows.length) return;
+    var cur = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rowh')) || 40;
+    var top = card.getBoundingClientRect().top + window.scrollY, h = card.offsetHeight, avail = navTop - gap - top;   // card measured from the page top
+    var want = Math.max(30, Math.min(56, Math.round((cur + (avail - h) / rows.length) * 10) / 10));
+    if (want !== cur) document.documentElement.style.setProperty('--rowh', want + 'px');
+    // still too tall at the smallest rows: tighten the date/time boxes too (short phones)
+    if (want <= 30 && !card.classList.contains('tight')) { card.classList.add('tight'); setTimeout(fitWkCard, 30); }
+    else if (want >= 38 && card.classList.contains('tight')) { card.classList.remove('tight'); setTimeout(fitWkCard, 30); }
+  }
+  window.addEventListener('resize', function () { clearTimeout(fitWkCard.t); fitWkCard.t = setTimeout(fitWkCard, 120); });
+  setTimeout(fitWkCard, 300); setTimeout(fitWkCard, 1200);
+  ['homeBtn'].forEach(function (id) { $(id).addEventListener('click', function () { setTimeout(fitWkCard, 60); }); });
+  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('#hTabs, #wkCard')) setTimeout(fitWkCard, 60); });
   // always open on Home: at start, and when the app comes back after being in the background for a while
   setView('home');
   (function () { var hid = 0; document.addEventListener('visibilitychange', function () {
@@ -2993,6 +3022,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Kad Workout kini ikut saiz skrin telefon kau: jarak ke bar bawah sama dengan jarak di bawah tab Workout/Tidur/Jalan.', 'The Workout card now fits your phone’s screen: the gap to the bottom bar matches the gap under the Workout/Sleep/Walk tabs.'], 'g-workout'],
     ['2026-11-25', ['Tab Workout / Tidur / Jalan kini bergaya sama dengan bar bawah dan ikut warna tema.', 'The Workout / Sleep / Walk tabs now match the bottom bar and follow your theme colour.'], 'g-swipe'],
     ['2026-11-25', ['Kad Workout lebih padat — muat satu skrin: timer sebelah tajuk, cara isi di ikon ⓘ, nota di ikon pen, butang Simpan sentiasa kelihatan.', 'A more compact Workout card that fits one screen: timer beside the title, fill-in tips under the ⓘ icon, notes under the pen icon, Save always visible.'], 'g-workout'],
     ['2026-11-25', ['Rekod kini ada tab sendiri di bar bawah (Rekod · Utama · Dashboard). App sentiasa dibuka di Utama.', 'Records now has its own tab in the bottom bar (Records · Home · Dashboard). The app always opens on Home.'], 'g-rec'],
