@@ -1111,6 +1111,33 @@
 
   .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
+  /* compact Workout card */
+  #wkCard.cmp .title { flex-wrap:wrap; gap:6px 8px; margin:0 0 10px !important; }
+  #wkCard.cmp .title h1 { flex:1 1 auto; min-width:0; }
+  #wkCard.cmp .title #sw.sw { margin:0 0 0 auto; }
+  #wkCard.cmp .title #sw.sw.has { flex:1 0 100%; margin:2px 0 0; }
+  #wkCard.cmp .title #sw.sw .swgo { padding:7px 12px !important; height:34px !important; }
+  #wkCard.cmp .durhead { display:none !important; }
+  #wkCard.cmp .top.trio { margin-bottom:8px !important; }
+  #wkCard.cmp .tplbar { margin:0 0 8px !important; }
+  #wkCard.cmp .hint { display:none; margin:8px 2px 0; padding:8px 10px; border-radius:10px; background:var(--tile); }
+  #wkCard.cmp.showhint .hint { display:block; }
+  #wkCard.cmp #notes { display:none; }
+  #wkCard.cmp.shownote #notes { display:block; }
+  #wkCard.cmp thead th:first-child { position:relative; }
+  #wkCard .hintbtn { all:unset; cursor:pointer; display:inline-flex; vertical-align:-3px; margin-left:4px; color:var(--accent); }
+  #wkCard .hintbtn .ico { width:15px; height:15px; }
+  #wkCard.cmp.showhint .hintbtn { color:var(--ink); }
+  #wkCard .notebtn .ico { width:18px; height:18px; } #wkCard .notebtn.has { color:var(--accent) !important; }
+  #wkCard.cmp .actions { margin-top:10px !important; gap:6px !important; }
+  #wkCard.cmp .actions .save { flex:1 1 auto !important; min-width:0; padding-left:10px !important; padding-right:10px !important; }
+  #wkCard.cmp .actions .rest { flex:0 1 auto !important; min-width:0; padding-left:12px !important; padding-right:12px !important; }
+  #wkCard.cmp .actions .clear { width:44px !important; min-width:44px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; flex:none !important; }
+  #wkCard.cmp thead th { white-space:nowrap; font-size:10.5px !important; letter-spacing:0 !important; padding-left:2px !important; padding-right:2px !important; }
+  @media (max-width:380px) { #wkCard.cmp .top input.dmy { font-size:15px !important; letter-spacing:-.3px; } #wkCard.cmp .top.trio { grid-template-columns:1.55fr 1fr 1fr; } #wkCard.cmp .actions .save { font-size:14px !important; } #wkCard.cmp .actions .rest { font-size:0 !important; width:48px; flex:none !important; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; } #wkCard.cmp .actions .rest .ico { width:20px; height:20px; margin:0 !important; } #wkCard.cmp thead th { white-space:normal; font-size:9.5px !important; } }
+  /* on short screens the save row stays in reach above the bottom bar */
+  #wkCard.cmp .actions { position:sticky; bottom:calc(92px + env(safe-area-inset-bottom)); z-index:6; background:inherit; padding:6px 0; margin-left:-2px; margin-right:-2px; }
+
   /* Home and Dashboard activity tabs: identical size */
   .htabs, #dashView .dtabs.seg { margin:0 0 12px !important; } .htabs button, .dtabs button { padding:9px 4px !important; font-weight:700 !important; font-size:14px !important; line-height:1.2 !important; }
   .dtabs { background:#e3e3e9 !important; } body.dark .dtabs { background:#1c1c1f !important; }
@@ -2462,6 +2489,23 @@
   $('dashBtn').onclick = function () { setView('dash'); };
   $('recBtn').onclick = function () { setView('rec'); };
   $('homeBtn').onclick = function () { setView('home'); };
+  // compact Workout card (fits one screen): timer sits beside the title, the fill-in hint and notes open from small buttons
+  (function () {
+    var card = $('wkCard'), title = card.querySelector('.title'), hint = card.querySelector('.hint'), notes = $('notes'), acts = card.querySelector('.actions');
+    title.appendChild($('sw')); card.classList.add('cmp');
+    var th = card.querySelector('thead th');
+    var ib = document.createElement('button'); ib.type = 'button'; ib.className = 'hintbtn'; ib.setAttribute('aria-label', 'Cara isi / How to fill'); ib.innerHTML = ic('info');
+    th.appendChild(ib);
+    ib.onclick = function (e) { e.stopPropagation(); card.classList.toggle('showhint'); };
+    var nb = document.createElement('button'); nb.type = 'button'; nb.className = 'clear notebtn'; nb.title = 'Nota'; nb.setAttribute('aria-label', 'Nota / Notes'); nb.innerHTML = ic('pen');
+    acts.insertBefore(nb, $('clearBtn'));
+    function paintNote() { var has = !!notes.value.trim(); nb.classList.toggle('has', has); if (has) card.classList.add('shownote'); }
+    nb.onclick = function () { var on = !card.classList.contains('shownote') || !notes.value.trim(); card.classList.toggle('shownote', on); if (on) setTimeout(function () { notes.focus(); }, 30); };
+    notes.addEventListener('input', paintNote); notes.addEventListener('blur', function () { if (!notes.value.trim()) card.classList.remove('shownote'); });
+    var desc = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+    Object.defineProperty(notes, 'value', { get: function () { return desc.get.call(this); }, set: function (v) { desc.set.call(this, v); setTimeout(paintNote, 0); }, configurable: true });
+    paintNote();
+  })();
   // always open on Home: at start, and when the app comes back after being in the background for a while
   setView('home');
   (function () { var hid = 0; document.addEventListener('visibilitychange', function () {
@@ -2933,6 +2977,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Kad Workout lebih padat — muat satu skrin: timer sebelah tajuk, cara isi di ikon ⓘ, nota di ikon pen, butang Simpan sentiasa kelihatan.', 'A more compact Workout card that fits one screen: timer beside the title, fill-in tips under the ⓘ icon, notes under the pen icon, Save always visible.'], 'g-workout'],
     ['2026-11-25', ['Rekod kini ada tab sendiri di bar bawah (Rekod · Utama · Dashboard). App sentiasa dibuka di Utama.', 'Records now has its own tab in the bottom bar (Records · Home · Dashboard). The app always opens on Home.'], 'g-rec'],
     ['2026-11-25', ['Pustaka latihan kini guna lukisan Workout Guide 3 frame yang bergerak dan ikut warna tema (19 latihan; sit up guna animasi figura).', 'The exercise library now uses 3-frame Workout Guide drawings that move and follow your theme colour (19 exercises; sit up uses the figure animation).'], 'f-credits'],
     ['2026-11-25', ['Swipe kiri/kanan di mana-mana pada Utama & Dashboard untuk tukar Workout, Tidur dan Jalan.', 'Swipe left/right anywhere on Home & the Dashboard to switch Workout, Sleep and Walk.'], 'g-swipe'],
@@ -2971,7 +3016,8 @@
       T('Pergi ke <b>Utama</b> → tab <b>Workout</b>.', 'Go to <b>Home</b> → the <b>Workout</b> tab.'),
       T('Pilih tarikh (lalai: hari ini). Pilih <b>Template</b> kalau nak isi nama latihan dengan cepat.', 'Pick the date (today by default). Use <b>Template</b> to fill exercise names quickly.'),
       T('Isi nama latihan dan reps setiap pusingan. Untuk latihan masa (contoh plank), isi saat.', 'Enter each exercise and the reps for each round. For timed moves (e.g. plank), enter seconds.'),
-      T('Guna <b>timer</b> untuk rekod masa sebenar, kemudian tekan <b>Simpan</b>.', 'Use the <b>timer</b> to record the actual time, then tap <b>Save</b>.'),
+      T('Guna <b>timer</b> (butang sebelah tajuk kad) untuk rekod masa sebenar, kemudian tekan <b>Simpan</b>. Butang Simpan sentiasa kelihatan di atas bar bawah.', 'Use the <b>timer</b> (button beside the card title) to record the actual time, then tap <b>Save</b>. The Save row always stays visible above the bottom bar.'),
+      T('Lupa cara isi? Tekan ikon <b>ⓘ</b> sebelah WORKOUT dalam jadual. Nak tambah nota? Tekan ikon <b>pen</b> sebelah Rest Day.', 'Forgot how to fill it? Tap the <b>ⓘ</b> icon beside WORKOUT in the table. Want a note? Tap the <b>pen</b> icon beside Rest Day.'),
       T('Kalau ada nama atau nombor yang app tak pasti, rekod ditanda <b>⚠ semak</b> — tekan rekod tu untuk betulkan.', 'If a name or number looks uncertain, the record is marked <b>⚠ check</b> — tap it to fix.')]), ['w', T('Buka Workout', 'Open Workout')], 'save simpan reps template');
     add('g-rest', 'guide', T('Hari rehat', 'Rest days'), ul([
       T('Tekan <b>Rest day</b> dalam kad Workout — tarikh diambil terus dari kad Workout.', 'Tap <b>Rest day</b> in the Workout card — it uses the Workout card’s date.'),
@@ -2997,7 +3043,7 @@
       T('Ikon pen dalam senarai template untuk ubah, tambah atau padam template.', 'Use the pen icon in the template list to edit, add or delete templates.'),
       T('Sebelah butang Template ada ringkasan <b>workout terakhir</b> — tekan untuk detail penuh.', 'Beside Template is a summary of your <b>last workout</b> — tap for the full detail.')]), ['tpl', T('Buka Template', 'Open Templates')], 'template');
     add('g-timer', 'guide', T('Timer workout', 'Workout timer'), ul([
-      T('Tekan main untuk mula, sekali lagi untuk berhenti seketika.', 'Tap play to start, again to pause.'),
+      T('Butang timer ada sebelah tajuk <b>Daily Workout</b>. Tekan untuk mula, sekali lagi untuk berhenti seketika.', 'The timer button sits beside the <b>Daily Workout</b> title. Tap to start, again to pause.'),
       T('Bila berhenti, tekan butang isi untuk masukkan masa ke ruang <b>SEBENAR</b>.', 'When paused, tap the fill button to put the time into the <b>ACTUAL</b> field.'),
       T('Masa SEBENAR digunakan untuk “Masa workout” dalam Records dan Dashboard.', 'ACTUAL time feeds “Workout time” in Records and the Dashboard.')]), ['timer', T('Pergi ke timer', 'Go to timer')], 'timer masa actual sebenar');
     add('g-pb', 'guide', T('Personal Best & streak', 'Personal Best & streak'), ul([
