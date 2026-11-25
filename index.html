@@ -1136,6 +1136,7 @@
   /* compact Workout card */
   .box.date .k { display:flex; align-items:baseline; justify-content:space-between; gap:6px; white-space:nowrap; min-width:0; }   /* day sits at the right end of the label row */
   #sleepCard .trio { grid-template-columns:2fr 1fr 1fr !important; }
+  @media (max-width:380px) { #walkCard .trio { grid-template-columns:1.45fr 1fr 1fr !important; } #walkCard .trio .box:not(.date) .k { font-size:10px !important; letter-spacing:-.02em; white-space:normal; line-height:1.15; } #walkCard .trio .box { display:flex !important; flex-direction:column; } #walkCard .trio .box > .dv, #walkCard .trio .box > .dwrap { margin-top:auto !important; } #walkDate, #sleepDate { font-size:15px !important; letter-spacing:-.3px; } }
   #sleepCard .box.date .k { letter-spacing:-.01em; }
   @media (max-width:380px) { #sleepCard .box.date .k { font-size:10px !important; gap:4px; letter-spacing:-.02em; } }
   .box.date .k .dayname { display:inline !important; margin:0 !important; padding:0 !important; font-size:inherit !important; line-height:inherit !important; letter-spacing:.04em; color:#4169e1 !important; font-weight:800 !important; text-transform:uppercase; }
@@ -2336,6 +2337,7 @@
   var HTAB = 'w';
   try { HTAB = localStorage.getItem('dw-htab') || 'w'; } catch (e) {}
   function setHTab(t, anim) {
+    setTimeout(function () { try { alignDays(); } catch (e) {} }, 40);
     var prev = HTAB, ORD = 'wsk'; HTAB = ORD.indexOf(t) >= 0 ? t : 'w'; try { localStorage.setItem('dw-htab', HTAB); } catch (e) {}
     [].forEach.call($('hTabs').children, function (b) { b.classList.toggle('on', b.dataset.t === HTAB); });
     $('hTabs').dataset.on = HTAB;
@@ -4464,6 +4466,19 @@
     return (typeof S !== 'undefined' && S && S.lang === 'en' ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'])[wd];   // BM in full, English short
   }
   // wake-up date (Sleep) and brisk-walk date (Walk) get the same short day beside their label
+  // line each weekday up with the calendar icon below it: its right edge meets the icon's right edge (never tight against the box edge)
+  function alignDays() {
+    [].forEach.call(document.querySelectorAll('.box.date'), function (b) {
+      var d = b.querySelector('.k .dayname'), c = b.querySelector('.cal'), k = b.querySelector('.k');
+      if (!d || !c || !k || !d.textContent || !b.offsetParent) return;
+      d.style.setProperty('margin-right', '0px', 'important');
+      var ic2 = c.querySelector('lord-icon, svg:not([style*="none"])') || c, kr = k.getBoundingClientRect().right, cr = ic2.getBoundingClientRect(), w = d.getBoundingClientRect().width;
+      var want = (cr.left + cr.right) / 2 + w / 2;                       // right edge if centred on the icon
+      var right = Math.min(want, cr.right);                              // long names: right edge meets the icon's right edge (keeps a gap from the box edge)
+      d.style.setProperty('margin-right', Math.max(0, Math.round(kr - right)) + 'px', 'important');
+    });
+  }
+  window.addEventListener('resize', function () { setTimeout(alignDays, 60); });
   function paintDateDays() {
     [['sleepDate', 'sleepDayName'], ['walkDate', 'walkDayName']].forEach(function (q) {
       var inp = $(q[0]); if (!inp) return; var sp = $(q[1]);
@@ -4473,6 +4488,7 @@
         ['input', 'change'].forEach(function (ev) { inp.addEventListener(ev, function () { setTimeout(paintDateDays, 0); }); }); }
       sp.textContent = shortDay(dmyToIso(inp.value));
     });
+    setTimeout(alignDays, 0);
   }
   function paintDayName() {
     var iso = dmyToIso($('date').value);
@@ -4480,6 +4496,7 @@
     LAST_DAY_KEY = iso;
     var p = iso ? iso.split('-') : null;
     $('dayName').textContent = shortDay(iso);   // short day beside the DATE label
+    setTimeout(alignDays, 0);
     try { paintDateDays(); } catch (e) {}
     paintRestFor();
   }
