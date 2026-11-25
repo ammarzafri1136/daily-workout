@@ -1112,6 +1112,11 @@
   .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
   /* compact Workout card */
+  #wkCard.cmp .box.date .k { display:flex; align-items:baseline; gap:6px; }
+  #wkCard.cmp .box.date .k .dayname { display:inline !important; margin:0 !important; padding:0 !important; font-size:inherit !important; line-height:inherit !important; letter-spacing:.04em; color:var(--accent) !important; font-weight:800 !important; text-transform:uppercase; }
+  #wkCard.cmp .box.date .k .dayname::before { content:'·'; margin-right:6px; color:var(--muted); font-weight:700; }
+  #wkCard.cmp .box.date .k .dayname:empty { display:none !important; }
+
   #wkCard.cmp .title:has(#sw.has) h1 { font-size:17px !important; text-overflow:ellipsis; }
   #wkCard.cmp .title #sw.sw.has.run .swx { display:none !important; }   /* reset only while paused: keeps the running timer on the title row */
   @media (max-width:380px) { #wkCard.cmp .title:has(#sw.has) h1 { font-size:15.5px !important; } #wkCard.cmp .title #sw.sw.has .swt { font-size:17px !important; min-width:46px; } #wkCard.cmp .title #sw.sw.has { gap:4px; } }
@@ -1121,7 +1126,6 @@
 
   #wkCard.cmp.tight .title { margin-bottom:6px !important; }
   #wkCard.cmp.tight .top.trio .box { padding-top:6px !important; padding-bottom:6px !important; }
-  #wkCard.cmp.tight .dayname { display:none !important; }
   #wkCard.cmp.tight .tplbar { margin-bottom:6px !important; } #wkCard.cmp.tight .tplbar .tplbtn { padding-top:6px !important; padding-bottom:6px !important; }
   #wkCard.cmp.tight thead th { padding-top:5px !important; padding-bottom:5px !important; }
 
@@ -2535,6 +2539,7 @@
   (function () {
     var card = $('wkCard'), title = card.querySelector('.title'), hint = card.querySelector('.hint'), notes = $('notes'), acts = card.querySelector('.actions');
     title.appendChild($('sw')); card.classList.add('cmp');
+    var dk = card.querySelector('.box.date .k'); if (dk) { dk.appendChild($('dayName')); }
     var th = card.querySelector('thead th');
     var ib = document.createElement('button'); ib.type = 'button'; ib.className = 'hintbtn'; ib.setAttribute('aria-label', 'Cara isi / How to fill'); ib.innerHTML = ic('info');
     th.appendChild(ib);
@@ -2544,7 +2549,7 @@
     var rb = $('restBtn'); [].slice.call(rb.childNodes).forEach(function (n) { if (n.nodeType === 3 && n.textContent.trim()) n.remove(); });
     var rl = document.createElement('span'); rl.className = 'rl'; rb.appendChild(rl);
     function paintRest() { var en = !!(typeof S !== 'undefined' && S && S.lang === 'en'); rl.textContent = en ? 'Rest' : 'Rehat'; rb.title = en ? 'Rest Day' : 'Hari Rehat'; rb.setAttribute('aria-label', rb.title); }
-    paintRest(); setTimeout(paintRest, 0); $('langBtn').addEventListener('click', function () { setTimeout(paintRest, 0); });
+    paintRest(); setTimeout(paintRest, 0); window.__paintRest = paintRest;
     function paintNote() { var has = !!notes.value.trim(); nb.classList.toggle('has', has); if (has) card.classList.add('shownote'); }
     nb.onclick = function () { var on = !card.classList.contains('shownote') || !notes.value.trim(); card.classList.toggle('shownote', on); if (on) setTimeout(function () { notes.focus(); }, 30); };
     notes.addEventListener('input', paintNote); notes.addEventListener('blur', function () { if (!notes.value.trim()) card.classList.remove('shownote'); });
@@ -3050,6 +3055,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Nama hari kini ringkas di sebelah TARIKH (contoh RAB / WED), jadi kad Workout lebih padat dan tak bergerak bila timer ditekan.', 'The weekday now sits beside DATE in short form (e.g. WED), so the Workout card is tighter and no longer shifts when you use the timer.'], 'g-workout'],
     ['2026-11-25', ['"Hari jalan" kini "Hari brisk walk": hanya kira hari yang ada sesi brisk walk dalam julat dipilih. Rekod tandakan hari brisk walk.', '"Walk days" is now "Brisk walk days": only days with a brisk-walk session in the chosen range. Records marks brisk-walk days.'], 'k-what'],
     ['2026-11-25', ['Ikon tab Rekod kini beranimasi macam Utama dan Dashboard.', 'The Records tab icon now animates like Home and Dashboard.'], 'g-rec'],
     ['2026-11-25', ['Timer kekal sebaris dengan tajuk Daily Workout bila berjalan, dan jarak kad ke bar bawah dilebarkan.', 'The timer stays on the Daily Workout title row while running, and the gap above the bottom bar is wider.'], 'g-timer'],
@@ -4400,7 +4406,8 @@
     if (iso === LAST_DAY_KEY) return;
     LAST_DAY_KEY = iso;
     var p = iso ? iso.split('-') : null;
-    $('dayName').textContent = p ? DAYS_BM[new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay()] : '';
+    var wd = p ? new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay() : -1;   // short day beside the DATE label
+    $('dayName').textContent = wd < 0 ? '' : (S.lang === 'en' ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'])[wd];
     paintRestFor();
   }
   // rest day uses the workout card's date (no separate date box)
@@ -4873,6 +4880,7 @@
     try { if (DASH) renderDash(); } catch (e) {}
     try { paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC); } catch (e) {}
     try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {} try { paintLastWk(); } catch (e) {} try { calcWalk(); } catch (e) {} try { paintPal(isDark()); } catch (e) {}
+    try { LAST_DAY_KEY = null; paintDayName(); } catch (e) {} try { if (window.__paintRest) window.__paintRest(); } catch (e) {} try { swPaint(); } catch (e) {}
     applyLang(); renderSleepTip(sleepMins());
   }
   $('langBtn').onclick = function () { setLang(S.lang === 'en' ? 'bm' : 'en'); };
