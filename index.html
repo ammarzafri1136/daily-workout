@@ -1113,10 +1113,15 @@
   .htabs { margin:0 0 12px; } .htabs button { padding:9px 4px !important; font-weight:700 !important; }
   .htabs { background:#e3e3e9 !important; } body.dark .htabs { background:#1c1c1f !important; }
   /* compact Workout card */
-  #wkCard.cmp .box.date .k { display:flex; align-items:baseline; gap:6px; }
-  #wkCard.cmp .box.date .k .dayname { display:inline !important; margin:0 !important; padding:0 !important; font-size:inherit !important; line-height:inherit !important; letter-spacing:.04em; color:var(--accent) !important; font-weight:800 !important; text-transform:uppercase; }
-  #wkCard.cmp .box.date .k .dayname::before { content:'·'; margin-right:6px; color:var(--muted); font-weight:700; }
-  #wkCard.cmp .box.date .k .dayname:empty { display:none !important; }
+  .box.date .k { display:flex; align-items:baseline; gap:6px; white-space:nowrap; min-width:0; }
+  #sleepCard .trio { grid-template-columns:1.75fr 1fr 1fr !important; }
+  #sleepCard .box.date .k { letter-spacing:-.01em; }
+  @media (max-width:380px) { #sleepCard .box.date .k { font-size:10px !important; gap:4px; letter-spacing:-.02em; } #sleepCard .box.date .k .dayname::before { margin-right:4px; } }
+  .box.date .k .dayname { display:inline !important; margin:0 !important; padding:0 !important; font-size:inherit !important; line-height:inherit !important; letter-spacing:.04em; color:#4169e1 !important; font-weight:800 !important; text-transform:uppercase; }
+  .box.date .k .dayname::before { content:'·'; margin-right:6px; color:var(--muted); font-weight:700; }
+  .box.date .k .dayname:empty { display:none !important; }
+  #date, #sleepDate, #walkDate { color:#4169e1 !important; }   /* royal blue dates */
+  body.dark #date, body.dark #sleepDate, body.dark #walkDate, body.dark .box.date .k .dayname { color:#7b98f5 !important; }
 
   #wkCard.cmp .title:has(#sw.has) h1 { font-size:17px !important; text-overflow:ellipsis; }
   #wkCard.cmp .title #sw.sw.has.run .swx { display:none !important; }   /* reset only while paused: keeps the running timer on the title row */
@@ -2541,6 +2546,7 @@
     var card = $('wkCard'), title = card.querySelector('.title'), hint = card.querySelector('.hint'), notes = $('notes'), acts = card.querySelector('.actions');
     title.appendChild($('sw')); card.classList.add('cmp');
     var dk = card.querySelector('.box.date .k'); if (dk) { dk.appendChild($('dayName')); }
+    setTimeout(paintDateDays, 0); setTimeout(paintDateDays, 800);
     var th = card.querySelector('thead th');
     var ib = document.createElement('button'); ib.type = 'button'; ib.className = 'hintbtn'; ib.setAttribute('aria-label', 'Cara isi / How to fill'); ib.innerHTML = ic('info');
     th.appendChild(ib);
@@ -3056,6 +3062,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Tarikh dan hari kini berwarna royal blue, dan hari ringkas juga ada di Tarikh bangun (Tidur) dan Tarikh (Jalan).', 'Dates and weekdays are now royal blue, and the short weekday also shows on the wake-up date (Sleep) and the Walk date.'], 'g-sleep'],
     ['2026-11-25', ['Nama hari kini ringkas di sebelah TARIKH (contoh RAB / WED), jadi kad Workout lebih padat dan tak bergerak bila timer ditekan.', 'The weekday now sits beside DATE in short form (e.g. WED), so the Workout card is tighter and no longer shifts when you use the timer.'], 'g-workout'],
     ['2026-11-25', ['"Hari jalan" kini "Hari brisk walk": hanya kira hari yang ada sesi brisk walk dalam julat dipilih. Rekod tandakan hari brisk walk.', '"Walk days" is now "Brisk walk days": only days with a brisk-walk session in the chosen range. Records marks brisk-walk days.'], 'k-what'],
     ['2026-11-25', ['Ikon tab Rekod kini beranimasi macam Utama dan Dashboard.', 'The Records tab icon now animates like Home and Dashboard.'], 'g-rec'],
@@ -4402,13 +4409,29 @@
 
   // ---------------- Day name under the workout date ----------------
   var DAYS_BM = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'], LAST_DAY_KEY = null;
+  function shortDay(iso) {
+    var p = iso ? String(iso).split('-') : null; if (!p || p.length < 3) return '';
+    var wd = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay();
+    return (typeof S !== 'undefined' && S && S.lang === 'en' ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'])[wd];
+  }
+  // wake-up date (Sleep) and brisk-walk date (Walk) get the same short day beside their label
+  function paintDateDays() {
+    [['sleepDate', 'sleepDayName'], ['walkDate', 'walkDayName']].forEach(function (q) {
+      var inp = $(q[0]); if (!inp) return; var sp = $(q[1]);
+      if (!sp) { var k = inp.closest('.box').querySelector('.k'); if (!k) return; sp = document.createElement('span'); sp.id = q[1]; sp.className = 'dayname'; k.appendChild(sp);
+        var d = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+        Object.defineProperty(inp, 'value', { get: function () { return d.get.call(this); }, set: function (v) { d.set.call(this, v); setTimeout(paintDateDays, 0); }, configurable: true });
+        ['input', 'change'].forEach(function (ev) { inp.addEventListener(ev, function () { setTimeout(paintDateDays, 0); }); }); }
+      sp.textContent = shortDay(dmyToIso(inp.value));
+    });
+  }
   function paintDayName() {
     var iso = dmyToIso($('date').value);
     if (iso === LAST_DAY_KEY) return;
     LAST_DAY_KEY = iso;
     var p = iso ? iso.split('-') : null;
-    var wd = p ? new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay() : -1;   // short day beside the DATE label
-    $('dayName').textContent = wd < 0 ? '' : (S.lang === 'en' ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'])[wd];
+    $('dayName').textContent = shortDay(iso);   // short day beside the DATE label
+    try { paintDateDays(); } catch (e) {}
     paintRestFor();
   }
   // rest day uses the workout card's date (no separate date box)
@@ -4881,7 +4904,7 @@
     try { if (DASH) renderDash(); } catch (e) {}
     try { paintCustomBtn('dFilter', RANGE); paintCustomBtn('rFilter', RREC); } catch (e) {}
     try { calcSleep(); } catch (e) {} try { paintRestFor(); } catch (e) {} try { paintLastWk(); } catch (e) {} try { calcWalk(); } catch (e) {} try { paintPal(isDark()); } catch (e) {}
-    try { LAST_DAY_KEY = null; paintDayName(); } catch (e) {} try { if (window.__paintRest) window.__paintRest(); } catch (e) {} try { swPaint(); } catch (e) {}
+    try { LAST_DAY_KEY = null; paintDayName(); paintDateDays(); } catch (e) {} try { if (window.__paintRest) window.__paintRest(); } catch (e) {} try { swPaint(); } catch (e) {}
     applyLang(); renderSleepTip(sleepMins());
   }
   $('langBtn').onclick = function () { setLang(S.lang === 'en' ? 'bm' : 'en'); };
