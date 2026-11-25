@@ -600,6 +600,7 @@
     <button type="button" class="ib" id="kcBtn" title="Knowledge Centre" aria-label="Knowledge Centre"><svg class="ico ih ih-help hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><g class="hq"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path class="hd" d="M12 17h.01"/></g></svg></button><button type="button" class="ib" id="setBtn" title="Settings" aria-label="Settings"><svg class="ico ih ih-gear hi" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="gr"><circle class="gc" cx="16" cy="16" r="5"/><path d="m30,17.5v-3l-3.388-1.355c-.25-.933-.617-1.815-1.089-2.633l1.436-3.351-2.121-2.121-3.351,1.436c-.817-.472-1.7-.838-2.633-1.089l-1.355-3.388h-3l-1.355,3.388c-.933.25-1.815.617-2.633,1.089l-3.351-1.436-2.121,2.121 1.436,3.351c-.472.817-.838,1.7-1.089,2.633l-3.388,1.355v3l3.388,1.355c.25.933.617,1.815,1.089,2.633l-1.436,3.351 2.121,2.121 3.351-1.436c.817.472 1.7.838 2.633,1.089l1.355,3.388h3l1.355-3.388c.933-.25 1.815-.617 2.633-1.089l3.351,1.436 2.121-2.121-1.436-3.351c.472-.817.838-1.7 1.089-2.633l3.388-1.355Z"/></g></svg></button>
   </nav>
   <div class="wk" id="weekStrip" aria-label="Minggu ini"></div>
+  <div id="wkReport" hidden></div>
 
   <div id="dashView" style="display:none">
     <div class="card">
@@ -1651,6 +1652,13 @@
   .wchoice button[data-m="replace"] { background:var(--accent) !important; color:#fff !important; }
   .wks button.kw::after, #weekStrip button.kw::after { content:''; position:absolute; bottom:-3px; left:50%; width:6px; height:6px; margin-left:-3px; border-radius:50%; background:var(--walk); box-shadow:0 0 0 1.5px var(--paper); }
   #weekStrip button.kw { position:relative; }
+  /* last week's report (Sunday & Monday only, one line of numbers + one tip; × hides it until next week) */
+  #wkReport { position:relative; background:var(--paper); border-radius:18px; padding:12px 40px 12px 14px; margin:0 0 12px; font-size:13.5px; line-height:1.45; color:var(--ink); }
+  #wkReport[hidden] { display:none; }
+  #wkReport small { display:block; font-size:11px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; color:var(--accent); margin-bottom:3px; }
+  #wkReport .wrn { font-weight:700; } #wkReport .wrn span { white-space:nowrap; } #wkReport .wrn b { font-weight:800; } #wkReport .wrt { color:var(--muted); margin-top:3px; }
+  #wkReport .wrx { all:unset; position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; }
+  #wkReport .wrx .ico { width:14px; height:14px; }
 
   /* never let a dashboard row push the page wider than the screen (it hides the fixed bottom bar on phones) */
   #dashView, #cardView { max-width:100%; overflow-x:clip; }
@@ -2176,6 +2184,15 @@
       var av = function (a) { return a.reduce(function (q, v) { return q + v; }, 0) / a.length; }, dif = av(we) - av(wk2), am = Math.round(Math.abs(dif) * 60);
       if (am >= 10) add('info', 'bed', 'Tidur hujung minggu', 'Weekend sleep', 'Hujung minggu kau tidur <b>' + hm(am) + ' ' + (dif > 0 ? 'lebih lama' : 'lebih sekejap') + '</b> berbanding hari kerja (' + hm(av(we) * 60) + ' lawan ' + hm(av(wk2) * 60) + ').', 'On weekends you sleep <b>' + hm(am) + ' ' + (dif > 0 ? 'longer' : 'less') + '</b> than on weekdays (' + hm(av(we) * 60) + ' vs ' + hm(av(wk2) * 60) + ').', 'sleep');
     }
+    // sleep vs performance: average reps on workout days after short vs good sleep (all history, so it is stable)
+    (function () {
+      var SH = {}; (SLEEP_ALL || []).forEach(function (x) { if (x.h > 0) SH[x.d] = x.h; });
+      var sh = [], gd = []; (REC || []).forEach(function (x) { if (x.activity !== 'Workout' || !(+x.reps) || SH[x.date] == null) return; if (SH[x.date] < 6) sh.push(+x.reps); else if (SH[x.date] >= lo) gd.push(+x.reps); });
+      if (sh.length < 3 || gd.length < 3) return;
+      var av = function (a) { return a.reduce(function (q, v) { return q + v; }, 0) / a.length; }, d = Math.round(100 * (av(gd) - av(sh)) / av(gd));
+      if (d >= 5) add('watch', 'bed', 'Tidur & prestasi', 'Sleep & performance', 'Bila tidur bawah 6 jam, reps kau purata <b>' + d + '% lebih rendah</b> berbanding lepas tidur ' + lo + ' jam ke atas (' + Math.round(av(sh)) + ' lawan ' + Math.round(av(gd)) + ' reps).', 'After under 6 hours of sleep, your reps are <b>' + d + '% lower</b> on average than after ' + lo + '+ hours (' + Math.round(av(sh)) + ' vs ' + Math.round(av(gd)) + ' reps).', 'sleep');
+      else if (d <= -5) add('info', 'bed', 'Tidur & prestasi', 'Sleep & performance', 'Menarik: reps kau tak jatuh walaupun tidur bawah 6 jam. Tapi tidur cukup tetap penting untuk pemulihan.', 'Interesting: your reps don’t drop after under 6 hours of sleep. Enough sleep still matters for recovery.', 'sleep');
+    })();
     // new personal bests in this period
     try {
       var nPB = pbList().filter(function (o) { return o.bd >= from && o.bd <= to; }).length + walkPBs().filter(function (o) { return o.id !== 'week' && o.d >= from && o.d <= to; }).length;
@@ -2654,6 +2671,7 @@
     var prev = curView();
     $('homeBtn').classList.toggle('on', v === 'home'); $('recBtn').classList.toggle('on', v === 'rec'); $('dashBtn').classList.toggle('on', v === 'dash');
     $('homeBtn').parentNode.dataset.v = v;
+    setTimeout(function () { try { paintWeekReport(); } catch (e) {} }, 0);
     setTimeout(function () { try { lordRecolor(); } catch (e) {} }, 420);
     if (prev === v) return;
     var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, inV = $(VIEWS[v]);
@@ -3224,6 +3242,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Laporan minggu lepas: setiap Ahad dan Isnin, satu kad ringkas di Home (workout, tidur, langkah, PB + satu cadangan). Tekan × untuk tutup sampai minggu depan. Ringkasan & cadangan juga kini tunjuk kaitan tidur dengan reps kau.', 'Last-week report: every Sunday and Monday, one short card on Home (workouts, sleep, steps, PBs + one tip). Tap × to hide it until next week. Summary & tips now also shows how sleep relates to your reps.'], 'g-rec'],
     ['2026-11-25', ['Jadual Rekod ada lajur Workout sendiri (reps dan bilangan latihan), dan ikon di kepala jadual kini di tengah lajur.', 'The Records table has its own Workout column (reps and number of exercises), and the header icons now sit centred in each column.'], 'g-rec'],
     ['2026-11-25', ['Tempoh tidur dalam jadual Rekod kini ikut bahasa: 5h 4m dalam English, 5j 4m dalam BM.', 'Sleep length in the Records table now follows your language: 5h 4m in English, 5j 4m in BM.'], 'g-rec'],
     ['2026-11-25', ['Jadual Rekod kini ada garis titik halus antara baris dan lajur supaya lebih senang dibaca.', 'The Records table now has faint dotted lines between rows and columns so it is easier to read.'], 'g-rec'],
@@ -3322,6 +3341,7 @@
     add('g-rec', 'guide', T('Records & Dashboard', 'Records & Dashboard'), ul([
       T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
       T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Slide your finger over a chart to see each day.'),
+      T('<b>Laporan minggu lepas</b>: setiap Ahad dan Isnin, satu kad kecil di Home tunjuk workout, purata tidur, langkah dan PB minggu lepas, dengan satu cadangan. Tekan × untuk tutup sampai minggu depan.', '<b>Last-week report</b>: every Sunday and Monday a small card on Home shows last week’s workouts, average sleep, steps and PBs, with one tip. Tap × to hide it until next week.'),
       T('Tekan mana-mana hari untuk lihat, ubah atau padam rekod. Data yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b> dalam Google Sheet.', 'Tap any day to view, edit or delete it. Deleted data is first copied to the <b>DELETED (BACKUP)</b> tab in the Google Sheet.')]), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'records dashboard carta chart');
     add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
       T('Butang bahasa di atas: tukar BM / English. Ikon gear: tulisan besar, sasaran (workout seminggu, tidur, langkah, minit brisk walk, panjang langkah).', 'The language button at the top switches BM / English. Gear icon: large text, goals (workouts a week, sleep, steps, brisk-walk minutes, stride length).'),
@@ -4570,7 +4590,33 @@
     if (!txt) return null;
     var m = /(\d+)\s*[jh]\s*(\d+)?/.exec(String(txt)); return m ? (+m[1]) + (+(m[2] || 0)) / 60 : null;
   }
+  function paintWeekReport() {
+    var el = $('wkReport'); if (!el) return;
+    var t = REC_TODAY || todayKey(), d = new Date(t + 'T00:00:00').getDay(), en = S.lang === 'en', T = function (bm, e) { return en ? e : bm; };
+    var ws = addDays(sundayOf(t), -7), we = addDays(ws, 6), gone = ''; try { gone = localStorage.getItem('dw-wrep') || ''; } catch (e) {}
+    var show = (d === 0 || d === 1) && gone !== ws && curView() === 'home' && REC && SLEEP_ALL !== null;
+    if (!show) { el.hidden = true; return; }
+    var wd = {}; REC.forEach(function (x) { if (x.date >= ws && x.date <= we && x.activity === 'Workout') wd[x.date] = 1; });
+    var nW = Object.keys(wd).length, goal = S.weekGoal || 4;
+    var ns = (SLEEP_ALL || []).filter(function (x) { return x.d >= ws && x.d <= we && x.h > 0; }), avS = ns.length ? ns.reduce(function (q, x) { return q + x.h; }, 0) / ns.length : 0;
+    var wk = (WALK_ALL || []).filter(function (x) { return x.d >= ws && x.d <= we; }), stp = wk.reduce(function (q, x) { return q + wTot(x); }, 0), bm = wk.reduce(function (q, x) { return q + (isBrisk(x) ? +x.min || 0 : 0); }, 0);
+    if (!nW && !ns.length && !stp) { el.hidden = true; return; }
+    var nPB = 0; try { nPB = pbList().filter(function (o) { return o.bd >= ws && o.bd <= we; }).length + walkPBs().filter(function (o) { return o.id !== 'week' && o.d >= ws && o.d <= we; }).length; } catch (e) {}
+    var parts = ['<b>' + nW + '/' + goal + '</b> workout'];
+    if (ns.length) parts.push(T('tidur ', 'sleep ') + '<b>' + hm(avS * 60) + '</b>');
+    if (stp) parts.push('<b>' + fmtN(stp) + '</b>' + T(' langkah', ' steps'));
+    if (nPB) parts.push('<b>' + nPB + '</b> PB');
+    var tip = nW < goal ? T('Minggu ni: rancang ' + goal + ' hari workout dari awal, walaupun sesi pendek.', 'This week: plan ' + goal + ' workout days up front, even short ones.')
+      : (ns.length && avS < slLo()) ? T('Tidur purata bawah ' + slLo() + ' jam — cuba tidur 30 minit lebih awal minggu ni.', 'Average sleep under ' + slLo() + 'h — try going to bed 30 minutes earlier this week.')
+      : bm < 150 ? T('Brisk walk ' + bm + ' minit — tambah ' + (150 - bm) + ' minit lagi minggu ni untuk capai 150.', 'Brisk walk ' + bm + ' min — add ' + (150 - bm) + ' more this week to reach 150.')
+      : T('Minggu yang mantap. Kekalkan!', 'A solid week. Keep it going!');
+    el.innerHTML = '<small>' + T('Minggu lepas', 'Last week') + ' · ' + isoToDmy(ws).slice(0, 5) + ' – ' + isoToDmy(we).slice(0, 5) + '</small><div class="wrn">' + parts.map(function (q) { return '<span>' + q + '</span>'; }).join(' · ') + '</div><div class="wrt">' + tip + '</div>' +
+      '<button type="button" class="wrx" aria-label="' + T('Tutup', 'Close') + '">' + ic('x') + '</button>';
+    el.querySelector('.wrx').onclick = function () { try { localStorage.setItem('dw-wrep', ws); } catch (e) {} el.hidden = true; };
+    el.hidden = false;
+  }
   function paintHeaderExtras() {
+    try { setTimeout(paintWeekReport, 0); } catch (e) {}
     var c = $('streakChip'); if (!c) return;
     c.innerHTML = ic('flame') + '<b>' + (STREAK === null ? '–' : STREAK) + '</b>';
     c.title = (S.lang === 'en' ? 'Workout streak: ' : 'Streak workout: ') + (STREAK || 0) + (S.lang === 'en' ? ' day(s)' : ' hari');
