@@ -586,6 +586,9 @@
   .ih.go .ex { animation:ihShake .5s ease-in-out; transform-origin:center bottom }
   .ih.go .bb { animation:ihBlink .5s ease-in-out 2 }
   .ih.go .ry { animation:ihBlink .5s ease-in-out } .ih.go .id { animation:ihPop .4s ease-out } .ih.go .cr { animation:ihNudgeY .3s ease-in-out }
+  .ih.go .puh { animation:puH 1.4s cubic-bezier(.45,0,.3,1) } .ih.go .pub { animation:puB 1.4s cubic-bezier(.45,0,.3,1) } .ih.go .pua { animation:puA 1.4s cubic-bezier(.45,0,.3,1) }   /* dumbbell (push-up) */
+  .ih.go .b1, .ih.go .b2, .ih.go .b3 { transform-box:fill-box; transform-origin:50% 100%; animation:hBar .8s ease-in-out } .ih.go .b2 { animation-delay:.1s } .ih.go .b3 { animation-delay:.2s }   /* bars */
+  .ih.go .zz { animation:zzz 1.6s ease-in-out }   /* bed */
   @media (prefers-reduced-motion: reduce) { .ih.go * { animation:none !important } }
 </style>
 <script src="https://cdn.lordicon.com/lordicon.js" defer></script>
@@ -934,7 +937,7 @@
   .wk small { font-size:11px; color:var(--muted); font-weight:500; }
   .wk b { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; background:var(--tile); }
   .wk .w b { background:var(--wk); color:#fff; } body.dark .wk .w b { color:#111; }
-  .wk .r b { background:var(--rest); color:#111; }
+  .wk .r b { background:var(--rest); color:#111; } body.dark .wk .r b { color:#fff; }
   .wk .t b { box-shadow:none; }
   .wk .s b { box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--sc); }
   .wk .f { opacity:.35; pointer-events:none; }
@@ -1012,7 +1015,7 @@
   #days .day.dt > .dta { flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; padding-left:6px; }
   #days .dta em { font-style:normal; font-size:11px; font-weight:800; padding:2px 7px; border-radius:999px; white-space:nowrap; background:color-mix(in srgb, currentColor 13%, transparent); }
   #days .dta em.w { color:var(--wk); } #days .dta em.r { color:var(--rest-tx, var(--rest)); } #days .dta em.k { color:var(--walk); } #days .dta em.s { color:var(--sleepc); }
-  #days .dta small.flag { font-size:11px; color:#d97706; font-weight:800; }
+  #days .dta small.flag { font-size:11px; color:#d97706; font-weight:800; display:inline-flex; align-items:center; gap:3px; } #days .dta small.flag .ico, .rv .ico { width:13px; height:13px; vertical-align:-2px; }
   #days .day.dt > .dtw { flex-direction:column; line-height:1.15; } #days .dtw b { font-weight:800; color:var(--wk); } #days .dtw small { font-size:10.5px; font-weight:600; color:var(--muted); }
   #days .dts, #days .dtk, #days .dtb { font-weight:700; white-space:nowrap; }
   #days .dts { color:var(--ink); } #days .dtk, #days .dtb { color:var(--walk); } #days .dtn { font-style:normal; color:var(--muted); opacity:.5; font-weight:500; }
@@ -1527,13 +1530,14 @@
   .kc .kcn .kca .kct { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .kc .kcn .kca small.kcd { display:block; margin:0 0 2px; font-size:11px; font-weight:800; letter-spacing:.3px; color:var(--accent); }
   .kc .kcn .kcgo { display:none; }
-  .kc .kcx { all:unset; box-sizing:border-box; position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; }
+  .kc .kcx { all:unset; box-sizing:border-box; position:absolute; top:50%; transform:translateY(-50%); right:6px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; }
   .kc .kcx .ico { width:14px; height:14px; } .kc .kcx:active { background:color-mix(in srgb, var(--muted) 18%, transparent); }
   .kc .kcne { font-size:13px; color:var(--muted); padding:10px 12px; border-radius:12px; background:var(--tile); }
   .kc .grp.kch { display:flex; align-items:baseline; justify-content:space-between; gap:8px; } .kc .kchr { display:flex; gap:12px; }
   .kc .kclk { all:unset; cursor:pointer; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); }
   .kc .kclk .ico { width:16px; height:16px; } .kc .kclk[data-nclr] { color:#ef4444; background:rgba(239,68,68,.12); }
-  .kc .grp.kch { align-items:center !important; } .kc .kchr { gap:8px !important; }
+  .kc .grp.kch { align-items:center !important; margin-bottom:8px; } .kc .kchr { gap:6px !important; margin-right:5px; }   /* list icon sits right above each row's × */
+  .kc .kclk { width:28px !important; height:28px !important; }
   .ih.go .rl1, .ih.go .rl2 { animation:ihGrowX .4s ease-out; transform-origin:left center; transform-box:fill-box; } .ih.go .rl2 { animation-delay:.1s; }
   .kc #kcMain > .grp { margin-top:18px; }
   .kc .kctip { padding:10px 12px !important; font-size:13.5px; align-items:center; }
@@ -2042,7 +2046,7 @@
         var slm = sleepStrMin(x.sleep), sl = slm ? Math.floor(slm / 60) + (en ? 'h' : 'j') + (slm % 60) + 'm' : (x.sleep ? String(x.sleep).replace(/\s+/g, '') : '');
         var dash = '<i class="dtn">–</i>';
         row.innerHTML = '<span class="dtd"><b>' + p[2] + '/' + p[1] + '</b><small>' + (en ? esc(shortDay(x.date)) : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'][new Date(x.date + 'T00:00:00').getDay()]) + '</small></span>' +
-          '<span class="dta"><em class="' + cls + '">' + act + '</em>' + (x.review === 'Needs Review' ? '<small class="flag">⚠ ' + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
+          '<span class="dta"><em class="' + cls + '">' + act + '</em>' + (x.review === 'Needs Review' ? '<small class="flag">' + ic('alert') + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
           '<span class="dtw">' + (x.activity === 'Workout' ? '<b>' + x.reps + '</b><small>' + x.exercises + (en ? ' ex' : ' lat.') + '</small>' : dash) + '</span>' +
           '<span class="dts">' + (sl ? esc(sl) : dash) + '</span>' +
           '<span class="dtk">' + (wk ? fmtN(wTot(wk)) : dash) + '</span>' +
@@ -2150,8 +2154,8 @@
       tile(T('Purata tidur', 'Avg sleep'), c.sl === null ? '–' : hm(c.sl * 60), dl(c.sl, p.sl, 'sl'), 'k-sl') +
       tile('Streak', cur + '<i> ' + T('hari', cur === 1 ? 'day' : 'days') + '</i>', '<em class="z">' + T('terbaik ', 'best ') + best + '</em>', 'k-streak') +
       tile(T('Langkah', 'Steps'), c.st >= 1e5 ? Math.round(c.st / 1000) + 'k' : c.st.toLocaleString(), dl(c.st, p.st), 'k-steps') +
-      tile(T('Purata langkah', 'Avg steps'), c.kavg === null ? '–' : c.kavg.toLocaleString(), (c.kavg === null || p.kavg === null) ? '<em class="z">–</em>' : dl(c.kavg, p.kavg), 'k-steps') +
-      tile(T('Capai sasaran', 'Step goal'), c.kg + '<i>/' + span + '</i>', dl(c.kg, p.kg, 'n'), 'k-steps') + '</div>';
+      tile(T('Purata', 'Avg steps'), c.kavg === null ? '–' : c.kavg.toLocaleString(), (c.kavg === null || p.kavg === null) ? '<em class="z">–</em>' : dl(c.kavg, p.kavg), 'k-steps') +
+      tile(T('Capai', 'Goal days'), c.kg + '<i>/' + span + '</i>', dl(c.kg, p.kg, 'n'), 'k-steps') + '</div>';
     // recommendations: collapsible list — each item has a tone (action / watch / good / info), tap to expand, filter chips on top
     var R = [], cons = Math.round(100 * c.w / span), run = 0;
     var k0 = (to === t && !c.wd[t] && !c.rd[t]) ? addDays(t, -1) : to;
@@ -2457,7 +2461,7 @@
           return '<tr><td>' + esc(r.name) + '</td><td class="v">' + r.cells.filter(Boolean).map(esc).join(' · ') + '</td></tr>';
         }).join('') + '</table>' +
         (w.notes ? '<div class="note">' + esc(w.notes) + '</div>' : '') +
-        (w.review.length ? '<div class="rv">⚠ Perlu semak: ' + esc(w.review.join(' | ')) + '</div>' : '') +
+        (w.review.length ? '<div class="rv">' + ic('alert') + ' Perlu semak: ' + esc(w.review.join(' | ')) + '</div>' : '') +
         '<div class="acts"><button type="button" class="rest"><svg class="ico ih ih-pen" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="round" aria-hidden="true"><g class="pg"><path d="M20 6 L26 12"/><path d="m10.5,27.5l-8,2 2-8L22.257,3.743c1.657-1.657,4.343-1.657,6,0s1.657,4.343,0,6L10.5,27.5Z"/></g></svg> Edit</button><button type="button" class="del"><svg class="ico ih ih-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="tl" d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path class="tl" d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></svg> Padam</button></div>';
       var b = el.querySelectorAll('.acts button');
       b[0].onclick = function () { startEditWorkout(d.date, w); };
@@ -2550,14 +2554,15 @@
   }
   // NET sleep = time in bed minus time awake
   function sleepMins() { var d = bedMins(); return d === null ? null : Math.max(0, d - awakeMins()); }
-  function hmTxt(m) { return Math.floor(m / 60) + 'j ' + (m % 60) + 'm'; }
+  function hmTxt(m) { return Math.floor(m / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (m % 60) + 'm'; }
   function calcSleep() {
     ['sleepStart', 'sleepEnd'].forEach(function (id) { var v = $(id).value, tv = $(id + 'Tv'); if (!tv) return; tv.textContent = v || '--:--'; tv.classList.toggle('tph', !v); });
     var aw = awakeMins(), atv = $('sleepAwakeTv'); atv.textContent = hmTxt(aw); atv.classList.toggle('tph', !aw);
     var m = sleepMins(), bed = bedMins();
+    var E2 = S.lang === 'en', L2 = function (bm, e) { return E2 ? e : bm; };
     $('sleepDur').innerHTML = m === null ? ''
-      : (aw && aw >= bed ? '<b>–</b>⚠ terjaga lebih dari masa di katil'
-      : '<b>' + hmTxt(m) + '</b><span>' + (m > 14 * 60 ? '⚠ lama sangat — semak waktu' : (aw ? 'tidur bersih<small>' + hmTxt(bed) + ' di katil − ' + hmTxt(aw) + ' terjaga</small>' : 'tempoh tidur')) + '</span>');
+      : (aw && aw >= bed ? '<b>–</b>' + ic('alert') + L2(' terjaga lebih dari masa di katil', ' awake longer than time in bed')
+      : '<b>' + hmTxt(m) + '</b><span>' + (m > 14 * 60 ? ic('alert') + L2(' lama sangat — semak waktu', ' very long — check the times') : (aw ? L2('tidur bersih', 'actual sleep') + '<small>' + hmTxt(bed) + L2(' di katil − ', ' in bed − ') + hmTxt(aw) + L2(' terjaga', ' awake') + '</small>' : L2('tempoh tidur', 'sleep length'))) + '</span>');
     $('sleepDur').style.display = m === null ? 'none' : '';
     $('sleepDur').parentNode.classList.toggle('hasdur', m !== null);   // no duration yet: the tip sits beside AWAKE
     if (typeof renderSleepTip === 'function') renderSleepTip(m);
@@ -2615,7 +2620,7 @@
     var y = function (h) { return T + (H - T - B) * (1 - (Math.min(Math.max(h, lo), hi) - lo) / (hi - lo)); };
     var g = '';
     for (var h = 5; h <= 9; h++) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(h) + '" y2="' + y(h) + '" stroke="currentColor" opacity=".14" stroke-dasharray="3 4"/>' +
-      '<text x="' + (L - 6) + '" y="' + (y(h) + 4) + '" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">' + (h === 9 ? '9j+' : h + 'j') + '</text>';
+      '<text x="' + (L - 6) + '" y="' + (y(h) + 4) + '" font-size="10" text-anchor="end" fill="currentColor" opacity=".6">' + (h + (S.lang === 'en' ? 'h' : 'j') + (h === 9 ? '+' : '')) + '</text>';
     var stp = nd <= 16 ? 1 : (nd <= 31 ? 2 : Math.ceil(nd / 12)), oneMonth = keys[0].slice(0, 7) === keys[nd - 1].slice(0, 7);
     keys.forEach(function (kk, i) {
       if (i % stp) return;
@@ -2640,7 +2645,7 @@
       g += '<g class="sdp" data-i="' + rows.indexOf(r) + '"><circle cx="' + cx + '" cy="' + cy + '" r="13" fill="transparent"/>' + mk + '</g>';
     });
     var hs = rows.map(function (r) { return r.h; }), avg = hs.reduce(function (a, b) { return a + b; }, 0) / hs.length;
-    var fmt = function (h) { var t = Math.round(h * 60); return Math.floor(t / 60) + 'j ' + (t % 60) + 'm'; };
+    var fmt = function (h) { var t = Math.round(h * 60); return Math.floor(t / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (t % 60) + 'm'; };
     el.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--muted);font-weight:700">' + esc(rg.label) + '</div>' +
       '<div class="schart"><svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;color:var(--ink)">' + g + '</svg><div class="stt"></div></div>' +
       '<div class="slg"><span><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="#ef4444"/></svg>Bawah target</span>' +
@@ -2997,8 +3002,8 @@
     }
     box.innerHTML = '<div class="wring" style="--wc:var(--walk)"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" class="trk"/><circle cx="20" cy="20" r="16" class="prg" stroke-dasharray="' + (C * f).toFixed(1) + ' ' + C.toFixed(1) + '"/></svg>' +
       '<div><b>' + Math.round(100 * n.total / goal) + '%</b><small>' + fmtN(n.total) + ' / ' + fmtN(goal) + '</small></div></div>' +
-      '<div class="wst">' + [[T('Jarak (anggaran)', 'Distance (est.)'), n.total ? (n.total * (S.stride || 75) / 100000).toFixed(2) + ' km' : '–'], [T('Kadar langkah', 'Cadence'), n.cad ? Math.round(n.cad) + '/min' : '–'],
-        [T('Kelajuan', 'Speed'), n.kmh ? n.kmh.toFixed(1) + (en ? ' km/h' : ' km/j') : '–'], [T('Kalori (anggaran)', 'Calories (est.)'), n.min ? '~' + n.kcal : '–']]
+      '<div class="wst">' + [[T('Jarak', 'Distance'), n.total ? '~' + (n.total * (S.stride || 75) / 100000).toFixed(2) + ' km' : '–'], [T('Rentak', 'Cadence'), n.cad ? Math.round(n.cad) + '/min' : '–'],
+        [T('Kelajuan', 'Speed'), n.kmh ? n.kmh.toFixed(1) + (en ? ' km/h' : ' km/j') : '–'], [T('Kalori', 'Calories'), n.min ? '~' + n.kcal : '–']]
         .map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
       (n.day && n.steps ? '<div class="wsrc">' + (n.day >= n.steps
         ? T('<b>Jumlah ' + fmtN(n.total) + '</b> = langkah jam. Jam dah kira <b>' + fmtN(n.steps) + '</b> langkah brisk walk + <b>' + fmtN(n.day - n.steps) + '</b> langkah lain, jadi tak dicampur dua kali.',
@@ -3306,6 +3311,8 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-25', ['Warna Rest Day kini warna workout yang dilembutkan (lebih putih dalam mod terang, lebih pudar dalam mod gelap) — senang dibezakan tapi tetap sepadan dengan tema.', 'Rest days now use a softened workout colour (whiter in light mode, muted in dark mode) — easy to tell apart and still matching the theme.'], 'g-rest'],
+    ['2026-11-25', ['Semua ikon dalam app kini beranimasi bila ditekan (termasuk ikon workout, carta bar dan katil yang sebelum ni statik). Ikon di Apa yang baru disusun sebaris dengan butang ×.', 'Every icon in the app now animates when tapped (including the workout, bar-chart and bed icons that were static before). Icons in What’s new now line up with the × buttons.'], 'g-kc'],
     ['2026-11-25', ['Butang Buang semua dan Lihat semua di Apa yang baru kini ikon beranimasi (tong sampah dan senarai).', 'The Clear all and See all buttons in What’s new are now animated icons (bin and list).'], 'g-kc'],
     ['2026-11-25', ['Butang back dalam Knowledge Centre kini kembali ke tempat kau datang (contohnya Apa yang baru atau halaman utama Knowledge Centre), bukan ke topik artikel.', 'The back button in the Knowledge Centre now returns to where you came from (e.g. What’s new or the Knowledge Centre home), not the article’s topic.'], 'g-kc'],
     ['2026-11-25', ['Knowledge Centre kini sentiasa sama tinggi — tak lagi naik turun bila tukar topik, artikel atau Apa yang baru.', 'The Knowledge Centre now keeps the same height — it no longer jumps when you switch topics, articles or What’s new.'], 'g-kc'],
@@ -3947,7 +3954,7 @@
     var penC = getComputedStyle(document.body).getPropertyValue('--wk').trim();
     var restC = getComputedStyle(document.body).getPropertyValue('--rest').trim();
     var kpis = [[wd.length, 'Hari workout'], [rd.length, 'Hari rehat'], [sessions, 'Sesi'], [reps, 'Reps'],
-      [Math.floor(mins / 60) + 'j ' + (mins % 60) + 'm', 'Masa'], [DASH.streaks.current, 'Streak'],
+      [Math.floor(mins / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (mins % 60) + 'm', 'Masa'], [DASH.streaks.current, 'Streak'],
       [DASH.streaks.longest, 'Streak terbaik'], [review, 'Perlu semak', review > 0]];
     renderSleepChart(); renderSleepDash(); try { renderWalkDash(); } catch (e) { console.error(e); }
     var kid = ['wd', 'rd', 'sess', 'reps', 'mins', 'cur', 'long', 'rev'];
@@ -3955,7 +3962,7 @@
     var spanK = Math.max(1, Math.round((Date.parse(lastK) - Date.parse(rgK.from)) / 864e5) + 1);
     var cons = Math.min(100, Math.round(100 * wd.length / spanK));
     $('dKpi').innerHTML = statRow({ v: cons, unit: '%', frac: cons / 100, label: 'Konsisten', k: 'wd' },
-        [[wd.length, 'Workout', 'wd'], [rd.length, 'Rehat', 'rd'], [reps, 'Reps', 'reps'], [Math.floor(mins / 60) + 'j ' + (mins % 60) + 'm', 'Masa', 'mins']]) +
+        [[wd.length, 'Workout', 'wd'], [rd.length, 'Rehat', 'rd'], [reps, 'Reps', 'reps'], [Math.floor(mins / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (mins % 60) + 'm', 'Masa', 'mins']]) +
       statRow(null, [[sessions, 'Sesi', 'sess'], [DASH.streaks.current, 'Streak', 'cur'], [DASH.streaks.longest, 'Streak terbaik', 'long'], [review, 'Perlu semak', 'rev', review > 0]]);
     [].forEach.call($('dKpi').querySelectorAll('[data-k]'), function (b) { b.onclick = function () { openKpi(b.dataset.k); }; });
 
@@ -4092,13 +4099,18 @@
   var PAL_SLEEP = ['#ec4899', '#ec4899', '#8b5cf6', '#60a5fa', '#8b5cf6', '#8b5cf6'];   // sleep colour per combo (differs from its workout, rest and walk colours)   // walk colour per combo (contrasts with its workout/rest colours)
   function palNow(dark) {        // -> {wk, rest, restTx, acc}
     if (S.palette === 'custom') {
-      var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), rest = S.cRest || P0[3], acc = S.cAcc || (dark ? P0[7] : P0[6]);
-      return { wk: wk, rest: rest, restTx: (!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest, acc: acc, walk: S.cWalk || PAL_WALK[0], sleep: S.cSleep || PAL_SLEEP[0] };
+      var P0 = PALS[0], wk = S.cWk || (dark ? P0[2] : P0[1]), acc = S.cAcc || (dark ? P0[7] : P0[6]), rs = S.cRest ? null : restOf(wk, dark), rest = S.cRest || rs.rest;
+      return { wk: wk, rest: rest, restTx: rs ? rs.tx : ((!dark && lum(rest) > 0.55) ? shade(rest, 0.55) : rest), acc: acc, walk: S.cWalk || PAL_WALK[0], sleep: S.cSleep || PAL_SLEEP[0] };
     }
-    var P = PALS[+S.palette] || PALS[0];
-    return { wk: dark ? P[2] : P[1], rest: dark ? P[4] : P[3], restTx: dark ? P[4] : P[5], acc: dark ? P[7] : P[6], walk: PAL_WALK[+S.palette] || PAL_WALK[0], sleep: PAL_SLEEP[+S.palette] || PAL_SLEEP[0] };
+    var P = PALS[+S.palette] || PALS[0], rp = restOf(dark ? P[2] : P[1], dark);
+    return { wk: dark ? P[2] : P[1], rest: rp.rest, restTx: rp.tx, acc: dark ? P[7] : P[6], walk: PAL_WALK[+S.palette] || PAL_WALK[0], sleep: PAL_SLEEP[+S.palette] || PAL_SLEEP[0] };
   }
   function shade(c, f) { var q = parseCss(c); return 'rgb(' + Math.round(q.r * f) + ',' + Math.round(q.g * f) + ',' + Math.round(q.b * f) + ')'; }
+  // rest day = the workout colour softened toward white (light mode) or toward the dark panel (dark mode); its text stays readable
+  function restOf(wk, dark) {
+    var m = function (a, b, t) { var p = parseCss(a), q = parseCss(b); return '#' + [p.r + (q.r - p.r) * t, p.g + (q.g - p.g) * t, p.b + (q.b - p.b) * t].map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join(''); };
+    return dark ? { rest: m(wk, '#26262e', .55), tx: m(wk, '#e5e7eb', .35) } : { rest: m(wk, '#ffffff', .68), tx: m(wk, '#4b5563', .45) };
+  }
   var PENS = [ // [name, bright-mode colour, dark-mode colour]
     ['Biru', '#1d4ed8', '#93c5fd'], ['Hijau', '#15803d', '#86efac'], ['Merah', '#b91c1c', '#fca5a5'],
     ['Ungu', '#7e22ce', '#d8b4fe'], ['Oren', '#c2410c', '#fdba74'], ['Hitam', '#111111', '#f5f5f4']];
@@ -4996,7 +5008,7 @@
   // sleep target is a RANGE (default 7–8h): inside = green, under = red, over = amber
   function slLo() { var lo = +S.sleepMin || 7, hi = +S.sleepTarget || 8; return Math.min(lo, hi); }
   function slHi() { var lo = +S.sleepMin || 7, hi = +S.sleepTarget || 8; return Math.max(lo, hi); }
-  function slTxt() { return slLo() + '–' + slHi() + 'j'; }
+  function slTxt() { return slLo() + '–' + slHi() + (S.lang === 'en' ? 'h' : 'j'); }
   function sleepColor(h) { return h < slLo() ? '#ef4444' : (h <= slHi() ? '#22c55e' : '#3b82f6'); }
   function hClock(h) { var t = Math.round(h * 60); return Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2); }
   function avgClock(list) {
