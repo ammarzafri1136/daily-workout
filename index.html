@@ -1224,6 +1224,8 @@
   .rkp .kr .ki { width:26px; height:26px; flex:none; margin:0; border-radius:50%; display:flex; align-items:center; justify-content:center;
     background:color-mix(in srgb, var(--kc) 18%, transparent); color:var(--kc); }
   .rkp .kr .ki .ico { width:15px; height:15px; overflow:visible; }
+  .wsrc { grid-column:1 / -1; font-size:12px; line-height:1.45; color:var(--muted); background:color-mix(in srgb, var(--walk) 10%, transparent); border-radius:10px; padding:8px 10px; margin-top:8px; }
+  .wsrc b { color:var(--ink); }
   .rkp .tps { margin-top:12px; background:color-mix(in srgb, var(--paper) 55%, transparent); border-radius:14px; overflow:hidden; }
   body.dark .rkp .tps { background:rgba(255,255,255,.04); }
   .rkp .tph { all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; gap:8px; padding:11px 12px; cursor:pointer; }
@@ -2534,6 +2536,11 @@
       '<div class="wst">' + [[T('Jarak (anggaran)', 'Distance (est.)'), n.total ? (n.total * (S.stride || 75) / 100000).toFixed(2) + ' km' : '–'], [T('Kadar langkah', 'Cadence'), n.cad ? Math.round(n.cad) + '/min' : '–'],
         [T('Kelajuan', 'Speed'), n.kmh ? n.kmh.toFixed(1) + (en ? ' km/h' : ' km/j') : '–'], [T('Kalori (anggaran)', 'Calories (est.)'), n.min ? '~' + n.kcal : '–']]
         .map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
+      (n.day && n.steps ? '<div class="wsrc">' + (n.day >= n.steps
+        ? T('<b>Jumlah ' + fmtN(n.total) + '</b> = langkah jam. Jam dah kira <b>' + fmtN(n.steps) + '</b> langkah brisk walk + <b>' + fmtN(n.day - n.steps) + '</b> langkah lain, jadi tak dicampur dua kali.',
+            '<b>Total ' + fmtN(n.total) + '</b> = watch steps. The watch already counts the <b>' + fmtN(n.steps) + '</b> brisk-walk steps + <b>' + fmtN(n.day - n.steps) + '</b> other steps, so they are not added twice.')
+        : T('<b>Jumlah ' + fmtN(n.total) + '</b> = langkah brisk walk, sebab langkah jam (' + fmtN(n.day) + ') lebih rendah — mungkin jam belum sync.',
+            '<b>Total ' + fmtN(n.total) + '</b> = brisk-walk steps, because the watch figure (' + fmtN(n.day) + ') is lower — the watch may not have synced yet.')) + '</div>' : '') +
       '<div class="stip wtip"><span class="si" style="background:' + (tone === 'g' ? '#22c55e' : tone === 'o' ? '#f97316' : 'var(--walk)') + '">' + ic(tone === 'o' ? 'warning' : (tone === 'g' ? 'check' : 'walk')) + '</span><div><b>' + head + '</b><span>' + tip + '</span></div></div>';
   }
   function resetWalkCard() { $('walkDate').value = isoToDmy(todayKey()); $('walkSteps').value = ''; $('walkMin').value = ''; $('walkDay').value = ''; WALK_MODE = ''; $('walkMsg').innerHTML = ''; calcWalk(); }
