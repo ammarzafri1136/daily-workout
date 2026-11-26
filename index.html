@@ -445,6 +445,10 @@
     display:inline-flex; align-items:center; justify-content:center; }
   .ib.txt { font-size:12px !important; font-weight:700 !important; }
   /* bottom tab bar: floating liquid-glass capsule */
+  /* content fades out behind the bottom bar while there is more to scroll */
+  #btmFade { position:fixed; left:0; right:0; bottom:0; height:calc(104px + env(safe-area-inset-bottom)); z-index:39; pointer-events:none; opacity:0; transition:opacity .25s;
+    background:linear-gradient(to bottom, color-mix(in srgb, var(--page) 0%, transparent) 0%, color-mix(in srgb, var(--page) 75%, transparent) 38%, var(--page) 62%); }
+  #btmFade.on { opacity:1; }
   .tabs { position:fixed; left:50%; right:auto; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:40; width:min(340px, calc(100% - 32px));
     border-radius:999px !important; padding:5px !important; gap:0; justify-content:center; isolation:isolate; overflow:hidden;
     background:linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.38)) !important;
@@ -1027,6 +1031,8 @@
   /* compact Records panel: rows sized so 7 days fit on one screen above the bottom bar (fitRecTable sets --rrh) */
   #days .day.dt { height:var(--rrh, 52px); padding:0 !important; box-sizing:border-box; }
   #days .day.dt > .dtd { justify-content:center !important; }
+  #days .day.dt.dtc { border-top-style:dashed !important; } #days .day.dt.dtc > .dtd { visibility:hidden; }   /* 2nd+ session of the same day */
+  #days .dta small { font-size:10.5px; font-weight:700; color:var(--muted); }
   #days .dth { padding-top:2px; }
   .recent .rkp { padding:6px; margin:8px 0 6px; border-radius:14px; }
   .recent .rkp .tps { margin-top:6px; } .recent .rkp .kps { margin-top:0; }
@@ -2028,7 +2034,7 @@
     RUN().withSuccessHandler(function (d) {
       $('cur').textContent = d.streaks.current; $('best').textContent = d.streaks.longest;
       $('sheetLink').href = d.sheetUrl;
-      REC = d.recent; REC_TODAY = d.today; STREAK = d.streaks.current; renderRecent(); paintHeaderExtras(); paintLastWk();
+      REC = d.recent; REC_TODAY = d.today; STREAK = d.streaks.current; SESS_D = {}; renderRecent(); paintHeaderExtras(); paintLastWk();
     }).withFailureHandler(function () { $('days').innerHTML = '<div class="day"><small>Tak dapat muat rekod.</small></div>'; }).appGetRecent();
   }
   var REC = [], REC_TODAY = '', RREC = '7d';
@@ -2055,20 +2061,26 @@
       hd.innerHTML = '<span>' + (en ? 'Date' : 'Tarikh') + '</span><span>' + (en ? 'Activity' : 'Aktiviti') + '</span><span class="th-w" title="Workout">' + ic('dumbbell') + '</span><span class="th-s" title="' + (en ? 'Sleep' : 'Tidur') + '">' + ic('moon') + '</span><span class="th-k" title="' + (en ? 'Steps' : 'Langkah') + '">' + ic('walk') + '</span><span>Brisk</span>';
       box.appendChild(hd);
       list.forEach(function (x) {
-        var row = document.createElement('div'); row.className = 'day dt'; row.setAttribute('role', 'button'); row.tabIndex = 0;
-        row.onclick = function () { openDetail(x.date); };
-        var p = x.date.split('-'), cls = x.activity === 'Workout' ? 'w' : (x.activity === 'Sleep' ? 's' : (x.activity === 'Walk' ? 'k' : 'r'));
-        var act = x.activity === 'Workout' ? 'Workout' : (x.activity === 'Sleep' ? (en ? 'Sleep' : 'Tidur') : (x.activity === 'Walk' ? (x.brisk ? 'Brisk' : (en ? 'Steps' : 'Langkah')) : (en ? 'Rest' : 'Rehat')));
+        // Activity column shows only Workout or Rest (today stays blank until something is logged); several workouts on one day = one row each
+        var isW = x.activity === 'Workout', p = x.date.split('-'), cls = isW ? 'w' : 'r', today = x.date === (REC_TODAY || todayKey());
+        var act = isW ? 'Workout' : (today ? '' : (en ? 'Rest' : 'Rehat'));
         var wk = WD[x.date] && !shown[x.date] ? WD[x.date] : null; if (wk) shown[x.date] = 1;
+        var ns = isW ? (SESS[x.date] || 1) : 1, SD = SESS_D[x.date]; if (SD && SD.length) ns = SD.length;
+        if (ns > 1 && !SD && !SESS_D['~' + x.date]) { SESS_D['~' + x.date] = 1; RUN().withSuccessHandler(function (d) { SESS_D[x.date] = (d && d.workouts) || []; renderRecent(); }).withFailureHandler(function () {}).appGetDay(x.date); }
+        for (var si = 0; si < ns; si++) (function (si) {
+        var row = document.createElement('div'); row.className = 'day dt' + (si ? ' dtc' : ''); row.setAttribute('role', 'button'); row.tabIndex = 0;
+        row.onclick = function () { openDetail(x.date, false, ns > 1 ? si : null); };
+        var sw = ns > 1 ? (SD && SD[si] ? sessReps(SD[si]) : null) : null;
         var slm = sleepStrMin(x.sleep), sl = slm ? Math.floor(slm / 60) + (en ? 'h' : 'j') + (slm % 60) + 'm' : (x.sleep ? String(x.sleep).replace(/\s+/g, '') : '');
         var dash = '<i class="dtn">–</i>';
         row.innerHTML = '<span class="dtd"><b>' + p[2] + '/' + p[1] + '</b><small>' + (en ? esc(shortDay(x.date)) : ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab'][new Date(x.date + 'T00:00:00').getDay()]) + '</small></span>' +
-          '<span class="dta"><em class="' + cls + '">' + act + '</em>' + (x.review === 'Needs Review' ? '<small class="flag">' + ic('alert') + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
-          '<span class="dtw">' + (x.activity === 'Workout' ? '<b>' + x.reps + '</b><small>' + x.exercises + (en ? ' ex' : ' lat.') + '</small>' : dash) + '</span>' +
-          '<span class="dts">' + (sl ? esc(sl) : dash) + '</span>' +
-          '<span class="dtk">' + (wk ? fmtN(wTot(wk)) : dash) + '</span>' +
-          '<span class="dtb">' + (wk && isBrisk(wk) ? wk.min + 'm' : dash) + '</span>';
+          '<span class="dta">' + (act ? '<em class="' + cls + '">' + act + '</em>' : '') + (ns > 1 ? '<small>' + (en ? 'Session ' : 'Sesi ') + (si + 1) + '</small>' : '') + (si === 0 && x.review === 'Needs Review' ? '<small class="flag">' + ic('alert') + (en ? 'review' : 'semak') + '</small>' : '') + '</span>' +
+          '<span class="dtw">' + (!isW ? dash : ns > 1 ? (sw ? '<b>' + sw.reps + '</b><small>' + sw.ex + (en ? ' ex' : ' lat.') + '</small>' : '<small>…</small>') : '<b>' + x.reps + '</b><small>' + x.exercises + (en ? ' ex' : ' lat.') + '</small>') + '</span>' +
+          '<span class="dts">' + (si === 0 && sl ? esc(sl) : dash) + '</span>' +
+          '<span class="dtk">' + (si === 0 && wk ? fmtN(wTot(wk)) : dash) + '</span>' +
+          '<span class="dtb">' + (si === 0 && wk && isBrisk(wk) ? wk.min + 'm' : dash) + '</span>';
         box.appendChild(row);
+        })(si);
       });
       setTimeout(fitRecTable, 0);
   }
@@ -2447,9 +2459,14 @@
   // ---------------- Day detail, edit, delete ----------------
   function closeDetail() { $('detail').classList.remove('on'); $('detailBg').classList.remove('on'); }
   $('detailClose').onclick = closeDetail; $('detailBg').onclick = closeDetail;
-  function openDetail(key, fromList) {
+  var SESS = {}, SESS_D = {};   // workouts per date (from the dashboard data) and each multi-session day's sessions
+  function sessReps(w) { var reps = 0; w.rows.forEach(function (r) { r.cells.forEach(function (c) { var n = /^(\d+)(\s|\(|$)/.exec(c); if (n && !/[ms]$/.test(c)) reps += +n[1]; }); }); return { reps: reps, ex: w.rows.length }; }
+  function setSess(days) { SESS = {}; (days || []).forEach(function (x) { if (x.sessions > 1) SESS[x.d] = x.sessions; }); }
+  var DETAIL_SI = null;
+  function openDetail(key, fromList, si) {
+    DETAIL_SI = si == null ? null : si;
     $('detailBack').style.display = fromList ? '' : 'none';
-    $('dTitle').textContent = isoToDmy(key); $('dBody').innerHTML = '<div class="empty">Memuatkan…</div>';
+    $('dTitle').textContent = isoToDmy(key) + (DETAIL_SI != null ? ' · ' + (S.lang === 'en' ? 'Session ' : 'Sesi ') + (DETAIL_SI + 1) : ''); $('dBody').innerHTML = '<div class="empty">Memuatkan…</div>';
     $('detail').classList.add('on'); $('detailBg').classList.add('on');
     RUN().withSuccessHandler(renderDetail).withFailureHandler(function (e) {
       $('dBody').innerHTML = '<div class="empty">Tak dapat muat: ' + esc(String(e && e.message || e)) + '</div>';
@@ -2457,6 +2474,7 @@
   }
   function renderDetail(d) {
     var box = $('dBody'); box.innerHTML = '';
+    if (DETAIL_SI != null && d.workouts[DETAIL_SI]) { SESS_D[d.date] = d.workouts; d = { date: d.date, workouts: [d.workouts[DETAIL_SI]], rests: [], sleep: null, walk: null }; }   // one session only
     if (d.walk) renderWalkDetail(d, box);
     if (!d.workouts.length && !d.rests.length && !d.sleep && !d.walk) { box.innerHTML = '<div class="empty">Tiada rekod pada tarikh ini.</div>'; return; }
     if (d.sleep) {
@@ -2829,6 +2847,13 @@
       h.addEventListener('click', tog); h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(e); } });
     });
   })();
+  (function () {
+    var f = document.createElement('div'); f.id = 'btmFade'; f.setAttribute('aria-hidden', 'true'); document.body.appendChild(f);
+    var upd = function () { var de = document.documentElement, more = de.scrollHeight - (window.scrollY + innerHeight) > 6; f.classList.toggle('on', more); };
+    window.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd);
+    new MutationObserver(function () { clearTimeout(upd.t); upd.t = setTimeout(upd, 60); }).observe(document.querySelector('.wrap') || document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden'] });
+    setTimeout(upd, 300);
+  })();
   function fitRecTable() {
     var box = $('days'), nav = document.querySelector('.tabs');
     if (!box || !nav || curView() !== 'rec' || !box.offsetParent) return;
@@ -2904,7 +2929,7 @@
   function loadDash() {
     if (!DASH) $('dKpi').innerHTML = '<div class="empty">Memuatkan…</div>';
     RUN().withSuccessHandler(function (d) {
-      DASH = d; if (d.sheetUrl) $('sheetLink').href = d.sheetUrl; SLEEP_ALL = d.sleep || []; renderSleepTip(sleepMins());
+      DASH = d; setSess(d.days); if (d.sheetUrl) $('sheetLink').href = d.sheetUrl; SLEEP_ALL = d.sleep || []; renderSleepTip(sleepMins());
       renderDash();
     }).withFailureHandler(function (e) { $('dKpi').innerHTML = '<div class="empty">Tak dapat muat dashboard: ' + esc(String(e && e.message || e)) + '</div>'; }).appGetDashboard();
   }
@@ -3328,6 +3353,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-26', ['Jadual Rekod: lajur Aktiviti kini hanya Workout atau Rehat. Kalau kau buat 2 sesi workout sehari, setiap sesi dapat baris sendiri (Sesi 1, Sesi 2) — tekan untuk lihat sesi tu sahaja. Bila ada lagi isi di bawah, kandungan kini pudar di belakang bar bawah.', 'Records table: the Activity column now shows only Workout or Rest. Two workouts on one day get a row each (Session 1, Session 2) — tap one to see just that session. When there is more to scroll, content now fades out behind the bottom bar.'], 'g-rec'],
     ['2026-11-25', ['Slider Kekuatan bunyi di Tetapan → Paparan (bawah Bunyi butang). 50% = kuat sekarang; seret ke 100% untuk lebih kuat. Bunyi contoh dimainkan bila kau lepas slider.', 'Sound volume slider in Settings → Display (under Button sounds). 50% = the current level; drag to 100% for louder. A sample plays when you let go.'], 'g-set'],
     ['2026-11-25', ['Bunyi butang dan bunyi simpan kini 50% lebih kuat.', 'Button and save sounds are now 50% louder.'], 'g-set'],
     ['2026-11-25', ['Bila ada ralat (contohnya tarikh salah, nama template kosong, gagal simpan), app keluarkan bunyi "uh-oh" pendek supaya kau perasan.', 'When something goes wrong (e.g. a wrong date, an empty template name, a failed save) the app plays a short "uh-oh" so you notice.'], 'g-set'],
@@ -3448,6 +3474,7 @@
       T('<b>Rekod</b> (tab kiri di bar bawah; Utama di tengah dan app sentiasa dibuka di situ): pilih tempoh, lihat petak ringkasan dan cadangan. Tekan mana-mana petak atau cadangan untuk penerangan penuh.', '<b>Records</b> (left tab in the bottom bar; Home is in the middle and the app always opens there): pick a period, see the summary tiles and tips. Tap any tile or tip for the full explanation.'),
       T('<b>Dashboard</b>: carta, heatmap dan statistik untuk Workout, Sleep dan Walk. Setiap carta tertutup — tekan tajuknya untuk buka. Gerakkan jari atas carta untuk lihat nilai setiap hari.', '<b>Dashboard</b>: charts, heatmaps and stats for Workout, Sleep and Walk. Each chart is folded — tap its title to open it. Slide your finger over a chart to see each day.'),
       T('<b>Laporan minggu lepas</b>: setiap Ahad dan Isnin, satu kad kecil di Home tunjuk workout, purata tidur, langkah dan PB minggu lepas, dengan satu cadangan. Tekan × untuk tutup sampai minggu depan.', '<b>Last-week report</b>: every Sunday and Monday a small card on Home shows last week’s workouts, average sleep, steps and PBs, with one tip. Tap × to hide it until next week.'),
+      T('Lajur <b>Aktiviti</b> hanya tunjuk Workout atau Rehat. Kalau 2 sesi workout sehari, setiap sesi ada baris sendiri (Sesi 1, Sesi 2); tekan baris tu untuk lihat sesi tu sahaja.', 'The <b>Activity</b> column shows only Workout or Rest. With 2 workouts in a day, each session gets its own row (Session 1, Session 2); tap a row to see just that session.'),
       T('Tekan mana-mana hari untuk lihat, ubah atau padam rekod. Data yang dipadam disalin dulu ke tab <b>DELETED (BACKUP)</b> dalam Google Sheet.', 'Tap any day to view, edit or delete it. Deleted data is first copied to the <b>DELETED (BACKUP)</b> tab in the Google Sheet.')]), ['dash', T('Buka Dashboard', 'Open Dashboard')], 'records dashboard carta chart');
     add('g-set', 'guide', T('Tema, bahasa & tetapan', 'Theme, language & settings'), ul([
       T('Butang bahasa di atas: tukar BM / English. Ikon gear: tulisan besar, sasaran (workout seminggu, tidur, langkah, minit brisk walk, panjang langkah).', 'The language button at the top switches BM / English. Gear icon: large text, goals (workouts a week, sleep, steps, brisk-walk minutes, stride length).'),
@@ -5157,7 +5184,7 @@
   // ---------------- Sleep insight (short tip that follows your sleep data) ----------------
   var SLEEP_ALL = null, WALK_ALL = null;
   function loadSleepAll() {
-    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; WALK_ALL = (d && d.walk) || []; EXH = (d && d.ex) || []; renderSleepTip(sleepMins()); paintHeaderExtras(); try { paintPBBtn(); } catch (e) {} updateHints(); if (REC && REC.length) renderRecent(); })
+    RUN().withSuccessHandler(function (d) { SLEEP_ALL = (d && d.sleep) || []; WALK_ALL = (d && d.walk) || []; EXH = (d && d.ex) || []; setSess(d && d.days); try { if (curView() === 'rec') renderRecent(); } catch (e) {} renderSleepTip(sleepMins()); paintHeaderExtras(); try { paintPBBtn(); } catch (e) {} updateHints(); if (REC && REC.length) renderRecent(); })
       .withFailureHandler(function () {}).appGetDashboard();
   }
   function hm(min) { min = Math.round(min); return Math.floor(min / 60) + (S.lang === 'en' ? 'h ' : 'j ') + (min % 60) + 'm'; }
