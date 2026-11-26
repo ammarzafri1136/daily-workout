@@ -446,7 +446,7 @@
   .ib.txt { font-size:12px !important; font-weight:700 !important; }
   /* bottom tab bar: floating liquid-glass capsule */
   /* content fades out behind the bottom bar while there is more to scroll */
-  #btmFade { position:fixed; left:0; right:0; bottom:0; height:calc(104px + env(safe-area-inset-bottom)); z-index:39; pointer-events:none; opacity:0; transition:opacity .25s;
+  #btmFade { position:fixed; left:0; right:0; bottom:0; height:calc(107px + env(safe-area-inset-bottom)); z-index:39; pointer-events:none; opacity:0; transition:opacity .25s;
     background:linear-gradient(to bottom, color-mix(in srgb, var(--page) 0%, transparent) 0%, color-mix(in srgb, var(--page) 75%, transparent) 38%, var(--page) 62%); }
   #btmFade.on { opacity:1; }
   .tabs { position:fixed; left:50%; right:auto; bottom:calc(14px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:40; width:min(340px, calc(100% - 32px));
@@ -3353,6 +3353,7 @@
   ];
   // What's new — ADD AN ENTRY HERE (and update the matching article above) whenever a feature changes. tests/run_tests.js checks this.
   var KC_NEWS = [
+    ['2026-11-26', ['Kesan pudar di atas bar bawah dinaikkan sedikit (3px).', 'The fade above the bottom bar now starts slightly higher (3px).'], 'g-rec'],
     ['2026-11-26', ['Jadual Rekod: lajur Aktiviti kini hanya Workout atau Rehat. Kalau kau buat 2 sesi workout sehari, setiap sesi dapat baris sendiri (Sesi 1, Sesi 2) — tekan untuk lihat sesi tu sahaja. Bila ada lagi isi di bawah, kandungan kini pudar di belakang bar bawah.', 'Records table: the Activity column now shows only Workout or Rest. Two workouts on one day get a row each (Session 1, Session 2) — tap one to see just that session. When there is more to scroll, content now fades out behind the bottom bar.'], 'g-rec'],
     ['2026-11-25', ['Slider Kekuatan bunyi di Tetapan → Paparan (bawah Bunyi butang). 50% = kuat sekarang; seret ke 100% untuk lebih kuat. Bunyi contoh dimainkan bila kau lepas slider.', 'Sound volume slider in Settings → Display (under Button sounds). 50% = the current level; drag to 100% for louder. A sample plays when you let go.'], 'g-set'],
     ['2026-11-25', ['Bunyi butang dan bunyi simpan kini 50% lebih kuat.', 'Button and save sounds are now 50% louder.'], 'g-set'],
